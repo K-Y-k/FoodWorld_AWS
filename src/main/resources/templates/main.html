@@ -1,0 +1,592 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <!--부트 스트랩 적용-->
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+    <!--css 적용-->
+    <link rel="stylesheet" type="text/css" href="../css/main_style.css" th:href="@{/css/main_style.css}">
+</head>
+
+<body>
+<div class="container_main">
+    <header style="position: relative;"> <!--네비게이션바-->
+        <div class="px-3 py-2 bg-dark text-white">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <img src="/image/main_img/logo2.PNG" class="logo" id="logo2">
+                <img src="/image/main_img/home_icon.PNG" width="50px" height="45px" style="margin-left: 3%;">
+                <a href="/" class="navbar-brand"><h4 class="theme">&nbsp;&nbsp;메인홈</h4></a>
+
+                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small" style="position: absolute">
+                    <li style="position: relative; left: -7%;">
+                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 27px; margin-top: 10px;">
+                        <a href="/boards/freeBoard" class="nav-link text-white" style="font-size: 16px;">
+                            <span>자유게시판</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: -4%;">
+                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 30px; margin-top: 10px;">
+                        <a href="/boards/recommendBoard" class="nav-link text-white" style="font-size: 16px;">
+                            <span>추천게시판</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: -1%;">
+                        <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px"
+                             style="margin-left: 35px; margin-top: 10px;">
+                        <a href="/boards/muckstarBoard" class="nav-link text-white" style="font-size: 16px;">
+                            <span>먹스타그램</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: 2%;">
+                        <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 27px; margin-top: 10px;">
+                        <a href="/menu" class="nav-link text-white" style="font-size: 16px;">
+                            <span>메뉴추천</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: 5%;">
+                        <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 20px; margin-top: 10px;">
+                        <a href="/chat" class="nav-link text-white" style="font-size: 16px;">
+                            <span>채팅방</span>
+                        </a>
+                    </li>
+                    <li th:if="${session.loginMember != null and session.loginMember.role eq 'admin'}"
+                        style="position: relative; left: 10%;">
+                        <img src="/image/main_img/admin_icon.png" width="45px" height="40px"
+                             style="margin-left: 40px; margin-top: 10px;">
+                        <a href="/admin/members" class="nav-link text-white" style="font-size: 16px;">
+                            <span>관리자 페이지</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </header>
+
+    <section style="position: relative; width: 300px;"> <!--세션 바-->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+             style="width: 290px; height: 110vh;">
+            <hr>
+
+            <div class="case-Member"
+                 th:if="${session.loginMember != null}">
+                <div class="mb-3">
+                    <h4 style="width: 100%; margin: 0 auto;" th:text="|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${session.loginMember.name}님|">
+                        ???님</h4>
+                    <h4 style="width: 100%; margin: 0 auto;">&nbsp;&nbsp;&nbsp;FOODWORLD에</h4>
+                    <h4 style="width: 100%; margin: 0 auto;">오신 것을 환영합니다!</h4>
+                </div>
+                <hr>
+
+                <img src="/image/main_img/logo1.PNG" class="logo" style="width: 250px; height: 160px;" id="logo">
+
+                <br>
+
+                <div class="col-auto" style="position:absolute; top: 32%;" id="col-auto2">
+                    <button type="button" class="btn btn-primary mb-3"
+                            style="width: 100px; margin-left: 7px;"
+                            th:onclick="|location.href='@{/members/profile/{memberId}(memberId=${session.loginMember.id})}'|">프로필
+                    </button>
+                    <form th:action="@{/members/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-primary mb-3"
+                                style="width: 100px; margin-left: 30px;">로그아웃
+                        </button>
+                    </form>
+                </div>
+
+                <br>
+            </div>
+
+            <div th:if="${session.loginMember == null}"
+                 class="case2-noMember">
+                <span style="text-align: center; font-size: 20px;" id="userName"></span>
+                <h4 style="margin-left: 13%;">FOOD WORLD에</h4>
+                <h4 style="margin-left: 5%;">오신 것을 환영합니다!</h4>
+                <hr>
+
+<!--                <form action="" th:action th:object="${loginForm}" method="post">-->
+
+
+<!--                    <div class="container" style="position:absolute; top: 14%; left: 1%;" id="form">-->
+<!--                        <a href="/oauth2/authorization/google" class="btn btn-secondary active" style="width: 100px; margin-left: 7px; font-size: 12px;" role="button">구글 로그인</a>-->
+<!--                        <a href="/oauth2/authorization/naver" class="btn btn-success active" style="width: 100px; margin-left: 30px; font-size: 11px;" role="button">네이버 로그인</a>-->
+
+<!--                        <br>-->
+<!--                        <br>-->
+
+<!--                        <div class="mb-3">-->
+<!--                            <input type="text" id="loginId" th:field="*{loginId}" class="form-control" placeholder="아이디"-->
+<!--                                   style="width: 250px;">-->
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+<!--                            <input type="password" id="password" th:field="*{password}" class="form-control"-->
+<!--                                   placeholder="비밀번호" style="width: 250px;">-->
+<!--                        </div>-->
+<!--                        <br>-->
+<!--                    </div>-->
+
+<!--                    <div class="col-auto" style="position:absolute; top: 30%; left: 3%;" id="col-auto">-->
+<!--                        <button type="submit" class="btn btn-primary mb-3" style="width: 100px; margin-left: 7px;"-->
+<!--                                id="login">-->
+<!--                            로그인-->
+<!--                        </button>-->
+<!--                        <button class="btn btn-primary mb-3" style="width: 100px; margin-left: 30px;"-->
+<!--                                id="register" th:onclick="|location.href='@{/members/join}'|"-->
+<!--                                type="button">회원가입-->
+<!--                        </button>-->
+<!--                    </div>-->
+
+<!--                </form>-->
+            </div>
+
+            <ul style="position:absolute; width: 275px; top: 35%; left: -5%; list-style-type: none;">
+                <hr>
+                <li class="nav-item">
+                    <a href="/boards/freeBoard" class="nav-link text-white" style="margin-left: 23%;">
+                        &nbsp;자유게시판
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/boards/recommendBoard" class="nav-link text-white" style="margin-left: 25%;">
+                        추천게시판
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/boards/muckstarBoard" class="nav-link text-white" style="margin-left: 25%;">
+                        먹스타그램
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/menu" class="nav-link text-white" style="margin-left: 27%;">
+                        메뉴추천
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/chat" class="nav-link text-white" style="margin-left: 29%;">
+                        채팅방
+                    </a>
+                </li>
+                <hr>
+            </ul>
+        </div>
+    </section>
+
+    <aside style="float: left; width: 1000px; position: relative; height: 100vh;">
+        <br>
+        <br>
+
+        <div style="width: 250px;"> <!--배경 꾸미는 사진-->
+            <img src="/image/main_img/main_background01.PNG"
+                 style="top: 3%; width: 250px;">
+            <img src="/image/main_img/main_background2.PNG"
+                 style="top: 45%; width: 250px;">
+            <img src="/image/main_img/main_background3.PNG"
+                 style="top: 70%; width: 200px;">
+        </div>
+
+        <div style="margin-left: 260px;"> <!--이미지 슬라이드-->
+            <div class="img_slide"
+                 style="position: absolute; top: 3%; width: 730px; height: 315px; border: solid 3px; border-color: rgb(9, 136, 15);">
+                <input type="radio" name="slide" id="slide01" checked>
+                <input type="radio" name="slide" id="slide02">
+                <input type="radio" name="slide" id="slide03">
+                <input type="radio" name="slide" id="slide04">
+                <input type="radio" name="slide" id="slide05">
+
+                <div class="slidewrap" style="margin-top: 15px;">
+                    <ul class="slidelist">
+                        <li>
+                            <a href="/boards/freeBoard">
+                                <label for="slide05" class="left"></label>
+                                <img src="/image/main_img/img_slide1.PNG">
+                                <label for="slide02" class="right"></label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/boards/recommendBoard">
+                                <label for="slide01" class="left"></label>
+                                <img src="/image/main_img/img_slide2.PNG">
+                                <label for="slide03" class="right"></label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/boards/muckstarBoard">
+                                <label for="slide02" class="left"></label>
+                                <img src="/image/main_img/img_slide3.PNG">
+                                <label for="slide04" class="right"></label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/menu">
+                                <label for="slide03" class="left"></label>
+                                <img src="/image/main_img/img_slide4.PNG">
+                                <label for="slide05" class="right"></label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/chat">
+                                <label for="slide04" class="left"></label>
+                                <img src="/image/main_img/img_slide5.PNG">
+                                <label for="slide01" class="right"></label>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="display:flex; border: solid 3px; border-color: rgb(202, 130, 22);
+                        position: absolute; width: 730px; height: 300px; top: 39%;">
+                <!--자유게시판 인기글 목록-->
+                <table style="width: 360px; margin-top: 15px; margin-left: 5px;">
+                    <thead>
+                    <tr>
+                        <td colspan="4">
+                            <h4 style="color: orangered; text-align: center;">자유게시판 HOT 7</h4>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="4">
+                            <a href="/boards/freeBoard"
+                               style="float: right; text-decoration: none; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 700;">
+                                더보기>>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="col-md-5" style="text-align: center; margin: 0 auto;">제목</th>
+                        <th class="col-md-1"></th>
+                        <th class="col-md-3" style="text-align: center; margin: 0 auto;">조회수</th>
+                        <th class="col-md-2" style="text-align: center; margin: 0 auto;">좋아요</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="freeBoard : ${freeBoards}">
+                        <td class="col-md-5" style="text-align: center; margin: 0 auto; display: inline-block; width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <a th:href="@{|/boards/freeBoard/${freeBoard.id}|}" th:text="|${freeBoard.title}|"
+                                   style="color: black; text-decoration-line: none;"></a>
+                        </td>
+                        <td class="col-md-1">
+                            <span th:if="${freeBoard.commentCount != 0}" style="color: red;" th:text="|[${freeBoard.commentCount}]|"></span>
+                        </td>
+                        <td class="col-md-3" style="text-align: center; margin: 0 auto;" th:text="${freeBoard.count}"></td>
+                        <td class="col-md-2" style="text-align: center; margin: 0 auto;;" th:text="${freeBoard.likeCount}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+                <!--추천게시판 인기글 목록-->
+                <table style="width: 360px; margin-top: 15px;">
+                    <thead>
+                    <tr>
+                        <td colspan="4">
+                            <h4 style="color: orangered; text-align: center;">추천게시판 HOT 7</h4>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="4">
+                            <a href="/boards/recommendBoard"
+                               style="float: right; text-decoration: none; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 700;">
+                                더보기>>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="col-md-5" style="text-align: center; margin: 0 auto;">제목</th>
+                        <th class="col-md-1" style="text-align: center; margin: 0 auto;"></th>
+                        <th class="col-md-3" style="text-align: center; margin: 0 auto;">조회수</th>
+                        <th class="col-md-2" style="text-align: center; margin: 0 auto;">좋아요</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="recommendBoard : ${recommendBoards}">
+                        <td class="col-md-5" style="text-align: center; margin: 0 auto; display: inline-block; width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <a th:href="@{|/boards/recommendBoard/${recommendBoard.id}|}" th:text="|${recommendBoard.title}|"
+                               style="color: black; text-decoration-line: none;"></a>
+                        </td>
+                        <td class="col-md-1">
+                            <span th:if="${recommendBoard.commentCount != 0}" style="color: red;" th:text="|[${recommendBoard.commentCount}]|"></span>
+                        </td>
+                        <td class="col-md-3" style="text-align: center; margin: 0 auto;" th:text="${recommendBoard.count}"></td>
+                        <td class="col-md-2" style="text-align: center; margin: 0 auto;;" th:text="${recommendBoard.likeCount}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div style="border: solid 3px; border-color: rgb(47, 9, 136);
+                        position: absolute; width: 730px; height: 300px; top: 73%;">
+                <!--먹스타그램 인기글 목록-->
+                <table style="width: 730px; margin-top: 15px;">
+                    <thead>
+                    <tr>
+                        <h4 style="font-family: 'Nanum Gothic'; font-style: normal; font-weight: 550; white-space: nowrap; font-size: 20px; color: rgb(47, 9, 136);">
+                            먹스타그램 HOT 5
+                        </h4>
+                    </tr>
+
+                    <tr>
+                        <a href="/boards/muckstarBoard" style="float: right; text-decoration: none; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 700;">
+                            더보기>>
+                        </a>
+                    </tr>
+                    </thead>
+
+                    <tbody style="">
+                    <tr style="">
+                        <td th:each="muckstarBoard : ${muckstarBoards}" style="margin-left: 10px; width: 180px; height: 200px;">
+                            <div>
+                                <a th:href="@{|/boards/muckstarBoard/${muckstarBoard.id}|}">
+                                    <img th:src="@{|/imageFileUpload/${muckstarBoard.boardFiles[0].storedFileName}|}"
+                                         width="175px;" height="150px;">
+                                </a>
+                            </div>
+
+                            <div class="input-group" style="height: 50px;">
+                                <div>
+                                    <button class="btn btnEvent" id="like_btn"
+                                            th:onclick="|location.href='@{/{boardId}/like(boardId=${muckstarBoard.id})}'|"
+                                            type="button">
+                                        <img src="/image/muckstargram_img/favorite_icon.PNG"
+                                             style="width: 30px; height: 30px; margin-bottom: 5px;">
+                                    </button>
+                                    <span class="like" style="font-weight: 500; font-size: 25px;"
+                                          th:text="${muckstarBoard.likeCount}"></span>
+                                </div>
+
+                                <div>
+                                    <img src="/image/muckstargram_img/comment_icon.PNG"
+                                         style="width: 30px; height: 33px; margin-left: 12px;">
+                                    <span class="comment" style="font-weight: 500; font-size: 25px; margin-left: 10px;"
+                                          th:text="${muckstarBoard.commentCount}"></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </aside>
+
+    <footer style="float : right; position: relative; width: 510px; height: 110vh; margin-right: 90px;">
+        <!--메뉴추천-->
+        <div class="card">
+            <h3 id="top_padding"
+                style="margin-top: 30px; margin-left: 10px; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 700;">
+                음식 메뉴 추천
+            </h3>
+
+            <br>
+
+            <div class="form-group col-sm-7">
+                <select class="form-select" style="margin-left: 140px;">
+                    <option value="전체">카테고리 분류 선택</option>
+                    <option value="한식">한식</option>
+                    <option value="중식">중식</option>
+                    <option value="일식/돈까스">일식/돈까스</option>
+                    <option value="회/초밥">회/초밥</option>
+                    <option value="치킨">치킨</option>
+                    <option value="피자">피자</option>
+                    <option value="족발/보쌈">족발/보쌈</option>
+                    <option value="햄버거">햄버거</option>
+                    <option value="샌드위치">샌드위치</option>
+                    <option value="분식">분식</option>
+                    <option value="찜/탕">찜/탕</option>
+                    <option value="샐러드">샐러드</option>
+                    <option value="도시락/죽">도시락/죽</option>
+                    <option value="아시안">아시안</option>
+                    <option value="기타">기타</option>
+                </select>
+            </div>
+
+            <br>
+
+            <button id="random_btn" style="width: 200px; height: 50px;
+                                           border-radius: 1.5rem; background-color: darkmagenta;
+                                           font-size: 20px; color: aliceblue; margin-left: 75px;">
+                오늘의 메뉴는?!
+            </button>
+
+            <br>
+
+            <img id="menuImg" src="/image/menu_img/00.PNG" width=250px height=250px style="margin-left: 45px;">
+
+            <br>
+
+            <h3 class="color2" style="color: rgb(13, 126, 9);">식당 체인점</h3>
+            <h4 id="franchises" style="word-break: keep-all;"></h4>
+
+            <br>
+
+            <h3 class="color1" style="color: rgb(24, 114, 69);">메뉴</h3>
+            <h4 id="menuName" style="word-break: keep-all;"></h4>
+
+            <br>
+        </div>
+
+
+        <!--채팅방-->
+        <div class="container p-4 detail" style="position: absolute; top: 69%;">
+            <div class="row">
+                <div class="col-9 p-0">
+                    <div class="chat-container" id="chat-room"
+                         style="background: url(./image/chat_img/chat_background1.PNG); background-size: cover; width: 350px;">
+
+                        <div class="connecting"
+                             style="text-align: center; color: white; display: none;">
+                        </div>
+
+                        <!--채팅 기록-->
+                        <ul class="list-group chat-content" id="chatContent" style="width: 350px; height: 230px; overflow-y: scroll; padding: 10px;">
+                            <!--DB에 저장된 채팅 메시지-->
+                            <div th:each="chatMessage : ${chatMessages}">
+                                <!--현재 회원이 보낸 것이면-->
+                                <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId == session.loginMember.id}"
+                                    style="margin-left: 40px; max-width: 280px; margin-top: 3%; list-style-type: none;">
+                                    <table style="float: right;">
+                                        <tr>
+                                            <td style="vertical-align: bottom;">
+                                                <span style="font-size: 15px; padding: 0px 5px 0px 5px;">
+                                                    <th:block th:if="${#temporals.day(chatMessage.createdDate)} == ${#temporals.day(localDateTime)}"
+                                                              th:text="${#temporals.format(chatMessage.createdDate, 'HH:mm')}"></th:block>
+                                                    <th:block th:if="${#temporals.day(chatMessage.createdDate)} != ${#temporals.day(localDateTime)}"
+                                                              th:text="${#temporals.format(chatMessage.createdDate, 'yyyy-MM-dd')}"></th:block>
+                                                </span>
+                                            </td>
+
+                                            <td style="background-color: lightyellow; border-radius: 1.0rem; padding: 5px 5px 5px 10px;">
+                                                <span style="font-size: 15px; word-break: break-all;"
+                                                      th:text="${chatMessage.content}">
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </li>
+
+                                <!--상대방 회원이 보낸 것이면-->
+                                <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId != session.loginMember.id}"
+                                    style="width: 280px; float: left; list-style-type: none; margin-top: 3%;">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <table>
+                                                    <tr th:text="${chatMessage.sender}">
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td style="background-color: violet; border-radius: 1.0rem; padding: 5px 5px 5px 10px;">
+                                                            <span style="font-size: 15px; word-break: break-all;"
+                                                                  th:text="${chatMessage.content}">
+                                                            </span>
+                                                        </td>
+
+                                                        <td style="vertical-align: bottom;">
+                                                            <span style="font-size: 15px; padding: 0px 5px 0px 5px;">
+                                                                <th:block th:if="${#temporals.day(chatMessage.createdDate) == #temporals.day(localDateTime)}"
+                                                                          th:text="${#temporals.format(chatMessage.createdDate, 'HH:mm')}"></th:block>
+                                                                <th:block th:if="${#temporals.day(chatMessage.createdDate) != #temporals.day(localDateTime)}"
+                                                                          th:text="${#temporals.format(chatMessage.createdDate, 'yyyy-MM-dd')}"></th:block>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </li>
+                            </div>
+                        </ul>
+
+                        <!--채팅 전송-->
+                        <div class="input-group">
+                            <input class="form-control chat-input" id="message" placeholder="채팅하고 싶은 채팅방을 클릭하고 이용해주세요." onkeydown="handleKeyDown(event)">
+                            <button class="btn btn-secondary" type="submit" onclick="sendMessage();">전송</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--채팅방 목록-->
+                <div class="col-3 p-0" style="height: 200px; overflow-y: scroll;">
+                    <ul class="list-group chat-list">
+                        <li class="list-group-item" style="background-color: rgb(121, 241, 195); width: 170px;">
+                            <span style="font-family: 'Nanum Gothic'; font-style: normal; font-weight: 555;;"
+                                  id="chat_title">채팅방 목록</span>
+                        </li>
+                    </ul>
+
+                    <div th:each="chatRoom : ${member1ChatRoom}">
+                        <li class="list-group-item" style="background-color: rgb(247, 173, 207); height: 5vh; width: 170px; ">
+                            <a th:href="@{/room(roomId=${chatRoom.roomId})}">
+                                <th:block th:if="${session.loginMember.id != chatRoom.member1.id}"
+                                          th:text="${chatRoom.member1.name}"></th:block>
+                                <th:block th:if="${session.loginMember.id != chatRoom.member2.id}"
+                                          th:text="${chatRoom.member2.name}"></th:block>
+                            </a>
+
+                            <button class="btn btn-primary" type="submit" th:onclick="onLeave();" style="width: 60px; height: 30px; float: right; font-size: 10px;">
+                                나가기
+                            </button>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+</script>
+
+
+<!--웹소켓을 지원하지 않는 브라우저에서도 웹소켓을 사용할 수 있도록 지원하는 SockJS 라이브러리 불러오기-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+
+<!--SockJS와 함께 사용되는 STOMP 라이브러리 불러오기-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+
+<script th:inline="javascript">
+    var username = [[${session.loginMember?.name}]] || 'Guest';
+    var userId = [[${session.loginMember?.id}]] || 'GuestId';
+
+    console.log("Hello, " + username);
+
+    var receiver = document.querySelector("[data-receiver-id]");
+    if (receiver !== null) {
+      var receiverId = receiver.getAttribute("data-receiver-id");
+    }
+</script>
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+.container_main {
+    /*display: flex;
+    align-items: center;
+    */
+    width: 1900px;
+    height: 110vh;
+    position: relative;
+}
+.nav {
+    width: 100%;
+    position: absolute;
+}
+.logo2 {
+    z-index: 3;
+    width: 200px;
+    position: relative;
+}
+
+.card {
+    text-align: center;
+    width: 350px;
+    height: 680px;
+    top: 2.5%;
+    left: 2%;
+    position: absolute;
+    background-color: lavenderblush;
+    border-color:rgb(11, 44, 6);
+    border-width: 0.2rem;
+    border-radius: 5rem;
+    text-align: center;
+}
+
+.col-auto{
+    width: 500px;
+}
+
+section{
+    float: left;
+}
+
+aside{
+    float: left;
+}
+
+/* INPUT 가리기 */
+.img_slide input[id*="slide"] {
+    display: none;
+}
+
+/* 슬라이드 영역 - max-width 크기를 조절해주면 됩니다*/
+.img_slide .slidewrap {
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.img_slide .slidelist {
+    white-space: nowrap;
+    font-size: 0;
+}
+
+.img_slide .slidelist > li {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    transition: all .5s;
+}
+.img_slide .slidelist > li > a {
+    display: block;
+    position: relative;
+    overflow: hidden;
+} /* 화살표 화면 밖으로 나가면 안보이도록 OVERFLOW로 가림처리 */
+
+.img_slide .slidelist > li > a img {
+    width: 60%;
+    margin-left: 150px;
+}
+
+/* 좌우로 넘기는 LABEL버튼에 대한 스타일 */
+.img_slide .slidelist label {
+    position: absolute;
+    z-index:1;
+    top: 50%;
+    transform:translateY(-50%);
+    padding: 40px;
+    cursor: pointer;
+}
+.img_slide .slidelist .left {
+    left:-300px;
+    background:url('/image/main_img/left_icon.PNG') center center / 100% no-repeat;
+} /* LEFT -300px로 화살표가 안보이게 되어있도록 준 스타일 */
+.img_slide .slidelist .right {
+    right:-300px;
+    background:url('/image/main_img/right_icon.PNG') center center / 100% no-repeat;
+} /* RIGHT -300px로 화살표가 안보이게 되어있도록 준 스타일 */
+
+/* INPUT이 체크되면 변화값이 li까지 전달되는 스타일 */
+.img_slide input[id="slide01"]:checked ~ .slidewrap .slidelist > li {transform:translateX(0%);}
+.img_slide input[id="slide02"]:checked ~ .slidewrap .slidelist > li {transform:translateX(-100%);}
+.img_slide input[id="slide03"]:checked ~ .slidewrap .slidelist > li {transform:translateX(-200%);}
+.img_slide input[id="slide04"]:checked ~ .slidewrap .slidelist > li {transform:translateX(-300%);}
+.img_slide input[id="slide05"]:checked ~ .slidewrap .slidelist > li {transform:translateX(-400%);}
+
+/* INPUT이 체크되면 변화값이 LEFT,RIGHT에 전달되는 스타일 */
+.img_slide input[id="slide01"]:checked ~ .slidewrap li:nth-child(1) .left {left:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide01"]:checked ~ .slidewrap li:nth-child(1) .right {right:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide02"]:checked ~ .slidewrap li:nth-child(2) .left {left:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide02"]:checked ~ .slidewrap li:nth-child(2) .right {right:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide03"]:checked ~ .slidewrap li:nth-child(3) .left {left:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide03"]:checked ~ .slidewrap li:nth-child(3) .right {right:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide04"]:checked ~ .slidewrap li:nth-child(4) .left {left:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide04"]:checked ~ .slidewrap li:nth-child(4) .right {right:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide05"]:checked ~ .slidewrap li:nth-child(5) .left {left:30px;transition:all .35s ease .5s;}
+.img_slide input[id="slide05"]:checked ~ .slidewrap li:nth-child(5) .right {right:30px;transition:all .35s ease .5s;}
+
+
+
+.chat-content {
+    height: 450px;
+    overflow-y: scroll;
+    padding: 10px;
+}
+.chat-content li {
+    margin-top: 10px;
+}
+.text-small {
+    font-size: 12px;
+    color: gray;
+    margin-bottom: 0;
+}
+.chat-box {
+    background: #eee;
+    padding: 5px;
+    border-radius: 5px;
+    float: left;
+}
+.mine {
+    float: right;
+}

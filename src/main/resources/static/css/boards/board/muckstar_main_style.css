@@ -1,0 +1,28 @@
+.product {
+    display: flex;
+    padding: 10px;
+  }
+  .thumbnail {
+    max-width: 200px;
+    width: 100%;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+  }
+  .product .title {
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .product .date {
+    color: black;
+    font-size: 13px;
+  }
+
+  #send {
+    margin-top: 50px;
+    margin-left: 600px;
+  }
+
+  .a {
+  }
+

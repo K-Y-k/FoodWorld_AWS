@@ -1,0 +1,46 @@
+#ftitle{
+    text-align: left;
+    width: 600px;
+
+}
+#fdate{
+    text-align: left;
+    width: 200px;
+
+}
+#flike{
+    text-align: center;
+    width: 50px;
+
+}
+#fcomment{
+    text-align: center;
+    width: 50px;
+}
+
+
+#ftitletop{
+    text-align: center;
+    width: 600px;
+    background-color: #D5D5D5;
+}
+#fdatetop{
+    text-align: center;
+    width: 200px;
+    background-color: #D5D5D5;
+}
+#fliketop{
+    text-align: center;
+    width: 50px;
+    background-color: #D5D5D5;
+}
+#fcommenttop{
+    text-align: center;
+    width: 50px;
+    background-color: #D5D5D5;
+}
+
+a{
+    font: bold;
+    text-decoration: none;
+}
