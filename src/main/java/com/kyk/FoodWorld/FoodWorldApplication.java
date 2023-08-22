@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 public class FoodWorldApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FoodWorldApplication.class, args);
+		SpringApplication.run(FoodWorldApplication.class, args); //
 	}
 
 }
