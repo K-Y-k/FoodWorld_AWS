@@ -8,8 +8,11 @@
 # 환경 변수를 이름 : 값 으로 지정한다. 
 #                   자주 사용되거나, 변경될 수 있는 부분은 환경 변수로 지정하면 편하게 사용할 수 있다.
 env:  
-  S3_BUCKET_NAME: foodworld-webservice-build   # 내가 설정한 S3 버킷 이름
-  PROJECT_NAME: FoodWorld_AWS                  # 내 깃허브 레포지토리 프로젝트 이름
+  S3_BUCKET_NAME: foodworld-webservice-build             # 내가 설정한 S3 버킷 이름
+  PROJECT_NAME: FoodWorld_AWS                            # 내 깃허브 레포지토리 프로젝트 이름
+  CODE_DEPLOY_APP_NAME: FoodWorld-webservice             # AWS Code Deploy 애플리케이션 이름을 추가
+  CODE_DEPLOY_GROUP_NAME: FoodWorld-webservice-group     # 그룹 이름을 추가
+
 
 name: deploy                               # GitHub Action에서 보여질 workflow의 이름을 지정한다.
 
@@ -68,8 +71,12 @@ jobs:                                      # job들을 정의하는 곳
          aws-region: ap-northeast-2
   
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   # s3에 프로젝트 이름에 해당하는 폴더에 zip파일을 저장한다.  
-
+      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   
+      # s3에 프로젝트 이름에 해당하는 폴더에 zip파일을 저장한다.  
+    
+    - name: Code Deploy
+      run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODE_DEPLOY_GROUP_NAME --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$PROJECT_NAME.zip
+      # 배포 그룹으로 해당 애플리케이션을 보냅니다.
 
 # name: Gradle Package
 
