@@ -85,7 +85,7 @@ jobs:                                      # job들을 정의하는 곳
          aws-region: ap-northeast-2
   
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   
+      run: aws s3 cp --region ap-northeast-2 ./deploy/$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   
       # s3에 프로젝트 이름에 해당하는 폴더에 zip파일을 저장한다.  
     
     - name: Code Deploy
