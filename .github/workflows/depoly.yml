@@ -1,0 +1,111 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+# 환경 변수를 이름 : 값 으로 지정한다. 
+#                   자주 사용되거나, 변경될 수 있는 부분은 환경 변수로 지정하면 편하게 사용할 수 있다.
+env:  
+  S3_BUCKET_NAME: foodworld-webservice-build   # 내가 설정한 S3 버킷 이름
+  PROJECT_NAME: FoodWorld_AWS                  # 내 깃허브 레포지토리 프로젝트 이름
+
+name: deploy                               # GitHub Action에서 보여질 workflow의 이름을 지정한다.
+
+on:                                        # event를 정의 하는 곳
+  release: 
+    types: [push]                          # push시 자동으로 실행된다.
+  push:
+    branches: [master]                     # master 브랜치에서 동작한다.
+  workflow_dispatch:                       # 수동으로도 실행이 가능하다.
+
+jobs:                                      # job들을 정의하는 곳
+  build:                                   # job의 id
+    runs-on: ubuntu-latest                 # 해당 스크립트를 작동할 OS이다. ubuntu 최신 stable 버전
+    permissions:
+      contents: read
+      packages: write
+
+    steps:                                 # job에서 수행하는 step들을 정의하는 곳
+    - name: Checkout 
+      uses: actions/checkout@v3            # Repository로부터 CI 수행 서버로 코드를 내려받는 Action으로 프로젝트 코드를 CheckOut한다.
+    
+    - name: Set up JDK 11                  # step의 이름
+      uses: actions/setup-java@v3          # jdk를 다운 받고 캐싱해주는 Action으로 Github Action이 실행될 OS에 Java를 설치
+      with:
+        java-version: '11' 
+        distribution: 'temurin'            # jdk를 제공하는 vender사 이름 ex. zulu, adopt, microsoft
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew              # gradle wrapper를 실행할 수 있도록 실행 권한 (+x)을 준다. (./gradlew를 실행하기 위함)
+      shell: bash
+      
+    - name: Build with Gradle
+      run: ./gradlew clean build -x test   # gradle wrapper를 통해 해당 프로젝트를 build 합니다.
+      shell: bash
+
+    - name: Get current time
+      uses: 1466587594/get-current-time@v2  # utcOffset: "+09:00": 해당 action의 기준이 UTC이므로 한국시간인 KST로 진행 하기 위해 offset에 +09:00를 해준다.
+      id: current-time
+      with:
+        format: YYYY-MM-DDTHH-mm-ss 
+        utcOffset: "+09:00"
+
+    - name: Show Current Time
+      run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # 지정한 포맷대로 현재 시간을 보여준다.
+      shell: bash
+
+    - name: Make zip file
+      run: zip -r ./$PROJECT_NAME.zip .                                     # 프로젝트 이름으로 해당 폴더를 모두 압축시킨다. (빌드된 전체 폴더)
+      shell: bash
+  
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2                        # aws에 해당 키 값으로 접속을 진행한다.
+      with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         aws-region: ap-northeast-2
+  
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   # s3에 프로젝트 이름에 해당하는 폴더에 zip파일을 저장한다.  
+
+
+# name: Gradle Package
+
+# on:
+#   release:
+#     types: [created]
+
+# jobs:
+#   build:
+
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+
+#     steps:
+#     - uses: actions/checkout@v3
+#     - name: Set up JDK 11
+#       uses: actions/setup-java@v3
+#       with:
+#         java-version: '11'
+#         distribution: 'temurin'
+#         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+#         settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+#     - name: Build with Gradle
+#       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+#       with:
+#         arguments: build
+
+#     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+#     # the publishing section of your build.gradle
+#     - name: Publish to GitHub Packages
+#       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+#       with:
+#         arguments: publish
+#       env:
+#         USERNAME: ${{ github.actor }}
+#         TOKEN: ${{ secrets.GITHUB_TOKEN }}
