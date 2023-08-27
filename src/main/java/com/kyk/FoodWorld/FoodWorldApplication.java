@@ -11,7 +11,7 @@ public class FoodWorldApplication {
 //		SpringApplication.run(FoodWorldApplication.class, args);
 
 		// application.properties에서 설정한 값을 pid commend로 사용하기 위해
-		SpringApplication application = new SpringApplication(Application.class);
+		SpringApplication application = new SpringApplication(FoodWorldApplication.class);
 		application.addListeners(new ApplicationPidFileWriter());
 		application.run(args);
 	}
