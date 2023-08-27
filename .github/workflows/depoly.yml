@@ -5,38 +5,49 @@
 # This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
-name: deploy                            # GitHub Action에서 보여질 workflow의 이름을 지정한다.
+name: deploy                               # GitHub Action에서 보여질 workflow의 이름을 지정한다.
 
-on:                                     # event를 정의 하는 곳
+on:                                        # event를 정의 하는 곳
   release: 
-    types: [push]                       # push시 자동으로 실행된다.
+    types: [push]                          # push시 자동으로 실행된다.
   push:
-    branches: [master]                  # master 브랜치에서 동작한다.
-  workflow_dispatch:                    # 수동으로도 실행이 가능하다.
+    branches: [master]                     # master 브랜치에서 동작한다.
+  workflow_dispatch:                       # 수동으로도 실행이 가능하다.
 
-jobs:                                   # job들을 정의하는 곳
-  build:                                # job의 id
-    runs-on: ubuntu-latest              # 해당 스크립트를 작동할 OS이다. ubuntu 최신 stable 버전
+jobs:                                      # job들을 정의하는 곳
+  build:                                   # job의 id
+    runs-on: ubuntu-latest                 # 해당 스크립트를 작동할 OS이다. ubuntu 최신 stable 버전
     permissions:
       contents: read
       packages: write
 
-    steps:                              # job에서 수행하는 step들을 정의하는 곳
-    - name: Checkout
-      uses: actions/checkout@v3         # Repository로부터 CI 수행 서버로 코드를 내려받는 Action으로 프로젝트 코드를 CheckOut한다.
+    steps:                                 # job에서 수행하는 step들을 정의하는 곳
+    - name: Checkout 
+      uses: actions/checkout@v3            # Repository로부터 CI 수행 서버로 코드를 내려받는 Action으로 프로젝트 코드를 CheckOut한다.
     
-    - name: Set up JDK 11               # step의 이름
-      uses: actions/setup-java@v3       # jdk를 다운 받고 캐싱해주는 Action으로 Github Action이 실행될 OS에 Java를 설치
+    - name: Set up JDK 11                  # step의 이름
+      uses: actions/setup-java@v3          # jdk를 다운 받고 캐싱해주는 Action으로 Github Action이 실행될 OS에 Java를 설치
       with:
         java-version: '11' 
-        distribution: 'temurin'         # jdk를 제공하는 vender사 이름 ex. zulu, adopt, microsoft
+        distribution: 'temurin'            # jdk를 제공하는 vender사 이름 ex. zulu, adopt, microsoft
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew           # gradle wrapper를 실행할 수 있도록 실행 권한 (+x)을 준다. (./gradlew를 실행하기 위함)
+      run: chmod +x ./gradlew              # gradle wrapper를 실행할 수 있도록 실행 권한 (+x)을 준다. (./gradlew를 실행하기 위함)
       shell: bash
       
     - name: Build with Gradle
-      run: ./gradlew clean build -x test # gradle wrapper를 통해 해당 프로젝트를 build 합니다.
+      run: ./gradlew clean build -x test   # gradle wrapper를 통해 해당 프로젝트를 build 합니다.
+      shell: bash
+
+    - name: Get current time
+      uses: 1466587594/get-current-time@v2  # utcOffset: "+09:00": 해당 action의 기준이 UTC이므로 한국시간인 KST로 진행 하기 위해 offset에 +09:00를 해준다.
+      id: current-time
+      with:
+        format: YYYY-MM-DDTHH-mm-ss 
+        utcOffset: "+09:00"
+
+    - name: Show Current Time
+      run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # 지정한 포맷대로 현재 시간을 보여준다.
       shell: bash
 
 
