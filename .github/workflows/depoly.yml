@@ -11,7 +11,6 @@ env:
   S3_BUCKET_NAME: foodworld-webservice-build   # 내가 설정한 S3 버킷 이름
   PROJECT_NAME: FoodWorld_AWS                  # 내 깃허브 레포지토리 프로젝트 이름
 
-
 name: deploy                               # GitHub Action에서 보여질 workflow의 이름을 지정한다.
 
 on:                                        # event를 정의 하는 곳
@@ -58,11 +57,11 @@ jobs:                                      # job들을 정의하는 곳
       shell: bash
 
     - name: Make zip file
-      run: zip -r ./$PROJECT_NAME.zip .                                     # 프로젝트 이름으로 해당 폴더를 모두 압축시칸다. (빌드된 전체 폴더)
+      run: zip -r ./$PROJECT_NAME.zip .                                     # 프로젝트 이름으로 해당 폴더를 모두 압축시킨다. (빌드된 전체 폴더)
       shell: bash
   
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2                        # aws에 해당 키 값으로 접속을 진행합니다.
+      uses: aws-actions/configure-aws-credentials@v2                        # aws에 해당 키 값으로 접속을 진행한다.
       with:
          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
