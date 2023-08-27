@@ -5,6 +5,13 @@
 # This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
+# 환경 변수를 이름 : 값 으로 지정한다. 
+#                   자주 사용되거나, 변경될 수 있는 부분은 환경 변수로 지정하면 편하게 사용할 수 있다.
+env:  
+  S3_BUCKET_NAME: foodworld-webservice-build   # 내가 설정한 S3 버킷 이름
+  PROJECT_NAME: FoodWorld_AWS                  # 내 깃허브 레포지토리 프로젝트 이름
+
+
 name: deploy                               # GitHub Action에서 보여질 workflow의 이름을 지정한다.
 
 on:                                        # event를 정의 하는 곳
