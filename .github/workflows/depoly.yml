@@ -48,6 +48,7 @@ jobs:                                      # job들을 정의하는 곳
       run: ./gradlew clean build -x test   # gradle wrapper를 통해 해당 프로젝트를 build 합니다.
       shell: bash
 
+
     - name: Get current time
       uses: 1466587594/get-current-time@v2  # utcOffset: "+09:00": 해당 action의 기준이 UTC이므로 한국시간인 KST로 진행 하기 위해 offset에 +09:00를 해준다.
       id: current-time
@@ -58,6 +59,19 @@ jobs:                                      # job들을 정의하는 곳
     - name: Show Current Time
       run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # 지정한 포맷대로 현재 시간을 보여준다.
       shell: bash
+
+
+    - name: Generate deployment package                                     # 배포 자동화 설정
+      run: |
+        mkdir -p before-deploy                            
+        cp scripts/*.sh before-deploy/                    
+        cp appspec.yml before-deploy/
+        cp build/libs/*.jar before-deploy/
+        cd before-deploy && zip -r before-deploy *        
+        cd ../ && mkdir -p deploy
+        mv before-deploy/before-deploy.zip deploy/$PROJECT_NAME.zip
+      shell: bash
+
 
     - name: Make zip file
       run: zip -r ./$PROJECT_NAME.zip .                                     # 프로젝트 이름으로 해당 폴더를 모두 압축시킨다. (빌드된 전체 폴더)
@@ -71,7 +85,7 @@ jobs:                                      # job들을 정의하는 곳
          aws-region: ap-northeast-2
   
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   
+      run: aws s3 cp --region ap-northeast-2 ./deploy/$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip   
       # s3에 프로젝트 이름에 해당하는 폴더에 zip파일을 저장한다.  
     
     - name: Code Deploy
