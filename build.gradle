@@ -9,7 +9,9 @@ jar {
 }
 
 group = 'com.kyk'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
+// 배포 테스트 전에 잦은 배포로 Jar 파일명이 겹칠 것을 고려하여 자동으로 버전값이 변경되도록 설정
+
 
 java {
 	sourceCompatibility = '11'
