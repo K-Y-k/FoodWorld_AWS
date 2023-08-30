@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <!--부트 스트랩 적용-->
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <!--css 적용-->
+    <link rel="stylesheet" type="text/css" href="../css/members/member_register_style.css" th:href="@{/css/members/member_register_style.css}">
+</head>
+
+<body>
+<div class="container_main">
+    <header style="position: relative;"> <!--네비게이션바-->
+        <div class="px-3 py-2 bg-dark text-white">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <img src="/image/main_img/logo2.PNG" class="logo" id="logo2" style="margin-left: 1%;">
+                <img src="/image/main_img/home_icon.PNG" width="50px" height="45px" style="margin-left: 3%;">
+                <a href="/" class="navbar-brand" style="margin-left: 1%;"><h4 class="theme">메인홈</h4></a>
+
+                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small" style="position: absolute">
+                    <li style="position: relative; left: -7%;">
+                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 27px; margin-top: 10px;">
+                        <a href="/boards/freeBoard" class="nav-link text-white" style="font-size: 16px;">
+                            <span>자유게시판</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: -4%;">
+                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 30px; margin-top: 10px;">
+                        <a href="/boards/recommendBoard" class="nav-link text-white" style="font-size: 16px;">
+                            <span>추천게시판</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: -1%;">
+                        <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px"
+                             style="margin-left: 35px; margin-top: 10px;">
+                        <a href="/boards/muckstarBoard" class="nav-link text-white" style="font-size: 16px;">
+                            <span>먹스타그램</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: 2%;">
+                        <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 27px; margin-top: 10px;">
+                        <a href="/menu" class="nav-link text-white" style="font-size: 16px;">
+                            <span>메뉴추천</span>
+                        </a>
+                    </li>
+                    <li style="position: relative; left: 5%;">
+                        <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 20px; margin-top: 10px;">
+                        <a href="/chat" class="nav-link text-white" style="font-size: 16px;">
+                            <span>채팅방</span>
+                        </a>
+                    </li>
+
+                    <li style="position: relative; left: 7%;">
+                        <h5 th:if="${session.loginMember != null}"
+                            th:text="${session.loginMember.name}+ '님 접속중'"
+                            style="font-size : 13px; margin-top: 20px;"></h5>
+
+                        <br/>
+
+                        <form th:action="@{/members/logout}" method="post">
+                            <button th:if="${session.loginMember != null}"
+                                    type="submit" class="btn btn-primary" id="logout"
+                                    style="width: 90px; height: 35px; position :absolute; top: 56%;"
+                                    th:onclick="@{/members/logout}">로그아웃
+                            </button>
+                        </form>
+
+                        <button th:if="${session.loginMember == null}"
+                                type="submit" class="btn btn-primary"
+                                style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
+                                th:onclick="|location.href='@{/members/login}'|">로그인
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <section style="position: relative; width: 17vw;"> <!--세션 바-->
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+             style="width: 290px; height: 110vh;" id="section-bar">
+            <hr>
+            <span style="text-align: center; font-size: 20px;" id="userName"></span>
+            <h4 style="margin-left: 13%;">FOOD WORLD에</h4>
+            <h4 style="margin-left: 5%;">오신 것을 환영합니다!</h4>
+            <hr>
+            <img src="/image/main_img/logo1.PNG" class="logo" style="width: 240px; display: inline;" id="logo">
+
+            <ul style="position:absolute; width: 275px; top: 35%; left: -5%; list-style-type: none;">
+                <hr>
+                <li class="nav-item">
+                    <a href="/boards/freeBoard" class="nav-link text-white" style="margin-left: 23%;">
+                        &nbsp;자유게시판
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/boards/recommendBoard" class="nav-link text-white" style="margin-left: 25%;">
+                        추천게시판
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/boards/muckstarBoard" class="nav-link text-white" style="margin-left: 25%;">
+                        먹스타그램
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/menu" class="nav-link text-white" style="margin-left: 27%;">
+                        메뉴추천
+                    </a>
+                </li>
+                <hr>
+                <li>
+                    <a href="/chat" class="nav-link text-white" style="margin-left: 29%;">
+                        채팅방
+                    </a>
+                </li>
+                <hr>
+                <li class="bg-dark" style="width: 290px; margin: 0; position:relative; right:6.5%;" id="section-height">
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <aside style="position: relative; width: 700px; margin-left: 250px; margin-top: 30px;">
+        <div style="border: solid 3px; border-color: rgb(202, 130, 22);">
+            <!--프로필 정보 단-->
+            <table class="container2 mt-10"
+                   style="white-space: nowrap; margin-top: 5px; position: absolute; margin-left: 50px;">
+                <tr>
+                    <h4 style="color: orangered; padding-top: 3%; margin-left: 45%;">Profile</h4>
+                </tr>
+
+                <tr style="position: relative; width: 700px;">
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <img th:if="${profileFile != null}"
+                                         th:src="@{|/profileImageUpload/${profileFile.storedFileName}|}"
+                                         class="rounded-circle"
+                                         style="width: 70px; height: 70px;">
+                                </td>
+                            </tr>
+
+                            <tr style="text-align: center;">
+                                <td th:text="${member.name}" style="">이름</td>
+                            </tr>
+                        </table>
+                    </td>
+
+                    <td>
+                        <table>
+                            <tr style="text-align: center;">
+                                <td>
+                                    <th:block style="width: 150px;" th:text="${boardsTotalCount}"></th:block>
+                                </td>
+
+                                <td>
+                                    <th:block style="width: 150px;" th:text="${followCount}"></th:block>
+                                </td>
+
+                                <td>
+                                    <th:block style="width: 150px;" th:text="${followingCount}"></th:block>
+                                </td>
+                            </tr>
+
+                            <tr style="text-align: center;">
+                                <td class="col-md-4" style="width: 150px;">
+                                    게시글
+                                </td>
+                                <td class="col-md-4" style="width: 150px;">
+                                    팔로워
+                                </td>
+                                <td class="col-md-4" style="width: 150px;">
+                                    팔로잉
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+            </table>
+
+            <div style="margin-top: 120px; margin-left: 50px; width: 600px; white-space: normal;">
+                <th:block th:text="${member.introduce}"></th:block>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn btn-primary"
+                        style="width: 100px; height: 35px; margin-left: 150px;" id="follow"
+                        th:if="${session.loginMember != null and session.loginMember.id != member.id and unFollow == null}"
+                        th:onclick="clicked()">팔로우
+                </button>
+
+                <button type="submit" class="btn btn-primary"
+                        style="margin-left: 150px;" id="unfollow"
+                        th:if="${session.loginMember != null and session.loginMember.id != member.id and unFollow != null}"
+                        th:onclick="clicked()">언팔로우
+                </button>
+
+                <button type="submit" class="btn btn-primary"
+                        style="margin-left: 150px;" id="chat"
+                        th:if="${session.loginMember != null and session.loginMember.id != member.id}"
+                        th:onclick="|location.href='@{/chat/matchingRoom/{memberId}(memberId=${member.id})}'|">채팅하기
+                </button>
+
+
+                <div style="margin-left: 470px;"
+                     th:if="${session.loginMember != null and session.loginMember.id == member.id}">
+                    <button type="submit" class="btn btn-primary"
+                            id="profile-update"
+                            th:onclick="|location.href='@{/members/profile/{memberId}/edit(memberId=${session.loginMember.id})}'|">
+                        프로필 수정
+                    </button>
+
+                    <button type="submit" class="btn btn-primary"
+                            th:onclick="|location.href='@{/members/profile/{memberId}/delete(memberId=${session.loginMember.id})}'|">
+                        회원탈퇴
+                    </button>
+                </div>
+
+                <div style="margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <br>
+
+        <div style="border: solid 3px; border-color: rgb(101, 130, 22);">
+            <div style="display: block; height: 30px; margin-left: 20px;">
+                <span th:text="|${member.name}님의 팔로워|" style="font-size: 20px;"></span>
+            </div>
+            <span class="cursorFollowerId" th:id="${firstCursorFollowerId}" style="display: none;"></span>
+
+            <div id="followerContainer" style="display: flex; flex-direction: row; overflow-x: scroll; white-space: nowrap">
+            </div>
+
+        </div>
+
+        <br>
+
+        <span class="memberId" th:id="${member.id}" style="display: none;"></span>
+        <span class="cursorBoardId" th:id="${firstCursorBoardId}" style="display: none;"></span>
+
+        <!--먹스타그램-->
+        <div class="grid-image" id="mucstarList">
+        </div>
+
+    </aside>
+
+    <footer style="margin-left: 1350px; position: relative; top: 3.5%; width: 250px; height: 40vh;">
+        <div id="followRecommendContainer" style="border: solid 3px; border-color: rgb(202, 130, 22); width: 250px; text-align: center; height: 40vh; overflow-y: scroll;">
+            <span style="font-size: 20px;">팔로우 추천</span>
+            <button class="btn btnEvent" th:onclick="|location.href='@{/members/profile/{memberId}(memberId=${member.id})}'|" type="button">
+                <img src="/image/main_img/redirect.PNG" style="width: 30px; height: 30px;">
+            </button>
+
+
+            <table th:if="${recommendMembers != null}"
+                    th:each="recommendMember : ${recommendMembers}"
+                    style="margin-top: 5px;">
+                <tr>
+                    <td>
+                        <a th:href="@{|/members/profile/${recommendMember.id}|}">
+                            <img th:src="@{|/profileImageUpload/${recommendMember.profileFile.storedFileName}|}"
+                             class="rounded-circle"
+                             style="width: 70px; height: 70px;">
+                        </a>
+                    </td>
+                    <td>
+                        <a th:href="@{|/members/profile/${recommendMember.id}|}" style="margin-left: 15px; text-decoration: none;">
+                            <span th:text="${recommendMember.name}"></span>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+    </footer>
+</div>
+
+
+<!--bootstrapjs-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous">
+</script>
+
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+</script>
+
+
+<script th:inline="javascript">
+    function clicked() {
+        alert("완료");
+        location.href = [[|@{/members/follow/{memberId}(memberId=${member.id})}|]];
+    }
+</script>
+
+<script type="text/javascript" th:src="@{/js/profile.js}" ></script>
+
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <!--부트 스트랩 적용-->
+  <link th:href="@{/css/bootstrap.min.css}"
+        href="../css/bootstrap.min.css" rel="stylesheet">
+  <!--css 적용-->
+  <link rel="stylesheet" type="text/css" href="../css/members/member_register_style.css" th:href="@{/css/members/member_register_style.css}">
+</head>
+
+<body>
+<div class="container_main">
+  <header style="position: relative;"> <!--네비게이션바-->
+    <div class="px-3 py-2 bg-dark text-white">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <img src="/image/main_img/logo2.PNG" class="logo" id="logo2">
+        <img src="/image/main_img/home_icon.PNG" width="50px" height="45px" style="margin-left: 3%;">
+        <a href="/" class="navbar-brand"><h4 class="theme">&nbsp;&nbsp;메인홈</h4></a>
+
+        <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small" style="position: absolute">
+          <li style="position: relative; left: -7%;">
+            <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                 style="margin-left: 27px; margin-top: 10px;">
+            <a href="/boards/freeBoard" class="nav-link text-white" style="font-size: 16px;">
+              <span>자유게시판</span>
+            </a>
+          </li>
+          <li style="position: relative; left: -4%;">
+            <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                 style="margin-left: 30px; margin-top: 10px;">
+            <a href="/boards/recommendBoard" class="nav-link text-white" style="font-size: 16px;">
+              <span>추천게시판</span>
+            </a>
+          </li>
+          <li style="position: relative; left: -1%;">
+            <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px"
+                 style="margin-left: 35px; margin-top: 10px;">
+            <a href="/boards/muckstarBoard" class="nav-link text-white" style="font-size: 16px;">
+              <span>먹스타그램</span>
+            </a>
+          </li>
+          <li style="position: relative; left: 2%;">
+            <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px"
+                 style="margin-left: 27px; margin-top: 10px;">
+            <a href="/menu" class="nav-link text-white" style="font-size: 16px;">
+              <span>메뉴추천</span>
+            </a>
+          </li>
+          <li style="position: relative; left: 5%;">
+            <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px"
+                 style="margin-left: 20px; margin-top: 10px;">
+            <a href="/chat" class="nav-link text-white" style="font-size: 16px;">
+              <span>채팅방</span>
+            </a>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </header>
+
+  <section style="position: relative; width: 17vw;"> <!--세션 바-->
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+         style="width: 290px; height: 100vh;">
+      <hr>
+      <span style="text-align: center; font-size: 20px;" id="userName"></span>
+      <h4 style="margin-left: 13%;">FOOD WORLD에</h4>
+      <h4 style="margin-left: 5%;">오신 것을 환영합니다!</h4>
+      <hr>
+      <img src="/image/main_img/logo1.PNG" class="logo" style="width: 240px; display: inline;" id="logo">
+
+      <ul style="position:absolute; width: 275px; top: 35%; left: -5%; list-style-type: none;">
+        <hr>
+        <li class="nav-item">
+          <a href="/boards/freeBoard" class="nav-link text-white" style="margin-left: 23%;">
+            &nbsp;자유게시판
+          </a>
+        </li>
+        <hr>
+        <li>
+          <a href="/boards/recommendBoard" class="nav-link text-white" style="margin-left: 25%;">
+            추천게시판
+          </a>
+        </li>
+        <hr>
+        <li>
+          <a href="/boards/muckstarBoard" class="nav-link text-white" style="margin-left: 25%;">
+            먹스타그램
+          </a>
+        </li>
+        <hr>
+        <li>
+          <a href="/menu" class="nav-link text-white" style="margin-left: 27%;">
+            메뉴추천
+          </a>
+        </li>
+        <hr>
+        <li>
+          <a href="/chat" class="nav-link text-white" style="margin-left: 29%;">
+            채팅방
+          </a>
+        </li>
+        <hr>
+      </ul>
+    </div>
+  </section>
+
+  <aside>
+      <!--로그인 폼-->
+      <div class="card" style="position :absolute; left: 38%;">
+        <br>
+        <br>
+        <div class="container mt-3" style="position :absolute;  top : 10%; left: 0%;">
+          <h4 class="tm">로그인</h4>
+          <br>
+          <br>
+          <form action="item.html" th:action th:object="${loginForm}" method="post">
+            <div class="mb-3">
+              <input type="text" id="loginId" th:field="*{loginId}" class="form-control" placeholder="아이디">
+              <div class="field-error" style="color: red;" th:errors="*{loginId}"></div>
+            </div>
+            <div class="mb-3">
+              <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호">
+              <div class="field-error" style="color: red;" th:errors="*{password}"></div>
+            </div>
+            <br>
+            <div class="container mt-3">
+              <button type="submit" class="btn btn-primary">로그인</button> &nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="/members/join">
+                <button type="button" class="btn btn-primary">회원가입</button>
+              </a> <br>
+            </div>
+          </form>
+        </div>
+      </div>
+  </aside>
+
+</div>
+
+</body>
+</html>

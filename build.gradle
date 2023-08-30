@@ -28,16 +28,41 @@ repositories {
 }
 
 dependencies {
+	// JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// 타임리프
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// 검증기
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// 웹
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// 테스트
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// 웹 소켓
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	// sockjs
+	implementation 'org.webjars:sockjs-client:1.5.1'
+	// stomp
+	implementation 'org.webjars:stomp-websocket:2.3.4'
+
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa"
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"   // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
+
+	// 파라미터 바인딩을 보여주는 org.hibernate.type: trace 설정이 가시성이 좋지않아 이 라이브러리를 가져와서 파라미터 바인딩 내용을 가시성 좋게 볼 수 있게함
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.8'
+
+	// H2
 	runtimeOnly 'com.h2database:h2'
+
+	// MariaDB 데이터베이스
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {

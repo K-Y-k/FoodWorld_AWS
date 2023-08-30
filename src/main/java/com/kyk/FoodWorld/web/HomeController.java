@@ -1,35 +1,37 @@
 package com.kyk.FoodWorld.web;
 
+import com.kyk.FoodWorld.member.domain.LoginSessionConst;
+import com.kyk.FoodWorld.member.domain.dto.LoginForm;
+import com.kyk.FoodWorld.member.domain.entity.Member;
+import com.kyk.FoodWorld.member.service.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
 
-    @GetMapping("/")
-    public String homeLoginCheck() {
-        return "main";
-    }
-
-
-//    private final MemberServiceImpl memberService;
+    private final MemberServiceImpl memberService;
 //    private final BoardServiceImpl boardService;
 //    private final LikeServiceImpl likeService;
 //    private final ChatService chatService;
-//
-//
-//    /**
-//     *  메인 폼 + 로그인 세션 체크 기능 (@SessionAttribute 활용)
-//     */
-//    @GetMapping("/")
-//    public String homeLoginCheck(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-//                                 @ModelAttribute("loginForm") LoginForm form,
-//                                 Model model) {
-//
+
+
+    /**
+     *  메인 폼 + 로그인 세션 체크 기능 (@SessionAttribute 활용)
+     */
+    @GetMapping("/")
+    public String homeLoginCheck(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+                                 @ModelAttribute("loginForm") LoginForm form,
+                                 Model model) {
+
 //        // 각 게시판 인기글 조회
 //        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
 //        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
@@ -54,38 +56,38 @@ public class HomeController {
 //                model.addAttribute("member1ChatRoom", member1ChatRoom);
 //            }
 //        }
-//
-//        return "main";
-//    }
-//
-//
-//    /**
-//     * 로그인 기능
-//     */
-//    @PostMapping("/")
-//    public String login(@ModelAttribute LoginForm form,
-//                        HttpServletRequest request) {
-//        log.info("로그인 아이디={}", form.getLoginId());
-//        log.info("로그인 패스워드={}", form.getLoginId());
-//
-//
-//        // 성공시 로그인 기능 적용후 멤버에 저장 틀릴시 예외처리
-//        Member loginMember = memberService.login(form.getLoginId(), form.getPassword()); // 폼에 입력한 아이디 패스워드 가져와서 멤버로 저장
-//        log.info("login? {}", loginMember);
-//
-//
-//        // 로그인 성공 처리
-//        // HttpSession 객체에  request.getSession()로 담으면 됨
-//        // 세션이 있으면 있는 세션을 반환하고 없으면 신규 세션을 생성한다. (true일 때)
-//        HttpSession session = request.getSession(); // 기본 값이 true이고, false는 없으면 생성 안함
-//        // 세션에 로그인 회원 정보를 보관한다.
-//        session.setAttribute("loginMember", loginMember);
-//
-//        log.info("sessionId={}", session.getId());
-//        return "redirect:/";
-//    }
-//
-//
+
+        return "main";
+    }
+
+
+    /**
+     * 로그인 기능
+     */
+    @PostMapping("/")
+    public String login(@ModelAttribute LoginForm form,
+                        HttpServletRequest request) {
+        log.info("로그인 아이디={}", form.getLoginId());
+        log.info("로그인 패스워드={}", form.getLoginId());
+
+
+        // 성공시 로그인 기능 적용후 멤버에 저장 틀릴시 예외처리
+        Member loginMember = memberService.login(form.getLoginId(), form.getPassword()); // 폼에 입력한 아이디 패스워드 가져와서 멤버로 저장
+        log.info("login? {}", loginMember);
+
+
+        // 로그인 성공 처리
+        // HttpSession 객체에  request.getSession()로 담으면 됨
+        // 세션이 있으면 있는 세션을 반환하고 없으면 신규 세션을 생성한다. (true일 때)
+        HttpSession session = request.getSession(); // 기본 값이 true이고, false는 없으면 생성 안함
+        // 세션에 로그인 회원 정보를 보관한다.
+        session.setAttribute("loginMember", loginMember);
+
+        log.info("sessionId={}", session.getId());
+        return "redirect:/";
+    }
+
+
 //    /**
 //     * 글 좋아요 업데이트 기능
 //     */
