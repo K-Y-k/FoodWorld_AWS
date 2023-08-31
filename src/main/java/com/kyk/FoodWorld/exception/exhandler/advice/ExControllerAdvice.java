@@ -2,8 +2,11 @@ package com.kyk.FoodWorld.exception.exhandler.advice;
 
 
 import com.kyk.FoodWorld.exception.exhandler.ErrorResult;
+import com.kyk.FoodWorld.exception.member.DuplicatedMemberLoginIdException;
+import com.kyk.FoodWorld.exception.member.DuplicatedMemberNameException;
 import com.kyk.FoodWorld.exception.member.MemberException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +24,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExControllerAdvice {
     /**
-     * MemberNotFoundException일 때 여기로 호출
+     * MemberNotFoundException, DuplicatedMemberNameException, DuplicatedMemberLoginIdException일 때 여기로 호출
      */
-    @ExceptionHandler
-    public String MemberNotFoundExHandler(MemberNotFoundException e, Model model) {
-        log.error("[MemberNotFoundException] ex", e);
+    @ExceptionHandler({MemberNotFoundException.class, DuplicatedMemberNameException.class, DuplicatedMemberLoginIdException.class})
+    public String MemberNotFoundExHandler(MemberException e, Model model) {
+        log.error("[" + e.getClass() + "] ex", e);
 
         model.addAttribute("message", e.getMessage());
         model.addAttribute("redirectUrl", "/");
