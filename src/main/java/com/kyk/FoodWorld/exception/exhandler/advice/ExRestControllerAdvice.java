@@ -1,6 +1,7 @@
 package com.kyk.FoodWorld.exception.exhandler.advice;
 
 
+import com.kyk.FoodWorld.exception.member.MemberException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import com.kyk.FoodWorld.exception.exhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,15 @@ public class ExRestControllerAdvice {
         return new ErrorResult("BAD", e.getMessage());
     }
 
+    /**
+     * MemberException일 때 여기로 호출
+     */
+    @ExceptionHandler
+    public ResponseEntity<ErrorResult> memberExHandler(MemberException e) {
+        log.error("[MemberExceptionHandler] ex", e);
+        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
 
     /**
      * 최상위 예외 Exception로
