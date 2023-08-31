@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body>
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2>500 error</h2>
+    </div>
+
+    <div>
+        <p>죄송합니다. 해당 페이지를 이용할 수 없습니다.</p>
+    </div>
+
+    <ul>
+        <li>오류 정보</li>
+
+        <!--BasicErrorController가 모델에 담아서 넘겨주는 값들-->
+        <ul>
+            <li th:text="|timestamp: ${timestamp}|"></li>
+            <li th:text="|path: ${path}|"></li>
+            <li th:text="|status: ${status}|"></li>
+            <li th:text="|message: ${message}|"></li>
+            <li th:text="|error: ${error}|"></li>
+            <li th:text="|exception: ${exception}|"></li>
+            <li th:text="|errors: ${errors}|"></li>
+            <li th:text="|trace: ${trace}|"></li>
+        </ul>
+        </li>
+    </ul>
+
+    <hr class="my-4">
+
+</div> <!-- /container -->
+</body>
+</html>
