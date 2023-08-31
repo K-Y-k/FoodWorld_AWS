@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExControllerAdvice {
     /**
-     * MemberException일 때 여기로 호출
+     * MemberNotFoundException일 때 여기로 호출
      */
     @ExceptionHandler
-    public String memberExHandler(MemberException e, Model model) {
+    public String MemberNotFoundExHandler(MemberNotFoundException e, Model model) {
         log.error("[MemberNotFoundException] ex", e);
 
         model.addAttribute("message", e.getMessage());
