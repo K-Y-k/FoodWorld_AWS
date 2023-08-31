@@ -1,4 +1,4 @@
-package com.kyk.FoodWorld.exception;
+package com.kyk.FoodWorld.exception.member;
 
 /**
  * MemberException 생성

@@ -1,7 +1,7 @@
 package com.kyk.FoodWorld.exception.exhandler.advice;
 
 
-import com.kyk.FoodWorld.exception.MemberNotFoundException;
+import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import com.kyk.FoodWorld.exception.exhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class ExRestControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ErrorResult illegalExHandler(IllegalArgumentException e) {
-        log.error("[exceptionHandler] ex", e);
+        log.error("[IllegalArgumentExceptionHandler] ex", e);
         return new ErrorResult("BAD", e.getMessage());
     }
 
@@ -49,7 +49,7 @@ public class ExRestControllerAdvice {
      */
     @ExceptionHandler
     public ResponseEntity<ErrorResult> memberExHandler(MemberNotFoundException e) {
-        log.error("[exceptionHandler] ex", e);
+        log.error("[MemberExceptionHandler] ex", e);
         ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
         return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
     }
@@ -62,7 +62,7 @@ public class ExRestControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResult exHandler(Exception e) {
-        log.error("[exceptionHandler] ex", e);
+        log.error("[ExceptionHandler] ex", e);
         return new ErrorResult("EX", "내부 오류");
     }
 }

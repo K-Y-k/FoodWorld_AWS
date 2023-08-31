@@ -1,9 +1,9 @@
 package com.kyk.FoodWorld.member.service;
 
 
-import com.kyk.FoodWorld.exception.DuplicatedMemberLoginIdException;
-import com.kyk.FoodWorld.exception.MemberNotFoundException;
-import com.kyk.FoodWorld.exception.DuplicatedMemberNameException;
+import com.kyk.FoodWorld.exception.member.DuplicatedMemberLoginIdException;
+import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
+import com.kyk.FoodWorld.exception.member.DuplicatedMemberNameException;
 import com.kyk.FoodWorld.member.domain.dto.JoinForm;
 import com.kyk.FoodWorld.member.domain.dto.UpdateForm;
 import com.kyk.FoodWorld.member.domain.entity.Member;
