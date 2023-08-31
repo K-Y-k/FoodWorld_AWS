@@ -1,8 +1,12 @@
 package com.kyk.FoodWorld.exception.exhandler.advice;
 
 
+import com.kyk.FoodWorld.exception.exhandler.ErrorResult;
+import com.kyk.FoodWorld.exception.member.MemberException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,10 +21,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExControllerAdvice {
     /**
-     * MemberNotFoundException일 때 여기로 호출
+     * MemberException일 때 여기로 호출
      */
     @ExceptionHandler
-    public String MemberNotFoundExceptionHandler(MemberNotFoundException e, Model model) {
+    public String memberExHandler(MemberException e, Model model) {
         log.error("[MemberNotFoundException] ex", e);
 
         model.addAttribute("message", e.getMessage());
