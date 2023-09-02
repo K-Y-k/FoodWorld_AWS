@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!--부트 스트랩 적용-->
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <!--css 적용-->
+    <link rel="stylesheet" type="text/css" href="../css/boards/board/board_main_style.css" th:href="@{/board_main_style.css}">
+</head>
+
+<!--메시지 알림-->
+<!--<script th:inline="javascript">-->
+
+<!--    var message = [[${message}]];-->
+<!--    alert(message);-->
+
+<!--    location.replace([[${redirectUrl}]]);-->
+
+<!--</script>-->
+
+<body>
+<header style="position: relative;">
+    <img src="/image/main_img/logo2.PNG" class = "logo" style="position: absolute; z-index: 3; width: 170px; height: 90px; left: 2.5%; top: 10%;" id = "logo2">
+    <div class="px-3 py-2 bg-dark text-white">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <img src = "/image/main_img/write_icon.PNG" width = "50px" height="50px" >
+                <a href="/boards/freeBoard" class="navbar-brand"><h4 class = "thema">&nbsp;&nbsp;자유게시판</h4></a>
+                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                    <li>
+                        <img src = "/image/main_img/home_icon.PNG" width = "45px" height="40px" style="margin-left: 151px; margin-top: 10px;">
+                        <a href="/" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메인
+                        </a>
+                    </li>
+                    <li>
+                        <img src = "/image/main_img/write_icon.PNG" width = "50px" height="40px" style="margin-left: 102px; margin-top: 10px;">
+                        <a href="/boards/recommendBoard" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;추천게시판
+                        </a>
+                    </li>
+                    <li>
+                        <img src = "/image/main_img/muckstar_icon.PNG" width = "40px" height="40px" style="margin-left: 95px; margin-top: 10px;">
+                        <a href="/boards/muckstarBoard" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;먹스타그램
+                        </a>
+                    </li>
+                    <li>
+                        <img src = "/image/main_img/menu_recommend_icon.PNG" width = "50px" height="40px" style="margin-left: 75px; margin-top: 10px;">
+                        <a href="/menu" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메뉴추천
+                        </a>
+                    </li>
+                    <li>
+                        <img src = "/image/main_img/chat_icon.PNG" width = "50px" height="40px" style="margin-left: 65px; margin-top: 10px;">
+                        <a href="/chat" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;채팅방&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </a>
+                    </li>
+
+                    <li>
+                        <h5 th:if="${session.loginMember != null}"
+                            th:text="${session.loginMember.name}+ '님 접속중'"
+                            id = "userName" style="font-size : 13px; margin-top: 20px;"></h5>
+
+                        <br/>
+
+                        <form th:action="@{/members/logout}" method="post">
+                            <button th:if="${session.loginMember != null}"
+                                    type="submit" class="btn btn-primary" id="logout"
+                                    style="width: 90px; height: 35px; position :absolute; top: 56%;"
+                                    th:onclick="@{/members/logout}">로그아웃
+                            </button>
+                        </form>
+
+                        <button th:if="${session.loginMember == null}"
+                                type="submit" class="btn btn-primary"
+                                style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
+                                th:onclick="|location.href='@{/members/login}'|">로그인
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div style="position: relative; width: 90vw; height: 80vh;">
+    <div class="container row" style="float: none; margin: 100 auto;">
+        <!--검색-->
+        <div style="margin-left: 745px; margin-top: 15px;">
+            <form th:action="@{/boards/freeBoard}" method="get">
+                <div class="row" style="">
+                    <div class="col-md-1" style="width: 150px;">
+                        <input type="text" name="writerSearchKeyword" class="form-control" placeholder="글쓴이" th:value="${writerSearchKeyword}"/>
+                    </div>
+
+                    <div class="col-md-2" style="width: 300px;">
+                        <input type="text" name="titleSearchKeyword" class="form-control" placeholder="제목" th:value="*{titleSearchKeyword}"/>
+                    </div>
+
+                    <div class="col-md-1" style="width: 100px;">
+                        <button type="submit" class="btn btn-secondary">검색</button>
+                    </div>
+
+                    <div class="col-md-1" style="width: 150px;">
+                        <button class="btn btn-danger" id="write"
+                                th:onclick="|location.href='@{/boards/freeBoard/upload}'|"
+                                type="button">글 작성
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!--게시판 테이블-->
+        <table class="table" style="position: absolute; top: 10%; width: 950px; height: 40vh; margin-left: 430px;">
+            <thead class="table-dark">
+            <tr>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">번호</th>
+                <th class="col-md-6" style="text-align: center; margin: 0 auto;">제목</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">글쓴이</th>
+                <th class="col-md-2" style="text-align: center; margin: 0 auto;">날짜</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">조회수</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">좋아요</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="board : ${boards}">
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${board.id}"></td>
+
+                <td class="col-md-6" style="text-decoration-line: none; width: 400px;">
+                    <a th:if="${not#strings.equals(board.subType, '말머리 선택')}"
+                       th:href="@{|/boards/freeBoard/${board.id}|}" th:text="|[${board.subType}]|"
+                       style="color: black; text-decoration-line: none; display: inline-block; overflow: hidden;"></a>
+
+                    <a th:href="@{|/boards/freeBoard/${board.id}|}" th:text="|${board.title}|"
+                       style="color: black; text-decoration-line: none; display: inline-block; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></a>
+
+                    <span th:if="${board.commentCount != 0}" style="color: red; text-decoration-line: none; display: inline-block; overflow: hidden;"
+                          th:href="@{|/boards/freeBoard/${board.id}|}" th:text="|[${board.commentCount}]|"></span>
+                </td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;">
+                    <a th:href="@{|/members/profile/${board.member.id}|}" style="color: black; text-decoration-line: none;">
+                        <th:block th:text="${board.writer}"/>
+                    </a>
+                </td>
+
+                <td class="col-md-2"
+                    th:if="${#temporals.day(board.createdDate)} == ${#temporals.day(localDateTime)}"
+                    style="text-align: center; margin: 0 auto;"
+                    th:text="${#temporals.format(board.createdDate, 'HH:mm')}"></td>
+                <td class="col-md-2"
+                    th:if="${#temporals.day(board.createdDate)} != ${#temporals.day(localDateTime)}"
+                    style="text-align: center; margin: 0 auto;"
+                    th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}"></td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${board.count}">조회수
+                </td>
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${board.likeCount}">좋아요
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--페이지-->
+        <nav aria-label="Page navigation example" style="position: absolute; top: 80%;">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" th:classappend="${!hasPrev} ? 'disabled'">
+                <a class="page-link" th:href="@{/boards/freeBoard(page=${previous}, writerSearchKeyword=${param.writerSearchKeyword}, titleSearchKeyword=${param.titleSearchKeyword})}">이전</a>
+              </li>
+
+              <li class="page-item" th:each="page : ${#numbers.sequence(startPage, endPage)}">
+                  <a class="page-link"
+                     th:if="${page != nowPage} and ${page != 0} and ${#strings.isEmpty(param.writerSearchKeyword)} and ${#strings.isEmpty(param.titleSearchKeyword)}"
+                     th:href="@{/boards/freeBoard(page = ${page - 1})}"
+                     th:text="${page}"></a>
+                  <a class="page-link"
+                     th:if="${page != nowPage} and ${page != 0} and ${#strings.isEmpty(param.writerSearchKeyword)} and ${not #strings.isEmpty(param.titleSearchKeyword)}"
+                     th:href="@{/boards/freeBoard(page = ${page - 1}, writerSearchKeyword=${param.writerSearchKeyword}, titleSearchKeyword=${param.titleSearchKeyword})}"
+                     th:text="${page}"></a>
+                  <a class="page-link"
+                     th:if="${page != nowPage} and ${page != 0} and ${not #strings.isEmpty(param.writerSearchKeyword)} and ${#strings.isEmpty(param.titleSearchKeyword)}"
+                     th:href="@{/boards/freeBoard(page = ${page - 1}, writerSearchKeyword=${param.writerSearchKeyword}, titleSearchKeyword=${param.titleSearchKeyword})}"
+                     th:text="${page}"></a>
+                  <a class="page-link"
+                     th:if="${page != nowPage} and ${page != 0} and ${not #strings.isEmpty(param.writerSearchKeyword)} and ${not #strings.isEmpty(param.titleSearchKeyword)}"
+                     th:href="@{/boards/freeBoard(page = ${page - 1}, writerSearchKeyword=${param.writerSearchKeyword}, titleSearchKeyword=${param.titleSearchKeyword})}"
+                     th:text="${page}"></a>
+
+                  <strong class="page-link"
+                          th:if="${page == nowPage} and ${#strings.isEmpty(param.writerSearchKeyword)} and ${#strings.isEmpty(param.titleSearchKeyword)}"
+                          th:text="${page}" style="color: red;"></strong>
+                  <strong class="page-link"
+                          th:if="${page == nowPage} and ${not #strings.isEmpty(param.titleSearchKeyword)} and ${#strings.isEmpty(param.writerSearchKeyword)}"
+                          th:text="${page}" style="color: red;"></strong>
+                  <strong class="page-link"
+                          th:if="${page == nowPage} and ${not #strings.isEmpty(param.writerSearchKeyword)} and ${#strings.isEmpty(param.titleSearchKeyword)}"
+                          th:text="${page}" style="color: red;"></strong>
+                  <strong class="page-link"
+                          th:if="${page == nowPage} and ${not #strings.isEmpty(param.writerSearchKeyword)} and ${not #strings.isEmpty(param.titleSearchKeyword)}"
+                          th:text="${page}" style="color: red;"></strong>
+              </li>
+              
+
+              <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                  <a class="page-link" th:href="@{/boards/freeBoard(page=${next}, writerSearchKeyword=${param.writerSearchKeyword}, titleSearchKeyword=${param.titleSearchKeyword})}">다음</a>
+              </li>
+            </ul>
+          </nav>
+    </div>
+
+    <!--왼쪽 광고 사진-->
+    <div style="position: absolute; top: 15%; right: 70%;">
+        <img src="/image/food/bok.jpg" width="45%;" height="85%;">
+    </div>
+
+    <!--아래 메뉴 추천 링크 사진-->
+    <div style="position: absolute; top: 90%; left: 35%;">
+        <a href="/menu">
+            <img src="/image/food/circ.PNG" width="80%;" height="30%;">
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

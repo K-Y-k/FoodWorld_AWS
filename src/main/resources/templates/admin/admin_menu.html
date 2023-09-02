@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!--부트 스트랩 적용-->
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <!--css 적용-->
+    <link rel="stylesheet" type="text/css" href="../css/boards/board/board_main_style.css" th:href="@{/css/main_style.css}">
+</head>
+
+
+<body>
+<header style="width: 1900px; height: 120px;">
+    <div class="px-3 py-2 bg-dark text-white" style="width: 1900px; height: 120px;">
+        <div class="d-flex flex-wrap" style="margin-top: 30px;">
+            <ul class="nav justify-content my-md-0">
+                <li style="margin-left: 30px;">
+                    <img src="/image/main_img/logo2.PNG" class="logo" style="z-index: 3; width: 170px; height: 90px;" id="logo2">
+                </li>
+
+                <li style="display: flex; margin-left: 50px;">
+                    <img src="/image/main_img/home_icon.PNG" width="50px" height="50px">
+                    <a href="/" class="navbar-brand" style="margin-left: 30px;"><h4 class="thema">관리자 페이지</h4></a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/admin_icon.PNG" width="45px" height="40px" style="margin-left: 63px;">
+                    <a href="/admin/members" class="nav-link text-white" style="margin-left: 40px;">
+                        회원관리
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/write_icon.PNG" width = "45px" height="40px" style="margin-left: 50px;">
+                    <a href="/admin/freeBoard" class="nav-link text-white" style="margin-left: 20px;">
+                        자유게시판
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/write_icon.PNG" width="50px" height="40px" style="margin-left: 30px;">
+                    <a href="/admin/recommendBoard" class="nav-link text-white">
+                        추천게시판
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px" style="margin-left: 35px;">
+                    <a href="/admin/muckstarBoard" class="nav-link text-white">
+                        먹스타그램
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px" style="margin-left: 28px;">
+                    <a href="/admin/menu" class="nav-link text-white">
+                        메뉴추천
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px" style="margin-left: 20px;">
+                    <a href="/admin/chat" class="nav-link text-white">
+                        채팅방
+                    </a>
+                </li>
+
+                <li style="margin-left: 50px;">
+                    <h5 th:if="${session.loginMember != null}"
+                        th:text="${session.loginMember.name}+ '님 접속중'"
+                        id = "userName" style="font-size: 13px;"></h5>
+
+                    <br/>
+
+                    <form th:action="@{/members/logout}" method="post">
+                        <button th:if="${session.loginMember != null}"
+                                type="submit" class="btn btn-primary" id="logout"
+                                style="width: 90px; height: 35px;"
+                                th:onclick="@{/members/logout}">로그아웃
+                        </button>
+                    </form>
+
+                    <button th:if="${session.loginMember == null}"
+                            type="submit" class="btn btn-primary"
+                            style="width: 80px; height: 35px;" id="login"
+                            th:onclick="|location.href='@{/members/login}'|">로그인
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div style="position: relative; width: 1900px; height: 110vh; margin-top: 10px;">
+    <div class="container row" style="float: none; margin: 100 auto;">
+        <div style="margin-left: 400px; display: flex;">
+            <span class="navbar-brand" style="font-size: 25px; font: bold;">메뉴 랜덤 추천 관리</span>
+
+            <!--카테고리 분류-->
+            <form id="search-form" th:action="@{/admin/menu}" method="get">
+                    <div class="row" style="margin-left: 10px;">
+                        <div class="col-md-1" style="width: 150px;">
+                            <select id="category-choice" class="form-control" onchange="categoryHandleChange()"
+                                    name="selectedCategory">
+                                <option value="카테고리 전체">카테고리 전체</option>
+                                <option value="한식">한식</option>
+                                <option value="중식">중식</option>
+                                <option value="일식/돈까스">일식/돈까스</option>
+                                <option value="회/초밥">회/초밥</option>
+                                <option value="치킨">치킨</option>
+                                <option value="피자">피자</option>
+                                <option value="족발/보쌈">족발/보쌈</option>
+                                <option value="햄버거">햄버거</option>
+                                <option value="샌드위치">샌드위치</option>
+                                <option value="분식">분식</option>
+                                <option value="찜/탕">찜/탕</option>
+                                <option value="샐러드">샐러드</option>
+                                <option value="도시락/죽">도시락/죽</option>
+                                <option value="아시안">아시안</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-1" style="width: 220px;">
+                            <input type="text" name="menuNameKeyword" class="form-control" placeholder="메뉴명"
+                                   th:value="${menuNameKeyword}"/>
+                        </div>
+
+                        <div class="col-md-1" style="width: 220px;">
+                            <input type="text" name="franchisesKeyword" class="form-control" placeholder="식당/체인점"
+                                   th:value="*{franchisesKeyword}"/>
+                        </div>
+
+                        <div class="col-md-1" style="width: 150px;">
+                            <button type="submit" class="btn btn-secondary">검색</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!--게시판 테이블-->
+        <table class="table" style="position: absolute; top: 5%; width: 900px; margin-left: 430px;">
+            <thead class="table-dark">
+            <tr>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">번호</th>
+                <th class="col-md-2" style="text-align: center; margin: 0 auto;">카테고리</th>
+                <th class="col-md-3" style="text-align: center; margin: 0 auto;">식당/체인점</th>
+                <th class="col-md-3" style="text-align: center; margin: 0 auto;">메뉴명</th>
+                <th class="col-md-2" style="text-align: center; margin: 0 auto;">작성일</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">관리</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="menuRecommend : ${menuRecommends}">
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${menuRecommend.id}">
+                </td>
+
+                <td class="col-md-2" style="text-align: center; margin: 0 auto;"
+                    th:text="${menuRecommend.category}">
+                </td>
+
+                <td class="col-md-3" style="text-align: center; margin: 0 auto;"
+                    th:text="${menuRecommend.franchises}">
+                </td>
+
+                <td class="col-md-3" style="text-align: center; margin: 0 auto;"
+                    th:text="${menuRecommend.menuName}">
+                </td>
+
+                <td class="col-md-2"
+                    style="text-align: center; margin: 0 auto;"
+                    th:text="${#temporals.format(menuRecommend.createdDate, 'yy-MM-dd')}">
+                </td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;">
+                    <button class="btn btn-primary"
+                            type="submit"
+                            style="width: 90px; height: 35px;"
+                            th:onclick="|location.href='@{/admin/menu/delete/{menuRecommendId}(menuRecommendId=${menuRecommend.id})}'|">삭제
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <!--페이지-->
+        <nav aria-label="Page navigation example" style="margin-top: 600px;">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${!hasPrev} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/menu(page=${menuRecommends.pageable.pageNumber - 1}, menuNameKeyword=${param.menuNameKeyword}, franchisesKeyword=${param.franchisesKeyword}, selectedCategory=${param.selectedCategory})}">이전</a>
+                </li>
+
+                <li class="page-item" th:each="page : ${#numbers.sequence(startPage, endPage)}">
+                    <a class="page-link"
+                       th:if="${page != nowPage} and ${page != 0}"
+                       th:href="@{/admin/menu(page = ${page - 1}, menuNameKeyword=${param.menuNameKeyword}, franchisesKeyword=${param.franchisesKeyword}, selectedCategory=${param.selectedCategory})}"
+                       th:text="${page}"></a>
+
+                    <strong class="page-link"
+                            th:if="${page == nowPage}"
+                            th:text="${page}" style="color: red;"></strong>
+                </li>
+
+
+                <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/admin/menu(page=${menuRecommends.pageable.pageNumber + 1}, menuNameKeyword=${param.menuNameKeyword}, franchisesKeyword=${param.franchisesKeyword}, selectedCategory=${param.selectedCategory})}">다음</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!--bootstrapjs-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous">
+</script>
+
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+</script>
+
+<script type="text/javascript" th:src="@{/js/admin_menu.js}" ></script>
+
+</body>
+</html>

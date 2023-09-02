@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!--부트 스트랩 적용-->
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <!--css 적용-->
+    <link rel="stylesheet" type="text/css" href="../css/boards/board/board_main_style.css" th:href="@{/css/main_style.css}">
+</head>
+
+
+<body>
+<header style="width: 1900px; height: 120px;">
+    <div class="px-3 py-2 bg-dark text-white" style="width: 1900px; height: 120px;">
+        <div class="d-flex flex-wrap" style="margin-top: 30px;">
+            <ul class="nav justify-content my-md-0">
+                <li style="margin-left: 30px;">
+                    <img src="/image/main_img/logo2.PNG" class="logo" style="z-index: 3; width: 170px; height: 90px;" id="logo2">
+                </li>
+
+                <li style="display: flex; margin-left: 50px;">
+                    <img src="/image/main_img/home_icon.PNG" width="50px" height="50px">
+                    <a href="/" class="navbar-brand" style="margin-left: 30px;"><h4 class="thema">관리자 페이지</h4></a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/admin_icon.PNG" width="45px" height="40px" style="margin-left: 63px;">
+                    <a href="/admin/members" class="nav-link text-white" style="margin-left: 40px;">
+                        회원관리
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/write_icon.PNG" width = "45px" height="40px" style="margin-left: 50px;">
+                    <a href="/admin/freeBoard" class="nav-link text-white" style="margin-left: 20px;">
+                        자유게시판
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/write_icon.PNG" width="50px" height="40px" style="margin-left: 30px;">
+                    <a href="/admin/recommendBoard" class="nav-link text-white">
+                        추천게시판
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px" style="margin-left: 35px;">
+                    <a href="/admin/muckstarBoard" class="nav-link text-white">
+                        먹스타그램
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px" style="margin-left: 28px;">
+                    <a href="/admin/menu" class="nav-link text-white">
+                        메뉴추천
+                    </a>
+                </li>
+
+                <li>
+                    <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px" style="margin-left: 20px;">
+                    <a href="/admin/chat" class="nav-link text-white">
+                        채팅방
+                    </a>
+                </li>
+
+                <li style="margin-left: 50px;">
+                    <h5 th:if="${session.loginMember != null}"
+                        th:text="${session.loginMember.name}+ '님 접속중'"
+                        id = "userName" style="font-size: 13px;"></h5>
+
+                    <br/>
+
+                    <form th:action="@{/members/logout}" method="post">
+                        <button th:if="${session.loginMember != null}"
+                                type="submit" class="btn btn-primary" id="logout"
+                                style="width: 90px; height: 35px;"
+                                th:onclick="@{/members/logout}">로그아웃
+                        </button>
+                    </form>
+
+                    <button th:if="${session.loginMember == null}"
+                            type="submit" class="btn btn-primary"
+                            style="width: 80px; height: 35px;" id="login"
+                            th:onclick="|location.href='@{/members/login}'|">로그인
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div style="position: relative; width: 1900px; height: 110vh; margin-top: 10px;">
+    <div class="container row" style="float: none; margin: 100 auto;">
+        <!--검색-->
+        <div style="margin-left: 430px; display: flex;">
+            <span  class="navbar-brand" style="font-size: 25px; font: bold;">회원 관리</span>
+
+            <form th:action="@{/admin/members}" method="get">
+                <div class="row" style="margin-left: 125px;">
+                    <div class="col-md-1" style="width: 150px;">
+                        <input type="text" name="memberSearchKeyword" class="form-control" placeholder="회원명" th:value="${memberSearchKeyword}"/>
+                    </div>
+
+                    <div class="col-md-1" style="width: 150px;">
+                        <button type="submit" class="btn btn-secondary">검색</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!--게시판 테이블-->
+        <table class="table" style="position: absolute; top: 5%; width: 850px; margin-left: 430px;">
+            <thead class="table-dark">
+            <tr>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">이름</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">아이디</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">등급</th>
+                <th class="col-md-2" style="text-align: center; margin: 0 auto;">가입일</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">게시글수</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">댓글수</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">메뉴수</th>
+                <th class="col-md-1" style="text-align: center; margin: 0 auto;">관리</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${member.name}"></td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${member.loginId}"></td>
+                </td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;"
+                    th:text="${member.role}"></td>
+                </td>
+
+                <td class="col-md-2"
+                    th:if="${#temporals.day(member.createdDate)} == ${#temporals.day(localDateTime)}"
+                    style="text-align: center; margin: 0 auto;"
+                    th:text="${#temporals.format(member.createdDate, 'HH:mm')}"></td>
+                <td class="col-md-2"
+                    th:if="${#temporals.day(member.createdDate)} != ${#temporals.day(localDateTime)}"
+                    style="text-align: center; margin: 0 auto;"
+                    th:text="${#temporals.format(member.createdDate, 'yyyy-MM-dd')}"></td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;">
+                    <a th:data-member-id="${member.id}"
+                       th:data-writer-id="${member.name}"
+                       data-type-id="board" style="text-decoration-line: none;"
+                       href="#" onclick="findChild()" th:text="${#lists.size(member.boards)}"></a>
+                </td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;">
+                    <a th:data-member-id="${member.id}"
+                       th:data-writer-id="${member.name}"
+                       data-type-id="comment" style="text-decoration-line: none;"
+                       href="#" onclick="findChild()" th:text="${#lists.size(member.comments)}"></a>
+                </td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;">
+                    <a th:data-member-id="${member.id}"
+                       th:data-writer-id="${member.name}"
+                       data-type-id="menu" style="text-decoration-line: none;"
+                       href="#" onclick="findChild()" th:text="${#lists.size(member.menuRecommends)}"></a>
+                </td>
+
+                <td class="col-md-1" style="text-align: center; margin: 0 auto;">
+                    <button class="btn btn-primary"
+                            type="submit"
+                            style="width: 90px; height: 35px;"
+                            th:onclick="|location.href='@{/admin/member/delete/{memberId}(memberId=${member.id})}'|">추방
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!--페이지-->
+        <nav aria-label="Page navigation example" style="position: absolute; top: 70%;">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${!hasPrev} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/members(page=${previous}, memberSearchKeyword=${param.memberSearchKeyword})}">이전</a>
+                </li>
+
+                <li class="page-item" th:each="page : ${#numbers.sequence(startPage, endPage)}">
+                    <a class="page-link"
+                       th:if="${page != nowPage} and ${page != 0} and ${#strings.isEmpty(param.memberSearchKeyword)}"
+                       th:href="@{/admin/members(page = ${page - 1})}"
+                       th:text="${page}"></a>
+                    <a class="page-link"
+                       th:if="${page != nowPage} and ${page != 0} and ${not #strings.isEmpty(param.memberSearchKeyword)}"
+                       th:href="@{/admin/members(page = ${page - 1}, writerSearchKeyword=${param.memberSearchKeyword})}"
+                       th:text="${page}"></a>
+
+                    <strong class="page-link"
+                            th:if="${page == nowPage} and ${#strings.isEmpty(param.memberSearchKeyword)}"
+                            th:text="${page}" style="color: red;"></strong>
+                    <strong class="page-link"
+                            th:if="${page == nowPage} and ${not #strings.isEmpty(param.memberSearchKeyword)}"
+                            th:text="${page}" style="color: red;"></strong>
+                </li>
+
+
+                <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                    <a class="page-link" th:href="@{/admin/members(page=${next}, memberSearchKeyword=${param.memberSearchKeyword})}">다음</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="childContainer" style="float: right; border: solid 3px; width: 400px; height: 70vh; overflow-y: scroll; overflow-x: hidden;">
+        <h5 id="container-title" style="width: 400px; text-align: center; font-size: 20px;">선택 회원의 게시글 / 댓글 / 메뉴 관리</h5>
+        <span class="cursorMemberId" th:id="${firstCursorBoardId}" style="display: none;"></span>
+        <span class="cursorChildId" th:id="${firstCursorChileId}" style="display: none;"></span>
+
+        <div id="childList"></div>
+    </div>
+</div>
+
+<!--bootstrapjs-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous">
+</script>
+
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+</script>
+
+<script type="text/javascript" th:src="@{/js/admin_member.js}" ></script>
+
+</body>
+</html>

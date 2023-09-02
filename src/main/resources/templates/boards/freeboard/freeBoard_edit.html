@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <!--부트 스트랩 적용-->
+  <link th:href="@{/css/bootstrap.min.css}"
+        href="../css/bootstrap.min.css" rel="stylesheet">
+  <!--css 적용-->
+  <link rel="stylesheet" type="text/css" href="../css/boards/board/board_upload_style.css" th:href="@{/css/boards/board/board_upload_style.css}">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+<header style="position: relative;">
+  <img src="/image/main_img/logo2.PNG" class = "logo" style="position: absolute; z-index: 3; width: 170px; height: 90px; left: 2.5%; top: 10%;" id = "logo2">
+  <div class="px-3 py-2 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <img src = "/image/main_img/write_icon.PNG" width = "50px" height="50px" >
+        <a href="/boards/freeBoard" class="navbar-brand"><h4 class = "thema">&nbsp;&nbsp;자유게시판</h4></a>
+        <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+          <li>
+            <img src = "/image/main_img/home_icon.PNG" width = "45px" height="40px" style="margin-left: 151px; margin-top: 10px;">
+            <a href="/" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메인
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/write_icon.PNG" width = "50px" height="40px" style="margin-left: 105px; margin-top: 10px;">
+            <a href="/boards/recommendBoard" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;추천게시판
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/muckstar_icon.PNG" width = "40px" height="40px" style="margin-left: 95px; margin-top: 10px;">
+            <a href="/boards/muckstarBoard" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;먹스타그램
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/menu_recommend_icon.PNG" width = "50px" height="40px" style="margin-left: 75px; margin-top: 10px;">
+            <a href="/menu" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메뉴추천
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/chat_icon.PNG" width = "50px" height="40px" style="margin-left: 65px; margin-top: 10px;">
+            <a href="/chat" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;채팅방&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </a>
+          </li>
+
+          <li>
+            <h5 th:if="${session.loginMember != null}"
+                th:text="${session.loginMember.name}+ '님 접속중'"
+                id = "userName" style="font-size : 13px; margin-top: 20px;"></h5>
+
+            <br/>
+
+            <form th:action="@{/members/logout}" method="post">
+              <button th:if="${session.loginMember != null}"
+                      type="submit" class="btn btn-primary" id="logout"
+                      style="width: 90px; height: 35px; position :absolute; top: 56%;"
+                      th:onclick="@{/members/logout}">로그아웃
+              </button>
+            </form>
+
+            <button th:if="${session.loginMember == null}"
+                    type="submit" class="btn btn-primary"
+                    style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
+                    th:onclick="|location.href='@{/members/login}'|">로그인
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section style="position: relative; width: 90vw; height: 30vh;">
+    <!--th:action="@{/boards/freeBoard/{boardId}/edit(boardId=${board.id})}"-->
+    <h2 id="mtitle" style="position: absolute; left: 45%; top: 10%;"><b>자유게시판 글 수정하기</b></h2>
+
+    <form action="" th:action th:object="${updateForm}" method="post" enctype="multipart/form-data">
+      <div class="container mt-3" style="position: absolute; top: 20%; width: 50vw; left: 25%">
+
+        <div class="form-group col-sm-5">
+          <select th:field="*{boardType}" class="form-select" disabled>
+            <option th:value="자유게시판">자유게시판</option>
+          </select>
+        </div>
+
+        <br>
+
+        <div class="form-group col-sm-2">
+          <select th:field="*{subType}" class="form-select">
+            <option value="말머리 선택">말머리 선택</option>
+            <option th:value="사는얘기">사는얘기</option>
+            <option th:value="질문">질문</option>
+          </select>
+        </div>
+
+        <div class="field-error" style="color: red;" th:errors="*{title}"></div>
+        <input type="text" id="title" class="form-control mt-3" name="title" th:field="*{title}"
+               th:errorclass="field-error">
+
+        <div class="field-error" style="color: red;" th:errors="*{content}"></div>
+        <textarea class="form-control mt-2" id="content" name="content" th:field="*{content}" rows="20"
+                  th:errorclass="field-error"></textarea> <!--textarea는 th:value가 안되어 th:text로-->
+
+        <span>첨부파일: </span>
+        <div class="attachedFile">
+          <div th:each="boardFile : *{boardFiles}"
+               th:if="${boardFile.attachedType == 'attached'}"
+               th:text="${boardFile.originalFileName}"></div>
+        </div>
+        <input id="input-attachFile" class="form-control mt-2" type="file" name="attachFiles" multiple>
+
+        <span>이미지 파일: </span>
+        <div class="imageFile">
+          <div th:each="boardFile : *{boardFiles}"
+               th:if="${boardFile.attachedType == 'none'}"
+               th:text="${boardFile.originalFileName}"></div>
+        </div>
+        <input id="input-imageFile" class="form-control mt-2" type="file" name="imageFiles" multiple> <!--name을 컨트롤러의 매개변수 이름과 동일해야한다-->
+
+
+        <button class="btn btn-danger mt-3" id="send" type="submit">글 수정완료</button>
+        <button class="btn btn-danger mt-3"
+                th:onclick="|location.href='@{/boards/freeBoard/{boardId}(boardId=*{id})}'|"
+                type="button">취소
+        </button>
+
+      </div>
+    </form>
+</section>
+
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+</script>
+
+<script type="text/javascript" th:src="@{/js/board_edit.js}"></script>
+
+</body>
+</html>
