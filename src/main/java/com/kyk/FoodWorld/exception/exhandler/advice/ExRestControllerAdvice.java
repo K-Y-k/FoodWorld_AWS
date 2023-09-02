@@ -36,32 +36,32 @@ public class ExRestControllerAdvice {
      * 예외를 터진 것을 잡은 것인라서 정상적으로 호출된 것으로 하기 싫으면 @ResponseStatus로 설정하자
      * 이 덕분에 지저분하게 서블릿 컨테이너로 다시 올라가지 않는다.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorResult illegalExHandler(IllegalArgumentException e) {
-        log.error("[IllegalArgumentExceptionHandler] ex", e);
-        return new ErrorResult("BAD", e.getMessage());
-    }
-
-//    /**
-//     * MemberException일 때 여기로 호출
-//     */
-//    @ExceptionHandler
-//    public ResponseEntity<ErrorResult> memberExHandler(MemberException e) {
-//        log.error("[MemberExceptionHandler] ex", e);
-//        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
-//        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ErrorResult illegalExHandler(IllegalArgumentException e) {
+//        log.error("[IllegalArgumentExceptionHandler] ex", e);
+//        return new ErrorResult("BAD", e.getMessage());
 //    }
-
-    /**
-     * 최상위 예외 Exception로
-     * 여기에 등록된 @ExceptionHandler의 예외가 해당 없는 예외는 여기로 호출된다.
-     * 즉, 공통 처리 예외
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler
-    public ErrorResult exHandler(Exception e) {
-        log.error("[ExceptionHandler] ex", e);
-        return new ErrorResult("EX", "내부 오류");
-    }
+//
+////    /**
+////     * MemberException일 때 여기로 호출
+////     */
+////    @ExceptionHandler
+////    public ResponseEntity<ErrorResult> memberExHandler(MemberException e) {
+////        log.error("[MemberExceptionHandler] ex", e);
+////        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+////        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+////    }
+//
+//    /**
+//     * 최상위 예외 Exception로
+//     * 여기에 등록된 @ExceptionHandler의 예외가 해당 없는 예외는 여기로 호출된다.
+//     * 즉, 공통 처리 예외
+//     */
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ExceptionHandler
+//    public ErrorResult exHandler(Exception e) {
+//        log.error("[ExceptionHandler] ex", e);
+//        return new ErrorResult("EX", "내부 오류");
+//    }
 }
