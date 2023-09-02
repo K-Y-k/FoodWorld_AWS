@@ -1,13 +1,16 @@
 package com.kyk.FoodWorld.exception.exhandler.advice;
 
 
+import com.kyk.FoodWorld.exception.exhandler.ErrorResult;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberLoginIdException;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberNameException;
 import com.kyk.FoodWorld.exception.member.MemberException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
