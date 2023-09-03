@@ -61,6 +61,9 @@ dependencies {
 	// MariaDB 데이터베이스
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
+	// Spring Cloud Aws 의존성을 추가
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 }
