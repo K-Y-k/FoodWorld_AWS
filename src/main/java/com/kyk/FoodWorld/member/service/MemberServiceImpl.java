@@ -1,6 +1,10 @@
 package com.kyk.FoodWorld.member.service;
 
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.*;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberLoginIdException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberNameException;
@@ -43,6 +47,11 @@ public class MemberServiceImpl implements MemberService {
     @Value("${file.profileLocation}")
     private String profileLocation;
 
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private final AmazonS3 amazonS3;
+
 //    @Value("${file.imageFileLocation}")
 //    private String imageFileLocation;
 //
@@ -64,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member savedMember = memberRepository.saveMember(memberEntity);
 
-        // 파일에 이름을 붙일 랜덤으로 식별자 지정 및 프로필 엔티티 생성
+        // 파일에 이름을 붙일 랜덤으로 식별자 지정 및 프로필 파일 엔티티 생성
         UUID uuid = UUID.randomUUID();
         String storedFileName = uuid + "_user_icon.PNG";
 
@@ -74,22 +83,28 @@ public class MemberServiceImpl implements MemberService {
                 .member(memberEntity)
                 .build();
 
-        // 원본 저장 경로
-        Path originalSourcePath = Paths.get(profileLocation + "\\user_icon.PNG");
-
-        // 복사 경로 생성
-        Path copySavePath = Paths.get(profileLocation + "\\" + storedFileName);
-        
-        // 원본 저장 파일을 복사
+        // S3 버킷에 복사 작업
         try {
-            Files.copy(originalSourcePath, copySavePath);
-            System.out.println("파일 복사 성공");
-        } catch (IOException e) {
-            System.out.println("파일 복사 실패: " + e.getMessage());
+            // 기존 기본 프로필 사진 객체 가져오기
+            S3Object o = amazonS3.getObject(new GetObjectRequest(bucket, "profileFile/user_icon.PNG"));
+
+            // 기본 프로필 사진 복사 객체 생성
+            CopyObjectRequest copyObjRequest = new CopyObjectRequest(
+                    o.getBucketName(), // 복사 대상 버킷 이름
+                    o.getKey(),        // 복사 대상 객체 키
+                    bucket,                        // 새로 복사의 버킷 이름
+                    "profileFile/" + storedFileName // 새로 복사의 객체 키
+            );
+
+            // 복사
+            amazonS3.copyObject(copyObjRequest);
+        } catch (SdkClientException e) {
+            e.printStackTrace();
         }
 
         // DB에서도 저장
         memberRepository.saveProfile(profileFile);
+
         return savedMember.getId();
     }
 
@@ -154,7 +169,7 @@ public class MemberServiceImpl implements MemberService {
         if (imageFile.getOriginalFilename() != null && !imageFile.getOriginalFilename().isBlank()) {
             // 현재 회원의 기존 프로필 사진을 찾고 실제 저장되었던 디렉토리의 프로필 사진을 삭제
             ProfileFile findMemberProfile = memberRepository.findProfileByMember(findMember);
-            deleteBeforeFile(profileLocation, findMemberProfile.getStoredFileName());
+            deleteBeforeProfileFile(findMemberProfile);
 
             // DB 내용 변경 및 프로필 사진 새로 생성
             findMember.changeProfile(form.getName(), form.getLoginId(), form.getPassword(), form.getIntroduce());
@@ -166,6 +181,7 @@ public class MemberServiceImpl implements MemberService {
         log.info("회원 프로필 변경");
         return findMember.getId();
     }
+
 
     @Override
     public Page<Member> findPageBy(Pageable pageable) {
@@ -188,7 +204,7 @@ public class MemberServiceImpl implements MemberService {
 
         // 현재 회원의 기존 프로필 사진을 찾고 실제 저장되었던 디렉토리의 프로필 사진을 삭제
         ProfileFile findMemberProfile = memberRepository.findProfileByMember(findMember);
-        deleteBeforeFile(profileLocation, findMemberProfile.getStoredFileName());
+        deleteBeforeProfileFile(findMemberProfile);
 
 
 //        // 현재 회원이 작성했던 게시글을 찾고
@@ -227,15 +243,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 이전 파일 삭제 처리 메서드
-    private void deleteBeforeFile(String beforeFileLocation, String file) {
-        Path beforeFilePath = Paths.get(beforeFileLocation + "\\" + file);
-        try {
-            Files.deleteIfExists(beforeFilePath);
-        } catch (DirectoryNotEmptyException e) {
-            log.info("디렉토리가 비어있지 않습니다");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void deleteBeforeProfileFile(ProfileFile findMemberProfile) {
+        // 삭제 대상 객체 생성
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "profileFile/" + findMemberProfile.getStoredFileName());
+
+        // 삭제 처리
+        amazonS3.deleteObject(deleteObjectRequest);
     }
 
     @Override
@@ -319,18 +332,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private void profileImageUpload(UpdateForm form, Member member) throws IOException {
-        String originalFileName = form.getProfileImage().getOriginalFilename();
+        String originalFilename = form.getProfileImage().getOriginalFilename();
 
         // 파일에 이름을 붙일 랜덤으로 식별자 지정
         UUID uuid = UUID.randomUUID();
-        String storedFileName = uuid + "_" + originalFileName;
-        String savePath = profileLocation;
+        String storedFileName = uuid + "_" + originalFilename;
 
-        // 실제 파일 저장 경로와 파일 이름 지정한 File 객체 생성 및 저장
-        form.getProfileImage().transferTo(new File(savePath, storedFileName));
+        // S3 버킷에 넣을 파일 설정 및 넣기
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(form.getProfileImage().getSize());
+        metadata.setContentType(form.getProfileImage().getContentType());
+
+        amazonS3.putObject(bucket, "profileFile/"+storedFileName, form.getProfileImage().getInputStream(), metadata);
 
         // 회원의 기존 프로필 사진에서 교체
-        memberRepository.updateProfileImage(originalFileName, storedFileName, member.getId());
+        memberRepository.updateProfileImage(originalFilename, storedFileName, member.getId());
     }
 
 

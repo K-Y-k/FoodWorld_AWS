@@ -34,7 +34,7 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 nohup java -jar \
-        -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-real-db.properties,classpath:/application-real.properties \
+        -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-real-db.properties,/home/ec2-user/app/application-s3.properties,classpath:/application-real.properties \
         -Dspring.profile.active=real \
         $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
         # nohup 실행 시 CodeDeploy는 무한 대기한다.

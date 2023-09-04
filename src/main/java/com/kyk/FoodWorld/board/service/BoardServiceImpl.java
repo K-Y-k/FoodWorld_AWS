@@ -1,6 +1,9 @@
 package com.kyk.FoodWorld.board.service;
 
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.kyk.FoodWorld.board.domain.dto.*;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.domain.entity.BoardFile;
@@ -50,6 +53,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Value("${file.attachFileLocation}")
     private String attachFileLocation;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private final AmazonS3 amazonS3;
 
 
     @Override
@@ -133,10 +141,13 @@ public class BoardServiceImpl implements BoardService {
             // 파일에 이름을 붙일 랜덤으로 식별자 지정
             UUID uuid = UUID.randomUUID();
             String storedFileName = uuid + "_" + originalFilename;
-            String savePath = imageFileLocation;
 
-            // 실제 파일 저장 경로와 파일 이름 지정한 File 객체 생성 및 저장
-            imageFiles.transferTo(new File(savePath, storedFileName));
+            // S3 버킷에 넣을 파일 설정 및 넣기
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(imageFiles.getSize());
+            metadata.setContentType(imageFiles.getContentType());
+
+            amazonS3.putObject(bucket, "imageFile/"+storedFileName, imageFiles.getInputStream(), metadata);
 
             String attachedType = "none";
 
@@ -153,10 +164,13 @@ public class BoardServiceImpl implements BoardService {
             // 파일에 이름을 붙일 랜덤으로 식별자 지정
             UUID uuid = UUID.randomUUID();
             String storedFileName = uuid + "_" + originalFilename;
-            String savePath = imageFileLocation;
 
-            // 실제 파일 저장 경로와 파일 이름 지정한 File 객체 생성 및 저장
-            imageFiles.transferTo(new File(savePath, storedFileName));
+            // S3 버킷에 넣을 파일 설정 및 넣기
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(imageFiles.getSize());
+            metadata.setContentType(imageFiles.getContentType());
+
+            amazonS3.putObject(bucket, "imageFile/"+storedFileName, imageFiles.getInputStream(), metadata);
 
             String attachedType = "none";
 
@@ -174,10 +188,13 @@ public class BoardServiceImpl implements BoardService {
             // 파일에 이름을 붙일 랜덤으로 식별자 지정
             UUID uuid = UUID.randomUUID();
             String storedFileName = uuid + "_" + originalFilename;
-            String savePath = attachFileLocation;
 
-            // 실제 파일 저장 경로와 파일 이름 지정한 File 객체 생성 및 저장
-            attachFiles.transferTo(new File(savePath, storedFileName));
+            // S3 버킷에 넣을 파일 설정 및 넣기
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(attachFiles.getSize());
+            metadata.setContentType(attachFiles.getContentType());
+
+            amazonS3.putObject(bucket, "attachFile/"+storedFileName, attachFiles.getInputStream(), metadata);
 
             String attachedType = "attached";
 
@@ -498,35 +515,20 @@ public class BoardServiceImpl implements BoardService {
         if (boardType.equals("자유게시판") || boardType.equals("추천게시판")) {
             for (BoardFile boardFile : findBoardFiles) {
                 if (boardFile.getAttachedType().equals("attached")) {
-                    Path beforeAttachPath = Paths.get(attachFileLocation + "\\" + boardFile.getStoredFileName());
-                    try {
-                        Files.deleteIfExists(beforeAttachPath);
-                    } catch (DirectoryNotEmptyException e) {
-                        log.info("디렉토리가 비어있지 않습니다");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    // 삭제 대상 객체 생성
+                    DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "attachFile/" + boardFile.getStoredFileName());
+
+                    // 삭제 처리
+                    amazonS3.deleteObject(deleteObjectRequest);
                 } else {
-                    Path beforeFilePath = Paths.get(imageFileLocation + "\\" + boardFile.getStoredFileName());
-                    try {
-                        Files.deleteIfExists(beforeFilePath);
-                    } catch (DirectoryNotEmptyException e) {
-                        log.info("디렉토리가 비어있지 않습니다");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "imageFile/" + boardFile.getStoredFileName());
+                    amazonS3.deleteObject(deleteObjectRequest);
                 }
             }
         } else {
             for (BoardFile boardFile : findBoardFiles) {
-                Path beforeFilePath = Paths.get(imageFileLocation + "\\" + boardFile.getStoredFileName());
-                try {
-                    Files.deleteIfExists(beforeFilePath);
-                } catch (DirectoryNotEmptyException e) {
-                    log.info("디렉토리가 비어있지 않습니다");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "imageFile/" + boardFile.getStoredFileName());
+                amazonS3.deleteObject(deleteObjectRequest);
             }
         }
 
