@@ -51,8 +51,6 @@ public class FreeBoardController {
     private final LikeServiceImpl likeService;
     private final CommentServiceImpl commentService;
 
-    @Value("${file.attachFileLocation}")
-    private String attachFileLocation;
 
     /**
      * 페이징된 글 조회 폼
@@ -340,31 +338,31 @@ public class FreeBoardController {
         return "redirect:/boards/freeBoard";
     }
 
-    /**
-     * 파일 다운로드
-     */
-    @GetMapping("/attach/{boardFileId}")
-    public ResponseEntity<Resource> downloadAttach(@PathVariable Long boardFileId) throws MalformedURLException {
-
-        BoardFile boardFile = boardService.findBoardFileById(boardFileId).orElseThrow(() ->
-                new IllegalArgumentException("파일 가져오기 실패: 파일을 찾지 못했습니다." + boardFileId));;
-
-        // 직접 접근해서 storedFileName, uploadFileName을 가져옴
-        // uploadFileName은 다운로드 받을 때의 파일명이 필요해서
-        String uploadFileName = boardFile.getOriginalFileName();
-        String storeFileName = boardFile.getStoredFileName();
-
-        UrlResource resource = new UrlResource("file:" + attachFileLocation + storeFileName);
-
-        // CONTENT_DISPOSITION이 attachment에 filename이 맞으면 다운로드하게 한다.
-        // 깨짐 방지를 위해 한글로 확실히 변환시키고 넣기
-        String encodeUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
-        String contentDisposition = "attachment; filename=\"" + encodeUploadFileName + "\"";
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                .body(resource);
-    }
+//    /**
+//     * 파일 다운로드
+//     */
+//    @GetMapping("/attach/{boardFileId}")
+//    public ResponseEntity<Resource> downloadAttach(@PathVariable Long boardFileId) throws MalformedURLException {
+//
+//        BoardFile boardFile = boardService.findBoardFileById(boardFileId).orElseThrow(() ->
+//                new IllegalArgumentException("파일 가져오기 실패: 파일을 찾지 못했습니다." + boardFileId));;
+//
+//        // 직접 접근해서 storedFileName, uploadFileName을 가져옴
+//        // uploadFileName은 다운로드 받을 때의 파일명이 필요해서
+//        String uploadFileName = boardFile.getOriginalFileName();
+//        String storeFileName = boardFile.getStoredFileName();
+//
+//        UrlResource resource = new UrlResource("file:" + attachFileLocation + storeFileName);
+//
+//        // CONTENT_DISPOSITION이 attachment에 filename이 맞으면 다운로드하게 한다.
+//        // 깨짐 방지를 위해 한글로 확실히 변환시키고 넣기
+//        String encodeUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
+//        String contentDisposition = "attachment; filename=\"" + encodeUploadFileName + "\"";
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+//                .body(resource);
+//    }
 
 
     /**

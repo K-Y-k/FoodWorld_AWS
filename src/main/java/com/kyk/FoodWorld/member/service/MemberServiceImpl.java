@@ -44,22 +44,12 @@ public class MemberServiceImpl implements MemberService {
 //    private final BoardFileRepository boardFileRepository;
 //    private final MenuRecommendRepository menuRecommendRepository;
 
-    @Value("${file.profileLocation}")
-    private String profileLocation;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     private final AmazonS3 amazonS3;
 
-//    @Value("${file.imageFileLocation}")
-//    private String imageFileLocation;
-//
-//    @Value("${file.attachFileLocation}")
-//    private String attachFileLocation;
-//
-//    @Value("${file.menuRecommendLocation}")
-//    private String menuRecommendLocation;
 
     /**
      * 회원가입

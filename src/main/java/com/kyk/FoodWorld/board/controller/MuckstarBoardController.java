@@ -45,8 +45,6 @@ public class MuckstarBoardController {
     private final LikeServiceImpl likeService;
     private final CommentServiceImpl commentService;
 
-    @Value("${file.attachFileLocation}")
-    private String attachFileLocation;
 
     /**
      * 먹스타그램 메인 폼 반환

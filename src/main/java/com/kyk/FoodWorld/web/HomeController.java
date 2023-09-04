@@ -1,5 +1,8 @@
 package com.kyk.FoodWorld.web;
 
+import com.kyk.FoodWorld.board.domain.entity.Board;
+import com.kyk.FoodWorld.board.service.BoardServiceImpl;
+import com.kyk.FoodWorld.like.service.LikeServiceImpl;
 import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.dto.LoginForm;
 import com.kyk.FoodWorld.member.domain.entity.Member;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -19,8 +23,8 @@ import javax.servlet.http.HttpSession;
 public class HomeController {
 
     private final MemberServiceImpl memberService;
-//    private final BoardServiceImpl boardService;
-//    private final LikeServiceImpl likeService;
+    private final BoardServiceImpl boardService;
+    private final LikeServiceImpl likeService;
 //    private final ChatService chatService;
 
 
@@ -32,22 +36,22 @@ public class HomeController {
                                  @ModelAttribute("loginForm") LoginForm form,
                                  Model model) {
 
-//        // 각 게시판 인기글 조회
-//        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
-//        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
-//        List<Board> muckstarBoards = boardService.popularBoardList("먹스타그램");
-//
-//        // 각 게시판 댓글 개수 가져오는 작업
-//        findCommentCount(freeBoards);
-//        findCommentCount(recommendBoards);
-//        findCommentCount(muckstarBoards);
-//
-//        // 각 게시판 모델링
-//        model.addAttribute("freeBoards", freeBoards);
-//        model.addAttribute("recommendBoards", recommendBoards);
-//        model.addAttribute("muckstarBoards", muckstarBoards);
-//
-//
+        // 각 게시판 인기글 조회
+        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
+        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
+        List<Board> muckstarBoards = boardService.popularBoardList("먹스타그램");
+
+        // 각 게시판 댓글 개수 가져오는 작업
+        findCommentCount(freeBoards);
+        findCommentCount(recommendBoards);
+        findCommentCount(muckstarBoards);
+
+        // 각 게시판 모델링
+        model.addAttribute("freeBoards", freeBoards);
+        model.addAttribute("recommendBoards", recommendBoards);
+        model.addAttribute("muckstarBoards", muckstarBoards);
+
+
 //        // 채팅방 목록 처리
 //        if (loginMember != null) {
 //            List<ChatRoom> member1ChatRoom = chatService.findNotLeaveMessageRoom(loginMember.getId());
@@ -88,28 +92,28 @@ public class HomeController {
     }
 
 
-//    /**
-//     * 글 좋아요 업데이트 기능
-//     */
-//    @GetMapping ("/{boardId}/like")
-//    public String likeUpdate(@PathVariable Long boardId,
-//                             @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-//                             Model model) {
-//        if(loginMember == null) {
-//            log.info("로그인 상태가 아님");
-//
-//            model.addAttribute("message", "회원만 좋아요를 누를 수 있습니다. 로그인 먼저 해주세요!");
-//            model.addAttribute("redirectUrl", "/members/login");
-//            return "messages";
-//        }
-//
-//        int likeCount = likeService.saveLike(loginMember.getId(), boardId);
-//        boardService.updateLikeCount(boardId, likeCount);
-//
-//        return "redirect:/";
-//    }
-//
-//
+    /**
+     * 글 좋아요 업데이트 기능
+     */
+    @GetMapping ("/{boardId}/like")
+    public String likeUpdate(@PathVariable Long boardId,
+                             @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+                             Model model) {
+        if(loginMember == null) {
+            log.info("로그인 상태가 아님");
+
+            model.addAttribute("message", "회원만 좋아요를 누를 수 있습니다. 로그인 먼저 해주세요!");
+            model.addAttribute("redirectUrl", "/members/login");
+            return "messages";
+        }
+
+        int likeCount = likeService.saveLike(loginMember.getId(), boardId);
+        boardService.updateLikeCount(boardId, likeCount);
+
+        return "redirect:/";
+    }
+
+
 //    /**
 //     * 클릭한 채팅방 조회
 //     */
@@ -149,14 +153,14 @@ public class HomeController {
 //
 //        return "main";
 //    }
-//
-//
-//    private void findCommentCount(List<Board> baordList) {
-//        for (Board board : baordList) {
-//            Board findBoard = boardService.findById(board.getId()).orElseThrow(() ->
-//                    new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + board.getId()));
-//            boardService.updateCommentCount(findBoard.getId());
-//        }
-//    }
+
+
+    private void findCommentCount(List<Board> baordList) {
+        for (Board board : baordList) {
+            Board findBoard = boardService.findById(board.getId()).orElseThrow(() ->
+                    new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + board.getId()));
+            boardService.updateCommentCount(findBoard.getId());
+        }
+    }
 
 }

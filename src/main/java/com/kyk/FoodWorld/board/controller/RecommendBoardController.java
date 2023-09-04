@@ -44,8 +44,7 @@ public class RecommendBoardController {
     private final LikeServiceImpl likeService;
     private final CommentServiceImpl commentService;
 
-    @Value("${file.attachFileLocation}")
-    private String attachFileLocation;
+
 
     /**
      * 페이징된 글 조회 폼

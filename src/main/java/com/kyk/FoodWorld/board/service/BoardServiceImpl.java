@@ -48,11 +48,6 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
 
-    @Value("${file.imageFileLocation}")
-    private String imageFileLocation;
-
-    @Value("${file.attachFileLocation}")
-    private String attachFileLocation;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -245,18 +240,18 @@ public class BoardServiceImpl implements BoardService {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 첨부파일일 때의 삭제 처리
                     if (boardFile.getAttachedType().equals("attached")) {
-                        deleteFile(attachFileLocation, boardFile);
+                        deleteFile("attachFile", boardFile);
                     } else if (boardFile.getAttachedType().equals("none")){ // 이미지 파일일 때의 삭제 처리
                         // 기존 실제 이미지 파일 삭제
-                        deleteFile(imageFileLocation, boardFile);
+                        deleteFile("imageFile", boardFile);
                     }
                 }
 
                 // 새로 받아온 첨부파일 생성
-                saveNewBoardAndBoardFileDB(attachFiles, attachFileLocation, findBoard, freeBoardUpdateForm, null, null, "attached");
+                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, freeBoardUpdateForm, null, null, "attached");
 
                 // 새로 받아온 이미지 파일 생성
-                saveNewBoardAndBoardFileDB(imageFiles, imageFileLocation, findBoard, freeBoardUpdateForm, null, null, "none");
+                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, freeBoardUpdateForm, null, null, "none");
             } else if (!Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
                 log.info("CASE2: 새로 받아온 첨부 파일만 있을 경우");
 
@@ -264,12 +259,12 @@ public class BoardServiceImpl implements BoardService {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 첨부 파일일 때의 기존 실제 첨부 파일 삭제 처리
                     if (boardFile.getAttachedType().equals("attached")){
-                        deleteFile(attachFileLocation, boardFile);
+                        deleteFile("attachFile", boardFile);
                     }
                 }
 
                 // 새로 받아온 첨부파일만 생성
-                saveNewBoardAndBoardFileDB(attachFiles, attachFileLocation, findBoard, freeBoardUpdateForm, null, null, "attached");
+                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, freeBoardUpdateForm, null, null, "attached");
             } else if (Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
                 log.info("CASE3: 새로 받아온 이미지 파일만 있을 경우");
                 
@@ -277,12 +272,12 @@ public class BoardServiceImpl implements BoardService {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 이미지 파일일 때의 기존 실제 이미지 파일 삭제 처리
                     if (boardFile.getAttachedType().equals("none")) {
-                        deleteFile(imageFileLocation, boardFile);
+                        deleteFile("imageFile", boardFile);
                     }
                 }
 
                 // 새로 받아온 이미지 파일만 생성
-                saveNewBoardAndBoardFileDB(imageFiles, imageFileLocation, findBoard, freeBoardUpdateForm, null, null, "none");
+                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, freeBoardUpdateForm, null, null, "none");
             } else {
                 log.info("CASE4: 새로 받아온 파일이 아예 없을 경우");
 
@@ -303,18 +298,18 @@ public class BoardServiceImpl implements BoardService {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 첨부파일일 때의 삭제 처리
                     if (boardFile.getAttachedType().equals("attached")) {
-                        deleteFile(attachFileLocation, boardFile);
+                        deleteFile("attachFile", boardFile);
                     } else if (boardFile.getAttachedType().equals("none")){ // 이미지 파일일 때의 삭제 처리
                         // 기존 실제 이미지 파일 삭제
-                        deleteFile(imageFileLocation, boardFile);
+                        deleteFile("imageFile", boardFile);
                     }
                 }
 
                 // 새로 받아온 첨부파일 생성
-                saveNewBoardAndBoardFileDB(attachFiles, attachFileLocation, findBoard, null, recommendBoardUpdateForm, null, "attached");
+                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, null, recommendBoardUpdateForm, null, "attached");
 
                 // 새로 받아온 이미지 파일 생성
-                saveNewBoardAndBoardFileDB(imageFiles, imageFileLocation, findBoard, null,  recommendBoardUpdateForm, null, "none");
+                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, null,  recommendBoardUpdateForm, null, "none");
             } else if (!Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
                 log.info("CASE2: 새로 받아온 첨부 파일만 있을 경우");
 
@@ -322,12 +317,12 @@ public class BoardServiceImpl implements BoardService {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 첨부 파일일 때의 기존 실제 첨부 파일 삭제 처리
                     if (boardFile.getAttachedType().equals("attached")){
-                        deleteFile(attachFileLocation, boardFile);
+                        deleteFile("attachFile", boardFile);
                     }
                 }
 
                 // 새로 받아온 첨부파일만 생성
-                saveNewBoardAndBoardFileDB(attachFiles, attachFileLocation, findBoard, null, recommendBoardUpdateForm, null, "attached");
+                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, null, recommendBoardUpdateForm, null, "attached");
             } else if (Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
                 log.info("CASE3: 새로 받아온 이미지 파일만 있을 경우");
 
@@ -335,12 +330,12 @@ public class BoardServiceImpl implements BoardService {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 이미지 파일일 때의 기존 실제 이미지 파일 삭제 처리
                     if (boardFile.getAttachedType().equals("none")) {
-                        deleteFile(imageFileLocation, boardFile);
+                        deleteFile("imageFile", boardFile);
                     }
                 }
 
                 // 새로 받아온 이미지 파일만 생성
-                saveNewBoardAndBoardFileDB(imageFiles, imageFileLocation, findBoard, null, recommendBoardUpdateForm,null,  "none");
+                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, null, recommendBoardUpdateForm,null,  "none");
             } else {
                 log.info("CASE4: 새로 받아온 파일이 아예 없을 경우");
 
@@ -354,11 +349,11 @@ public class BoardServiceImpl implements BoardService {
             if (!Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
                 for (BoardFile boardFile : findBoardFiles) {
                     // 기존 이미지 파일 삭제
-                    deleteFile(imageFileLocation, boardFile);
+                    deleteFile("imageFile", boardFile);
                 }
 
                 // 새로 받아온 이미지 파일 생성
-                saveNewBoardAndBoardFileDB(imageFiles, imageFileLocation, findBoard, null, null, muckstarUpdateForm, "none");
+                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, null, null, muckstarUpdateForm, "none");
             } else { // 새로 받아온 파일이 없을 경우
                 findBoard.updateBoard(muckstarUpdateForm.getTitle(), muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
             }
@@ -368,7 +363,7 @@ public class BoardServiceImpl implements BoardService {
         return findBoard.getId();
     }
 
-    private void saveNewBoardAndBoardFileDB(List<MultipartFile> files, String fileLocation, Board findBoard, FreeBoardUpdateForm freeBoardUpdateForm, RecommendBoardUpdateForm recommendBoardUpdateForm, MuckstarUpdateForm muckstarUpdateForm, String attached) throws IOException {
+    private void saveNewBoardAndBoardFileDB(List<MultipartFile> files, String folder, Board findBoard, FreeBoardUpdateForm freeBoardUpdateForm, RecommendBoardUpdateForm recommendBoardUpdateForm, MuckstarUpdateForm muckstarUpdateForm, String attached) throws IOException {
         log.info("BoardType={}", findBoard.getBoardType());
 
         if (!files.isEmpty()) {
@@ -379,10 +374,14 @@ public class BoardServiceImpl implements BoardService {
                 // 파일에 이름을 붙일 랜덤으로 식별자 지정
                 UUID uuid = UUID.randomUUID();
                 String attachStoredFileName = uuid + "_" + attachOriginalFilename;
-                String savePath = fileLocation;
 
-                // 새로 받아온 실제 첨부파일 디렉토리에 저장
-                file.transferTo(new File(savePath, attachStoredFileName));
+                // S3 버킷에 넣을 파일 설정 및 넣기
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(file.getSize());
+                metadata.setContentType(file.getContentType());
+
+                amazonS3.putObject(bucket, folder + "/"+attachStoredFileName, file.getInputStream(), metadata);
+
 
                 // 각 게시글에 따른 엔티티와 파일 엔티티의 DB 업데이트
                 if (findBoard.getBoardType().equals("자유게시판")) {
@@ -400,16 +399,13 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
-    private void deleteFile(String attachFileLocation, BoardFile boardFile) {
-        // 기존 실제 첨부파일 삭제
-        Path beforeAttachPath = Paths.get(attachFileLocation + "\\" + boardFile.getStoredFileName());
-        try {
-            Files.deleteIfExists(beforeAttachPath);
-        } catch (DirectoryNotEmptyException e) {
-            log.info("디렉토리가 비어있지 않습니다");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void deleteFile(String folder, BoardFile boardFile) {
+        // 삭제 대상 객체 생성
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, folder + "/" + boardFile.getStoredFileName());
+
+        // 삭제 처리
+        amazonS3.deleteObject(deleteObjectRequest);
+
         // 기존 파일 엔티티 삭제
         boardFileRepository.delete(boardFile);
     }
