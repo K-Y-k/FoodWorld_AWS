@@ -165,11 +165,11 @@
           <br>
           <br>
 
-          <div th:if="${board.area != null}">
+          <div th:unless="${#strings.isEmpty(board.area)}">
               <h4 class="content" th:text="|식당 주소: ${board.area}|" style="margin-left: 2%;"></h4>
           </div>
 
-          <div th:if="${board.menuName != null}">
+          <div th:unless="${#strings.isEmpty(board.menuName)}">
               <h4 class="content" th:text="|메뉴 카테고리: ${board.menuName}|" style="margin-left: 2%;"></h4>
           </div>
 
@@ -225,7 +225,7 @@
                                   <table style="position: relative; width: 40vw;">
                                       <td style="float: left;">
                                           <img class="rounded-circle"
-                                               th:src="@{|/profileImageUpload/${comment.member.profileFile.storedFileName}|}"
+                                               th:src="@{${comment.member.profileFile.path}}"
                                                style="width: 3vw; height: 5vh;">
                                       </td>
 

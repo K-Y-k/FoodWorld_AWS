@@ -380,7 +380,7 @@ public class BoardServiceImpl implements BoardService {
                 metadata.setContentLength(file.getSize());
                 metadata.setContentType(file.getContentType());
 
-                amazonS3.putObject(bucket, folder + "/"+attachStoredFileName, file.getInputStream(), metadata);
+                amazonS3.putObject(bucket, folder + "/" + attachStoredFileName, file.getInputStream(), metadata);
 
 
                 // 각 게시글에 따른 엔티티와 파일 엔티티의 DB 업데이트
@@ -393,7 +393,7 @@ public class BoardServiceImpl implements BoardService {
                     findBoard.updateBoard(muckstarUpdateForm.getTitle(), muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
                 }
 
-                BoardFile updateBoardFileEntity = BoardFile.toBoardFileEntity(findBoard, attachOriginalFilename, attachStoredFileName, amazonS3.getUrl(bucket, folder + attachStoredFileName).toString(), attached);
+                BoardFile updateBoardFileEntity = BoardFile.toBoardFileEntity(findBoard, attachOriginalFilename, attachStoredFileName, amazonS3.getUrl(bucket, folder + "/" + attachStoredFileName).toString(), attached);
                 boardFileRepository.save(updateBoardFileEntity);
             }
         }

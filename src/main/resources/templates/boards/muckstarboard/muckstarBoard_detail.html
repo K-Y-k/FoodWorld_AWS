@@ -124,7 +124,7 @@
             <div class="row">
                 <div class="col" style="margin-left: 2%;">
                     <img th:if="${profileFile != null}"
-                         th:src="@{|/profileImageUpload/${profileFile.storedFileName}|}"
+                         th:src="@{${profileFile.path}}"
                          class="rounded-circle"
                          style="float: left; width: 50px; height: 50px;">
 
@@ -194,7 +194,7 @@
                                   <table style="position: relative; width: 40vw;">
                                       <td style="float: left;">
                                           <img class="rounded-circle"
-                                               th:src="@{|/profileImageUpload/${comment.member.profileFile.storedFileName}|}"
+                                               th:src="@{${comment.member.profileFile.path}}"
                                                style="width: 3vw; height: 5vh;">
                                       </td>
 

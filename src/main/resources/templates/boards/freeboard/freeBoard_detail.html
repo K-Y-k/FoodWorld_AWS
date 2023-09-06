@@ -208,7 +208,7 @@
                                   <table style="position: relative; width: 40vw;">
                                       <td style="float: left;">
                                           <img class="rounded-circle"
-                                               th:src="@{|/profileImageUpload/${comment.member.profileFile.storedFileName}|}"
+                                               th:src="@{${comment.member.profileFile.path}}"
                                                style="width: 3vw; height: 5vh;">
                                       </td>
 
