@@ -3,9 +3,12 @@ package com.kyk.FoodWorld.board.service;
 
 import com.kyk.FoodWorld.board.domain.dto.*;
 import com.kyk.FoodWorld.board.domain.entity.Board;
+import com.kyk.FoodWorld.board.domain.entity.BoardFile;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.List;
@@ -99,6 +102,12 @@ public interface BoardService {
     List<Board> popularBoardList(String boardType);
 
     Page<Board> categoryBoardList(String boardType, BoardSearchCond boardSearchDto, Pageable pageable);
+
+
+    /**
+     * 파일 다운로드
+     */
+    ResponseEntity<byte[]> fileDownload(BoardFile boardFile) throws IOException;
 }
 
 

@@ -17,26 +17,20 @@ import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriUtils;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -338,31 +332,16 @@ public class FreeBoardController {
         return "redirect:/boards/freeBoard";
     }
 
-//    /**
-//     * 파일 다운로드
-//     */
-//    @GetMapping("/attach/{boardFileId}")
-//    public ResponseEntity<Resource> downloadAttach(@PathVariable Long boardFileId) throws MalformedURLException {
-//
-//        BoardFile boardFile = boardService.findBoardFileById(boardFileId).orElseThrow(() ->
-//                new IllegalArgumentException("파일 가져오기 실패: 파일을 찾지 못했습니다." + boardFileId));;
-//
-//        // 직접 접근해서 storedFileName, uploadFileName을 가져옴
-//        // uploadFileName은 다운로드 받을 때의 파일명이 필요해서
-//        String uploadFileName = boardFile.getOriginalFileName();
-//        String storeFileName = boardFile.getStoredFileName();
-//
-//        UrlResource resource = new UrlResource("file:" + attachFileLocation + storeFileName);
-//
-//        // CONTENT_DISPOSITION이 attachment에 filename이 맞으면 다운로드하게 한다.
-//        // 깨짐 방지를 위해 한글로 확실히 변환시키고 넣기
-//        String encodeUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
-//        String contentDisposition = "attachment; filename=\"" + encodeUploadFileName + "\"";
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-//                .body(resource);
-//    }
+    /**
+     * 파일 다운로드
+     */
+    @GetMapping("/attach/{boardFileId}")
+    public ResponseEntity<byte[]> downloadAttach(@PathVariable Long boardFileId) throws IOException {
+        BoardFile boardFile = boardService.findBoardFileById(boardFileId).orElseThrow(() ->
+                new IllegalArgumentException("파일 가져오기 실패: 파일을 찾지 못했습니다." + boardFileId));
+
+        return boardService.fileDownload(boardFile);
+    }
 
 
     /**

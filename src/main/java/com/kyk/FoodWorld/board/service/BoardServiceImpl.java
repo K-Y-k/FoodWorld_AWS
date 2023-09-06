@@ -2,8 +2,8 @@ package com.kyk.FoodWorld.board.service;
 
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import com.kyk.FoodWorld.board.domain.dto.*;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.domain.entity.BoardFile;
@@ -15,19 +15,23 @@ import com.kyk.FoodWorld.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -530,6 +534,38 @@ public class BoardServiceImpl implements BoardService {
 
         boardRepository.delete(boardId);
     }
+
+    @Override
+    public ResponseEntity<byte[]> fileDownload(BoardFile boardFile) throws IOException {
+        // S3 버킷에서 해당 관련 파일이 있는지 조회하여 객체로 담기
+        S3Object o = amazonS3.getObject(new GetObjectRequest(bucket, "attachFile/" + boardFile.getStoredFileName()));
+        log.info("파일 정상 받아졌나? = {}", o.getBucketName());
+
+
+        // 객체의 내용을 S3ObjectInputStream 형태로 가져오고
+        S3ObjectInputStream objectInputStream = o.getObjectContent();
+        // IOUtils의 toByteArray() 메소드에 의해 파일을 만들고 내용을 쓰는 과정
+        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+
+        // 받을 파일명에 깨짐 방지를 위해 한글로 확실히 변환시키고 넣기
+        String fileName = URLEncoder.encode(boardFile.getOriginalFileName(), StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+
+        // Http 헤더 생성
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        // 전송하는 파일의 종류에 따라 Content-Type을 지정해준다.
+        // 이미지는 "image/jpeg" 같은 형식으로, 기타 파일은 "application/octet-stream"을 넣어준다.
+        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        // 파일의 길이를 맞춰준다.
+        httpHeaders.setContentLength(bytes.length);
+
+        // attachment에 filename이 맞으면 다운로드하게 한다.
+        httpHeaders.setContentDispositionFormData("attachment", fileName);
+
+        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    }
+
 
     @Override
     public int updateCount(Long boardId) {
