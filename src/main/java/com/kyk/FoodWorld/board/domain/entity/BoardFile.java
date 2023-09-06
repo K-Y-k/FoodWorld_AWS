@@ -20,6 +20,8 @@ public class BoardFile extends BaseTimeEntity {
 
     private String storedFileName;
 
+    private String path;
+
     private String attachedType;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,18 +35,20 @@ public class BoardFile extends BaseTimeEntity {
     }
 
     // board 엔티티에 originalFileName, storedFileName 컬럼을 추가하지 않기 위해
-    public static BoardFile toBoardFileEntity(Board board, String originalFileName, String storedFileName, String attachedType) {
+    public static BoardFile toBoardFileEntity(Board board, String originalFileName, String storedFileName, String path, String attachedType) {
          return BoardFile.builder()
                  .originalFileName(originalFileName)
                  .storedFileName(storedFileName)
+                 .path(path)
                  .board(board)
                  .attachedType(attachedType)
                  .build();
     }
 
-    public void updateBoardFile(String originalFileName, String storedFileName, String attachedType){
+    public void updateBoardFile(String originalFileName, String storedFileName, String path, String attachedType){
         this.originalFileName = originalFileName;
         this.storedFileName = storedFileName;
+        this.path = path;
         this.attachedType = attachedType;
     }
 

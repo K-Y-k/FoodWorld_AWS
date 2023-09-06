@@ -71,8 +71,8 @@ public class SpringDataJpaMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void updateProfileImage(String originalFileName, String storedFileName, Long memberId) {
-        profileFileRepository.updateProfileImage(originalFileName, storedFileName, memberId);
+    public void updateProfileImage(String originalFileName, String storedFileName, String path, Long memberId) {
+        profileFileRepository.updateProfileImage(originalFileName, storedFileName, path, memberId);
     }
 
     @Override

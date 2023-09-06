@@ -147,7 +147,7 @@ public class BoardServiceImpl implements BoardService {
             String attachedType = "none";
 
             // DB에 파일 관련 필드 값 저장
-            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, attachedType);
+            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "imageFile/"+storedFileName).toString(),attachedType);
             boardFileRepository.save(boardFileEntity);
         }
     }
@@ -170,7 +170,7 @@ public class BoardServiceImpl implements BoardService {
             String attachedType = "none";
 
             // DB에 파일 관련 필드 값 저장
-            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, attachedType);
+            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "imageFile/"+storedFileName).toString(), attachedType);
             boardFileRepository.save(boardFileEntity);
         }
     }
@@ -194,7 +194,7 @@ public class BoardServiceImpl implements BoardService {
             String attachedType = "attached";
 
             // DB에 파일 관련 필드 값 저장
-            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, attachedType);
+            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "attachFile/"+storedFileName).toString(), attachedType);
             boardFileRepository.save(boardFileEntity);
         }
     }
@@ -393,7 +393,7 @@ public class BoardServiceImpl implements BoardService {
                     findBoard.updateBoard(muckstarUpdateForm.getTitle(), muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
                 }
 
-                BoardFile updateBoardFileEntity = BoardFile.toBoardFileEntity(findBoard, attachOriginalFilename, attachStoredFileName, attached);
+                BoardFile updateBoardFileEntity = BoardFile.toBoardFileEntity(findBoard, attachOriginalFilename, attachStoredFileName, amazonS3.getUrl(bucket, folder + attachStoredFileName).toString(), attached);
                 boardFileRepository.save(updateBoardFileEntity);
             }
         }

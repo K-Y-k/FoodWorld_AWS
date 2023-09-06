@@ -70,6 +70,7 @@ public class MemberServiceImpl implements MemberService {
         ProfileFile profileFile = ProfileFile.builder()
                 .originalFileName("user_icon.PNG")
                 .storedFileName(storedFileName)
+                .path(getProfileFilePath(storedFileName))
                 .member(memberEntity)
                 .build();
 
@@ -241,7 +242,33 @@ public class MemberServiceImpl implements MemberService {
         amazonS3.deleteObject(deleteObjectRequest);
     }
 
-    @Override
+    // 프로필 이미지 변경 메서드
+    private void profileImageUpload(UpdateForm form, Member member) throws IOException {
+        String originalFilename = form.getProfileImage().getOriginalFilename();
+
+        // 파일에 이름을 붙일 랜덤으로 식별자 지정
+        UUID uuid = UUID.randomUUID();
+        String storedFileName = uuid + "_" + originalFilename;
+
+        // S3 버킷에 넣을 파일 설정 및 넣기
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(form.getProfileImage().getSize());
+        metadata.setContentType(form.getProfileImage().getContentType());
+
+        amazonS3.putObject(bucket, "profileFile/"+storedFileName, form.getProfileImage().getInputStream(), metadata);
+
+        // 회원의 기존 프로필 사진에서 교체
+        memberRepository.updateProfileImage(originalFilename, storedFileName, getProfileFilePath(storedFileName), member.getId());
+    }
+
+
+    // 회원 프로필 사진 경로 가져오기 메서드
+    private String getProfileFilePath(String storedFileName) {
+        return amazonS3.getUrl(bucket, "profileFile/" + storedFileName).toString();
+    }
+
+
+    // 회원가입에서의 닉네임 체크 메서드
     public int checkName(String memberName) {
         // 문자열에 빈 공백 검사
         for (int i = 0; i < memberName.length(); i++) {
@@ -261,7 +288,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
+    // 회원가입에서의 로그인 아이디 체크 메서드
     public int checkLoginId(String memberLoginId) {
         // 문자열에 빈 공백 검사
         for (int i = 0; i < memberLoginId.length(); i++) {
@@ -281,7 +308,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
+    // 회원 수정에서의 닉네임 변경 메서드
     public int updateCheckName(String memberName, Long memberId) {
         // 문자열에 빈 공백 검사
         for (int i = 0; i < memberName.length(); i++) {
@@ -301,7 +328,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    @Override
+    // 회원 수정에서의 로그인 아이디 변경 메서드
     public int updateCheckLoginId(String memberLoginId, Long memberId) {
         // 문자열에 빈 공백 검사
         for (int i = 0; i < memberLoginId.length(); i++) {
@@ -320,38 +347,6 @@ public class MemberServiceImpl implements MemberService {
             return memberRepository.updateCheckLoginId(memberLoginId, memberId);
         }
     }
-
-    private void profileImageUpload(UpdateForm form, Member member) throws IOException {
-        String originalFilename = form.getProfileImage().getOriginalFilename();
-
-        // 파일에 이름을 붙일 랜덤으로 식별자 지정
-        UUID uuid = UUID.randomUUID();
-        String storedFileName = uuid + "_" + originalFilename;
-
-        // S3 버킷에 넣을 파일 설정 및 넣기
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(form.getProfileImage().getSize());
-        metadata.setContentType(form.getProfileImage().getContentType());
-
-        amazonS3.putObject(bucket, "profileFile/"+storedFileName, form.getProfileImage().getInputStream(), metadata);
-
-        // 회원의 기존 프로필 사진에서 교체
-        memberRepository.updateProfileImage(originalFilename, storedFileName, member.getId());
-    }
-
-
-    /**
-     * 회원 프로필 사진 경로 가져오기
-     */
-    public String findProfileLocation(Long memberId) {
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
-                new IllegalArgumentException("회원 조회 실패: " + memberId));
-
-        ProfileFile findMemberProfile = memberRepository.findProfileByMember(findMember);
-
-        return findMemberProfile.getStoredFileName();
-    }
-
 }
 
 

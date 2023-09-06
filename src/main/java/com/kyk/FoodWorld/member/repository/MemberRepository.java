@@ -30,7 +30,7 @@ public interface MemberRepository {
 
     ProfileFile findProfileByMember(Member member);
 
-    void updateProfileImage(String originalFileName, String storedFileName, Long memberId);
+    void updateProfileImage(String originalFileName, String storedFileName, String path, Long memberId);
 
     Page<Member> findPageBy(Pageable pageable);
     Page<Member> findByNameContaining(String memberSearchKeyword, Pageable pageable);

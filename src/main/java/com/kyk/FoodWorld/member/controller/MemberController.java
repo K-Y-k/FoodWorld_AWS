@@ -161,6 +161,7 @@ public class MemberController {
         ProfileFile profileFile = member.getProfileFile();
         if (profileFile != null && !profileFile.getStoredFileName().isEmpty()) {
             model.addAttribute("profileFile", profileFile);
+            log.info("프로필 경로 = {}", profileFile.getPath());
         }
 
 //        // 해당 회원이 작성한 게시글 총 개수

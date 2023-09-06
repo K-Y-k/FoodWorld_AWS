@@ -21,7 +21,7 @@ public interface ProfileFileRepository extends JpaRepository<ProfileFile, Long> 
      * 프로필 사진 엔티티의 필드 내용을 변경
      */
     @Modifying
-    @Query("update ProfileFile p set p.originalFileName = :originalFileName, p.storedFileName = :storedFileName where p.member.id = :memberId")
-    void updateProfileImage(String originalFileName, String storedFileName, Long memberId);
+    @Query("update ProfileFile p set p.originalFileName = :originalFileName, p.storedFileName = :storedFileName, p.path = :path where p.member.id = :memberId")
+    void updateProfileImage(String originalFileName, String storedFileName, String path, Long memberId);
 
 }

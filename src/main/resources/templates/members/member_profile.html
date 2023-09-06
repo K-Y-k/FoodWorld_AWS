@@ -144,7 +144,7 @@
                             <tr>
                                 <td>
                                     <img th:if="${profileFile != null}"
-                                         th:src="@{|/profileImageUpload/${profileFile.storedFileName}|}"
+                                         th:src="@{${profileFile.path}}"
                                          class="rounded-circle"
                                          style="width: 70px; height: 70px;">
                                 </td>

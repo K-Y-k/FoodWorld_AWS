@@ -141,7 +141,7 @@ function getStoryItem(board) {
                             <td>
                                 <div class="card" id="card" style="margin-top: 5%; left: 10%; width: 40vw; height: 70vh;">
                                     <a href="/boards/muckstarBoard/${board.id}">
-                                        <img class="muckstar-image" src="/imageFileUpload/${board.boardFiles[0].storedFileName}"
+                                        <img class="muckstar-image" src="${board.boardFiles[0].path}"
                                              style="width: 40vw; height: 62vh;">
                                     </a>
 

@@ -113,7 +113,7 @@
 
             <div th:each="imageFile : ${boardFiles}"
                  style="width: 40vw; display: flex; justify-content: center; margin-left: 10%; margin-top: 5%;">
-                <img th:src="@{|/imageFileUpload/${imageFile.storedFileName}|}"
+                <img th:src="@{${imageFile.path}}"
                      style="max-width: 100%; height: auto;">
             </div>
 
