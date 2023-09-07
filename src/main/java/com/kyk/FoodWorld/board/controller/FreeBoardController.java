@@ -76,7 +76,6 @@ public class FreeBoardController {
             Board findBoard = boardService.findById(board.getId()).orElseThrow(() ->
                     new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + board.getId()));
             boardService.updateCommentCount(findBoard.getId());
-            boardService.updateCount(board.getId());
         }
 
         int nowPage = pageable.getPageNumber() + 1;                  // 페이지에 넘어온 페이지를 가져옴 == boards.getPageable().getPageNumber()
