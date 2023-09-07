@@ -114,6 +114,9 @@ public class MenuController {
 
         log.info("바인딩 에러 정보 = {}", bindingResult);
         if (bindingResult.hasErrors()) {
+            String binPath = menuRecommendService.getBinPath();
+            model.addAttribute("path", binPath);
+
             return "menurecommend/menu_recommend_upload";
         }
 

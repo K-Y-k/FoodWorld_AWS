@@ -74,8 +74,11 @@ public class MenuRecommendServiceImpl implements MenuRecommendService{
 
         amazonS3.putObject(bucket, "menuRecommend/"+storedFileName, uploadForm.getImageFile().getInputStream(), metadata);
 
+        // 파일 불러오기 경로
+        String path = amazonS3.getUrl(bucket, "menuRecommend/"+storedFileName).toString();
+
         // DB에 파일 관련 필드 값 저장
-        MenuRecommend menuRecommendEntity = uploadForm.toSaveEntity(member, uploadForm, storedFileName);
+        MenuRecommend menuRecommendEntity = uploadForm.toSaveEntity(member, uploadForm, storedFileName, path);
         menuRecommendRepository.save(menuRecommendEntity);
     }
 

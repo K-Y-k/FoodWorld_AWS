@@ -27,7 +27,7 @@ public class MenuRecommendUploadForm {
 
     private MultipartFile imageFile;
 
-    public MenuRecommend toSaveEntity(Member member, MenuRecommendUploadForm uploadForm, String storedFileName) {
+    public MenuRecommend toSaveEntity(Member member, MenuRecommendUploadForm uploadForm, String storedFileName, String path) {
         return MenuRecommend.builder()
                 .category(uploadForm.getCategory())
                 .franchises(uploadForm.getFranchises())
@@ -35,6 +35,7 @@ public class MenuRecommendUploadForm {
                 .member(member)
                 .originalFileName(uploadForm.getImageFile().getOriginalFilename())
                 .storedFileName(storedFileName)
+                .path(path)
                 .build();
     }
 }
