@@ -174,7 +174,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
                         board.boardType.eq(boardType),
                         board.createdDate.between(startToday, endToday)
                 )
-                .orderBy(board.count.doubleValue().multiply(0.7).add(board.likeCount.doubleValue().multiply(0.3)).desc(),
+                .orderBy(board.count.multiply(7).add(board.likeCount.multiply(3)).desc(),
                         board.createdDate.desc(),
                         board.id.desc())
                 .limit(limit)
