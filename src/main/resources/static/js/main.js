@@ -20,7 +20,7 @@ function randomMenu() {  // 랜덤 메뉴 함수
     		let randomPick = result; // 단일 객체
 
             $("#category").text("카테고리: "+randomPick.category);
-            $("#menuImg").attr("src", "/menuRecommendImageUpload/"+randomPick.storedFileName)
+            $("#menuImg").attr("src", randomPick.path);
             $("#franchises").text(randomPick.franchises);
             $("#menuName").text(randomPick.menuName);
     	},

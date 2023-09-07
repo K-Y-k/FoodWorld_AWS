@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!--부트 스트랩 적용-->
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <!--css 적용-->
+    <link rel="stylesheet" type="text/css" href="../css/boards/board/board_upload_style.css" th:href="@{/board_upload_style.css}">
+</head>
+
+<body>
+<header style="position: relative;">
+    <img src="/image/main_img/logo2.PNG" class="logo"
+         style="position: absolute; z-index: 3; width: 170px; height: 90px; left: 2.5%; top: 10%;" id="logo2">
+
+    <div class="px-3 py-2 bg-dark text-white">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <img src="/image/main_img/menu_recommend_icon.PNG" width="60px" height="50px">
+                <a href="/menu" class="navbar-brand"><h4 class="thema">&nbsp;&nbsp;메뉴추천</h4></a>
+
+                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                    <li>
+                        <img src="/image/main_img/home_icon.PNG" width="45px" height="40px"
+                             style="margin-left: 151px; margin-top: 10px;">
+                        <a href="/" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메인
+                        </a>
+                    </li>
+                    <li>
+                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 100px; margin-top: 10px;">
+                        <a href="/boards/freeBoard" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;자유게시판
+                        </a>
+                    </li>
+                    <li>
+                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 85px; margin-top: 10px;">
+                        <a href="/boards/recommendBoard" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;추천게시판
+                        </a>
+                    </li>
+                    <li>
+                        <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px"
+                             style="margin-left: 88px; margin-top: 10px;">
+                        <a href="/boards/muckstarBoard" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;먹스타그램
+                        </a>
+                    </li>
+                    <li>
+                        <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px"
+                             style="margin-left: 65px; margin-top: 10px;">
+                        <a href="/chat" class="nav-link text-white">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;채팅방&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </a>
+                    </li>
+
+                    <li>
+                        <h5 th:if="${session.loginMember != null}"
+                            th:text="${session.loginMember.name}+ '님 접속중'"
+                            id="userName" style="font-size : 13px; margin-top: 20px;">
+                        </h5>
+
+                        <br>
+
+                        <form th:action="@{/members/logout}" method="post">
+                            <button th:if="${session.loginMember != null}"
+                                    type="submit" class="btn btn-primary" id="logout"
+                                    style="width: 90px; height: 35px; position :absolute; top: 56%;"
+                                    th:onclick="@{/members/logout}">로그아웃
+                            </button>
+                        </form>
+
+                        <button th:if="${session.loginMember == null}"
+                                type="submit" class="btn btn-primary"
+                                style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
+                                th:onclick="|location.href='@{/members/login}'|">로그인
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section style="position: relative; width: 90vw; height: 30vh;">
+    <h2 id="categoryMenuRecommend" style="position: absolute; left: 50%; top: 10%;"><b>메뉴 수정하기</b></h2>
+
+    <form th:action th:object="${updateForm}" method="post" enctype="multipart/form-data">
+        <div class="container mt-3" style="position: absolute; top: 20%; width: 50vw; left: 25%">
+            <div class="field-error" style="color: red;" th:errors="*{category}"></div>
+            <div class="form-group col-sm-2">
+                <select th:field="*{category}" class="form-select">
+                    <option value="">카테고리 선택</option>
+                    <option th:value="한식">한식</option>
+                    <option th:value="중식">중식</option>
+                    <option th:value="|일식/돈까스|">일식/돈까스</option>
+                    <option th:value="|회/초밥|">회/초밥</option>
+                    <option th:value="치킨">치킨</option>
+                    <option th:value="피자">피자</option>
+                    <option th:value="|족빌/보쌈|">족발/보쌈</option>
+                    <option th:value="햄버거">햄버거</option>
+                    <option th:value="샌드위치">샌드위치</option>
+                    <option th:value="분식">분식</option>
+                    <option th:value="|찜/탕|">찜/탕</option>
+                    <option th:value="샐러드">샐러드</option>
+                    <option th:value="|도시락/죽|">도시락/죽</option>
+                    <option th:value="아시안">아시안</option>
+                    <option th:value="기타">기타</option>
+                </select>
+            </div>
+
+            <div class="field-error" style="color: red;" th:errors="*{franchises}"></div>
+            <input type="text" id="franchises" class="form-control mt-2" name="franchises" th:field="*{franchises}" placeholder="식당/체인점을 입력해주세요"
+                   th:errorclass="field-error">
+
+            <div class="field-error" style="color: red;" th:errors="*{menuName}"></div>
+            <input type="text" id="menuName" class="form-control mt-2" name="menuName" th:field="*{menuName}" placeholder="메뉴 이름을 입력해주세요"
+                   th:errorclass="field-error">
+
+            <br>
+
+            <label th:for="img">메뉴 이미지 선택</label>
+            <br>
+            <img th:id="thumbnail"
+                 th:src="@{${path}}"
+                 style="width: 30vw; height: 40vh;">
+            <input class="form-control mt-2" id="InputImage" type="file" name="imageFile" onchange="readURL(this)">
+
+
+            <button class="btn btn-danger mt-3" type="submit">등록하기</button>
+            <button class="btn btn-danger mt-3"
+                    th:onclick="|location.href='@{/menu}'|"
+                    type="button">취소
+            </button>
+        </div>
+    </form>
+</section>
+
+<script>
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.readAsDataURL(input.files[0]);
+
+        reader.onload = function (e) {
+            var tempImage=new Image();
+        	tempImage.src=reader.result;
+
+        	console.log(tempImage);
+
+        	tempImage.onload=function(){
+        		var canvas=document.createElement('canvas');
+        		var canvasContext=canvas.getContext("2d");
+
+            	var img = new Image();
+	        	img.src = e.target.result;
+
+        		canvas.width=img.width*0.5;
+        		canvas.height=img.height*0.5;
+
+        		canvasContext.drawImage(this,0,0,canvas.width,canvas.height);
+
+        		var dataURI=canvas.toDataURL("image/png");
+
+        		document.querySelector("#thumbnail").src=dataURI;
+        	}
+        };
+
+    }
+}
+</script>
+</body>
+</html>
