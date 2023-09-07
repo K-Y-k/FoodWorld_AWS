@@ -36,20 +36,20 @@ public class HomeController {
                                  @ModelAttribute("loginForm") LoginForm form,
                                  Model model) {
 
-//        // 각 게시판 인기글 조회
-//        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
-//        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
-//        List<Board> muckstarBoards = boardService.popularBoardList("먹스타그램");
-//
-//        // 각 게시판 댓글 개수 가져오는 작업
-//        findCommentCount(freeBoards);
-//        findCommentCount(recommendBoards);
-//        findCommentCount(muckstarBoards);
-//
-//        // 각 게시판 모델링
-//        model.addAttribute("freeBoards", freeBoards);
-//        model.addAttribute("recommendBoards", recommendBoards);
-//        model.addAttribute("muckstarBoards", muckstarBoards);
+        // 각 게시판 인기글 조회
+        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
+        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
+        List<Board> muckstarBoards = boardService.popularBoardList("먹스타그램");
+
+        // 각 게시판 댓글 개수 가져오는 작업
+        findCommentCount(freeBoards);
+        findCommentCount(recommendBoards);
+        findCommentCount(muckstarBoards);
+
+        // 각 게시판 모델링
+        model.addAttribute("freeBoards", freeBoards);
+        model.addAttribute("recommendBoards", recommendBoards);
+        model.addAttribute("muckstarBoards", muckstarBoards);
 
 
 //        // 채팅방 목록 처리
