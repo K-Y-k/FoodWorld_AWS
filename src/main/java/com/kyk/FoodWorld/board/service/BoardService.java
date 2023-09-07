@@ -5,6 +5,7 @@ import com.kyk.FoodWorld.board.domain.dto.*;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.domain.entity.BoardFile;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -107,7 +108,7 @@ public interface BoardService {
     /**
      * 파일 다운로드
      */
-    ResponseEntity<byte[]> fileDownload(BoardFile boardFile) throws IOException;
+    ResponseEntity<UrlResource> fileDownload(BoardFile boardFile) throws IOException;
 }
 
 

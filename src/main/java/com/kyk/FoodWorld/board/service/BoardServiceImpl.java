@@ -405,10 +405,7 @@ public class BoardServiceImpl implements BoardService {
 
     private void deleteFile(String folder, BoardFile boardFile) {
         // 삭제 대상 객체 생성
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, folder + "/" + boardFile.getStoredFileName());
-
-        // 삭제 처리
-        amazonS3.deleteObject(deleteObjectRequest);
+        deleteFile(folder + "/" + boardFile.getStoredFileName());
 
         // 기존 파일 엔티티 삭제
         boardFileRepository.delete(boardFile);
@@ -515,55 +512,46 @@ public class BoardServiceImpl implements BoardService {
         if (boardType.equals("자유게시판") || boardType.equals("추천게시판")) {
             for (BoardFile boardFile : findBoardFiles) {
                 if (boardFile.getAttachedType().equals("attached")) {
-                    // 삭제 대상 객체 생성
-                    DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "attachFile/" + boardFile.getStoredFileName());
-
-                    // 삭제 처리
-                    amazonS3.deleteObject(deleteObjectRequest);
+                    deleteFile("attachFile/" + boardFile.getStoredFileName());
                 } else {
-                    DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "imageFile/" + boardFile.getStoredFileName());
-                    amazonS3.deleteObject(deleteObjectRequest);
+                    deleteFile("imageFile/" + boardFile.getStoredFileName());
                 }
             }
         } else {
             for (BoardFile boardFile : findBoardFiles) {
-                DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "imageFile/" + boardFile.getStoredFileName());
-                amazonS3.deleteObject(deleteObjectRequest);
+                deleteFile("imageFile/" + boardFile.getStoredFileName());
             }
         }
 
         boardRepository.delete(boardId);
     }
 
+    private void deleteFile(String key) {
+        // 삭제 대상 객체 생성
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
+
+        // 삭제 처리
+        amazonS3.deleteObject(deleteObjectRequest);
+    }
+
     @Override
-    public ResponseEntity<byte[]> fileDownload(BoardFile boardFile) throws IOException {
+    public ResponseEntity<UrlResource> fileDownload(BoardFile boardFile) throws IOException {
         // S3 버킷에서 해당 관련 파일이 있는지 조회하여 객체로 담기
         S3Object o = amazonS3.getObject(new GetObjectRequest(bucket, "attachFile/" + boardFile.getStoredFileName()));
         log.info("파일 정상 받아졌나? = {}", o.getBucketName());
 
+        // S3에 올라간 파일은 amazonS3.getUrl(버킷이름, 파일이름)을 통해 UrlResource에 담아 파일 다운로드를 할 수 있다.
+        UrlResource resource = new UrlResource(amazonS3.getUrl(bucket, o.getKey()));
 
-        // 객체의 내용을 S3ObjectInputStream 형태로 가져오고
-        S3ObjectInputStream objectInputStream = o.getObjectContent();
-        // IOUtils의 toByteArray() 메소드에 의해 파일을 만들고 내용을 쓰는 과정
-        byte[] bytes = IOUtils.toByteArray(objectInputStream);
+        // 받을 파일명을 한글 깨짐 방지를 위해 한글로 확실히 변환시키고 넣기
+        String encodeUploadFileName = UriUtils.encode(boardFile.getOriginalFileName(), StandardCharsets.UTF_8);
 
-        // 받을 파일명에 깨짐 방지를 위해 한글로 확실히 변환시키고 넣기
-        String fileName = URLEncoder.encode(boardFile.getOriginalFileName(), StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        // CONTENT_DISPOSITION이 attachment에 filename이 맞으면 다운로드하게 한다.
+        String contentDisposition = "attachment; filename=\"" + encodeUploadFileName + "\"";
 
-        // Http 헤더 생성
-        HttpHeaders httpHeaders = new HttpHeaders();
-
-        // 전송하는 파일의 종류에 따라 Content-Type을 지정해준다.
-        // 이미지는 "image/jpeg" 같은 형식으로, 기타 파일은 "application/octet-stream"을 넣어준다.
-        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-        // 파일의 길이를 맞춰준다.
-        httpHeaders.setContentLength(bytes.length);
-
-        // attachment에 filename이 맞으면 다운로드하게 한다.
-        httpHeaders.setContentDispositionFormData("attachment", fileName);
-
-        return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(resource);
     }
 
 

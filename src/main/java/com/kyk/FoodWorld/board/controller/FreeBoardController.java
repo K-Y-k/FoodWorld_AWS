@@ -17,6 +17,7 @@ import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -336,7 +337,7 @@ public class FreeBoardController {
      * 파일 다운로드
      */
     @GetMapping("/attach/{boardFileId}")
-    public ResponseEntity<byte[]> downloadAttach(@PathVariable Long boardFileId) throws IOException {
+    public ResponseEntity<UrlResource> downloadAttach(@PathVariable Long boardFileId) throws IOException {
         BoardFile boardFile = boardService.findBoardFileById(boardFileId).orElseThrow(() ->
                 new IllegalArgumentException("파일 가져오기 실패: 파일을 찾지 못했습니다." + boardFileId));
 
