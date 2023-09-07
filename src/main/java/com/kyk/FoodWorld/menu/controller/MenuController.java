@@ -71,7 +71,7 @@ public class MenuController {
             log.info("hasNext = {}", menuRecommends.hasNext());
         }
 
-        return "/menurecommend/menu_recommend";
+        return "menurecommend/menu_recommend";
     }
 
     
@@ -94,7 +94,7 @@ public class MenuController {
         String binPath = menuRecommendService.getBinPath();
         model.addAttribute("path", binPath);
 
-        return "/menurecommend/menu_recommend_upload";
+        return "menurecommend/menu_recommend_upload";
     }
 
     /**
@@ -114,7 +114,7 @@ public class MenuController {
 
         log.info("바인딩 에러 정보 = {}", bindingResult);
         if (bindingResult.hasErrors()) {
-            return "/menurecommend/menu_recommend_upload";
+            return "menurecommend/menu_recommend_upload";
         }
 
         // 파일을 필수로 넣게하기 위한 방지 작업
@@ -151,7 +151,7 @@ public class MenuController {
         model.addAttribute("path", path);
         model.addAttribute("updateForm", findMenuRecommend);
 
-        return "/menurecommend/menu_recommend_edit";
+        return "menurecommend/menu_recommend_edit";
     }
 
     /**
@@ -170,7 +170,7 @@ public class MenuController {
             String path = findMenuRecommend.getPath();
             model.addAttribute("path", path);
 
-            return "/menurecommend/menu_recommend_edit";
+            return "menurecommend/menu_recommend_edit";
         }
 
         menuRecommendService.updateMenu(menuRecommendId, updateForm);
