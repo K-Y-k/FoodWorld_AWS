@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.comment.domain.entity.Comment;
 import com.kyk.FoodWorld.like.domain.entity.Like;
+import com.kyk.FoodWorld.menu.domain.entity.MenuRecommend;
 import com.kyk.FoodWorld.web.BaseTimeEntity;
 import lombok.*;
 
@@ -70,11 +71,12 @@ public class Member extends BaseTimeEntity {
     @JsonIgnoreProperties({"member"})
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-//
-//    @Builder.Default
-//    @JsonIgnoreProperties({"member"})
-//    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private List<MenuRecommend> menuRecommends = new ArrayList<>();
+
+    @Builder.Default
+    @JsonIgnoreProperties({"member"})
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<MenuRecommend> menuRecommends = new ArrayList<>();
+
 //
 //    @Builder.Default
 //    @JsonIgnoreProperties({"member1"})
