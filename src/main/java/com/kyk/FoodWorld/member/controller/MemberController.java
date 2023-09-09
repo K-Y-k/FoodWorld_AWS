@@ -1,6 +1,9 @@
 package com.kyk.FoodWorld.member.controller;
 
 
+import com.kyk.FoodWorld.board.service.BoardServiceImpl;
+import com.kyk.FoodWorld.follow.domain.entity.Follow;
+import com.kyk.FoodWorld.follow.service.FollowServiceImpl;
 import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.dto.JoinForm;
 import com.kyk.FoodWorld.member.domain.dto.LoginForm;
@@ -30,8 +33,8 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberServiceImpl memberService;
-//    private final BoardServiceImpl boardService;
-//    private final FollowServiceImpl followService;
+    private final BoardServiceImpl boardService;
+    private final FollowServiceImpl followService;
 
 
     /**
@@ -164,58 +167,58 @@ public class MemberController {
             log.info("프로필 경로 = {}", profileFile.getPath());
         }
 
-//        // 해당 회원이 작성한 게시글 총 개수
-//        int boardsTotalCount = boardService.boardsTotalCount(memberId);
-//        model.addAttribute("boardsTotalCount", boardsTotalCount);
-//
-//        // 팔로우, 팔로워 수
-//        int followCount = followService.countByToMember_Id(memberId);
-//        model.addAttribute("followCount", followCount);
-//
-//        int followingCount = followService.countByFromMember_Id(memberId);
-//        model.addAttribute("followingCount", followingCount);
-//
-//
-//        // 현재 회원이 팔로우한 상태인지 확인
-//        try {
-//            Optional<Follow> followState = followService.findByFromMember_IdAndToMember_Id(loginMember.getId(), memberId);
-//
-//            if (followState.isPresent()){
-//                model.addAttribute("unFollow", followState);
-//            }
-//        } catch (NullPointerException e){
-//            log.info("NPE 에러");
-//        }
-//
-//        // 회원의 팔로워 최근 id 가져오기
-//        try {
-//            Long firstCursorFollowerId = followService.findFirstCursorFollowerId(member);
-//            log.info("최근 팔로워 id = {}", firstCursorFollowerId);
-//            model.addAttribute("firstCursorFollowerId", firstCursorFollowerId);
-//        } catch (NullPointerException e){
-//            log.info("NPE 에러");
-//        }
-//
-//        // 회원의 먹스타그램 최근 id 가져오기
-//        try {
-//            Long firstCursorBoardIdInMember = boardService.findFirstCursorBoardIdInMember(memberId, boardType);
-//            model.addAttribute("firstCursorBoardId", firstCursorBoardIdInMember);
-//        } catch (NullPointerException e){
-//            log.info("NPE 에러");
-//        }
-//
-//        // 회원과 연관된 팔로워들 추천 리스트
-//        if (loginMember != null) {
-//            List<Member> recommendMembers = followService.recommendMember(loginMember.getId());
-//
-//            if (!recommendMembers.isEmpty()) {
-//                for (Member member1 : recommendMembers) {
-//                    log.info("최종 결과 팔로우 추천 리스트 = {}", member1.getName());
-//                }
-//
-//                model.addAttribute("recommendMembers", recommendMembers);
-//            }
-//        }
+        // 해당 회원이 작성한 게시글 총 개수
+        int boardsTotalCount = boardService.boardsTotalCount(memberId);
+        model.addAttribute("boardsTotalCount", boardsTotalCount);
+
+        // 팔로우, 팔로워 수
+        int followCount = followService.countByToMember_Id(memberId);
+        model.addAttribute("followCount", followCount);
+
+        int followingCount = followService.countByFromMember_Id(memberId);
+        model.addAttribute("followingCount", followingCount);
+
+
+        // 현재 회원이 팔로우한 상태인지 확인
+        try {
+            Optional<Follow> followState = followService.findByFromMember_IdAndToMember_Id(loginMember.getId(), memberId);
+
+            if (followState.isPresent()){
+                model.addAttribute("unFollow", followState);
+            }
+        } catch (NullPointerException e){
+            log.info("NPE 에러");
+        }
+
+        // 회원의 팔로워 최근 id 가져오기
+        try {
+            Long firstCursorFollowerId = followService.findFirstCursorFollowerId(member);
+            log.info("최근 팔로워 id = {}", firstCursorFollowerId);
+            model.addAttribute("firstCursorFollowerId", firstCursorFollowerId);
+        } catch (NullPointerException e){
+            log.info("NPE 에러");
+        }
+
+        // 회원의 먹스타그램 최근 id 가져오기
+        try {
+            Long firstCursorBoardIdInMember = boardService.findFirstCursorBoardIdInMember(memberId, boardType);
+            model.addAttribute("firstCursorBoardId", firstCursorBoardIdInMember);
+        } catch (NullPointerException e){
+            log.info("NPE 에러");
+        }
+
+        // 회원과 연관된 팔로워들 추천 리스트
+        if (loginMember != null) {
+            List<Member> recommendMembers = followService.recommendMember(loginMember.getId());
+
+            if (!recommendMembers.isEmpty()) {
+                for (Member member1 : recommendMembers) {
+                    log.info("최종 결과 팔로우 추천 리스트 = {}", member1.getName());
+                }
+
+                model.addAttribute("recommendMembers", recommendMembers);
+            }
+        }
 
         return "members/member_profile";
     }

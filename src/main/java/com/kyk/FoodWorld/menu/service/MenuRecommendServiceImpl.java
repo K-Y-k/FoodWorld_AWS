@@ -160,7 +160,7 @@ public class MenuRecommendServiceImpl implements MenuRecommendService{
                 new IllegalArgumentException("메뉴 가져오기 실패: 메뉴룰 찾지 못했습니다." + menuRecommendId));
 
         // 삭제 대상 객체 생성
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "menuRecommend/" + menuRecommend.getOriginalFileName());
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, "menuRecommend/" + menuRecommend.getStoredFileName());
 
         // 삭제 처리
         amazonS3.deleteObject(deleteObjectRequest);

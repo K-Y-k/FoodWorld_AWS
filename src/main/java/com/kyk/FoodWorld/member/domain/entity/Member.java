@@ -3,6 +3,7 @@ package com.kyk.FoodWorld.member.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.comment.domain.entity.Comment;
+import com.kyk.FoodWorld.follow.domain.entity.Follow;
 import com.kyk.FoodWorld.like.domain.entity.Like;
 import com.kyk.FoodWorld.menu.domain.entity.MenuRecommend;
 import com.kyk.FoodWorld.web.BaseTimeEntity;
@@ -47,15 +48,15 @@ public class Member extends BaseTimeEntity {
 
     private String role;
 
-//    @Builder.Default
-//    @JsonIgnoreProperties({"member"})
-//    @OneToMany(mappedBy = "fromMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private List<Follow> fromMembers = new ArrayList<>();
-//
-//    @Builder.Default
-//    @JsonIgnoreProperties({"member"})
-//    @OneToMany(mappedBy = "toMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-//    private List<Follow> toMembers = new ArrayList<>();
+    @Builder.Default
+    @JsonIgnoreProperties({"member"})
+    @OneToMany(mappedBy = "fromMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Follow> fromMembers = new ArrayList<>();
+
+    @Builder.Default
+    @JsonIgnoreProperties({"member"})
+    @OneToMany(mappedBy = "toMember", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Follow> toMembers = new ArrayList<>();
 //
     @Builder.Default
     @JsonIgnoreProperties({"member"})
@@ -82,7 +83,7 @@ public class Member extends BaseTimeEntity {
 //    @JsonIgnoreProperties({"member1"})
 //    @OneToMany(mappedBy = "member1", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
 //    private List<ChatRoom> member1ChatRooms = new ArrayList<>();
-//
+
 //    @Builder.Default
 //    @JsonIgnoreProperties({"member2"})
 //    @OneToMany(mappedBy = "member2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)

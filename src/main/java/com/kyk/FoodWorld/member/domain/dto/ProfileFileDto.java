@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor
 public class ProfileFileDto {
-    private String storedFileName;
+    private String path;
 }

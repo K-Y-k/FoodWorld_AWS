@@ -70,7 +70,7 @@ function getFollowerItem(follower) {
                     <tr>
                         <td>
                             <a href="/members/profile/${follower.fromMember.id}">
-                                <img src="/profileImageUpload/${follower.fromMember.profileFile.storedFileName}"
+                                <img src="${follower.fromMember.profileFile.path}"
                                     class="rounded-circle"
                                     style="width: 70px; height: 70px; margin-left: 20px; text-align: center;">
                             </a>
@@ -206,7 +206,7 @@ function storyLoad() {
 
 function getStoryItem(board) {
     let item = `<a href="/boards/muckstarBoard/${board.id}">
-                    <img class="muckstar-image" src="/imageFileUpload/${board.boardFiles[0].storedFileName}">
+                    <img class="muckstar-image" src="${board.boardFiles[0].path}">
                 </a>`;
 
     console.log("첫번째 이미지: ", board.boardFiles[0].storedFileName)

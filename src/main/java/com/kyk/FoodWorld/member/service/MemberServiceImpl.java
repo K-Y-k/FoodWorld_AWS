@@ -5,6 +5,10 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.kyk.FoodWorld.board.domain.entity.Board;
+import com.kyk.FoodWorld.board.domain.entity.BoardFile;
+import com.kyk.FoodWorld.board.repository.BoardFileRepository;
+import com.kyk.FoodWorld.board.repository.BoardRepository;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberLoginIdException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberNameException;
@@ -13,6 +17,8 @@ import com.kyk.FoodWorld.member.domain.dto.UpdateForm;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.member.domain.entity.ProfileFile;
 import com.kyk.FoodWorld.member.repository.MemberRepository;
+import com.kyk.FoodWorld.menu.domain.entity.MenuRecommend;
+import com.kyk.FoodWorld.menu.repository.MenuRecommendRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +46,9 @@ import java.util.UUID;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-//    private final BoardRepository boardRepository;
-//    private final BoardFileRepository boardFileRepository;
-//    private final MenuRecommendRepository menuRecommendRepository;
+    private final BoardRepository boardRepository;
+    private final BoardFileRepository boardFileRepository;
+    private final MenuRecommendRepository menuRecommendRepository;
 
 
     @Value("${cloud.aws.s3.bucket}")
@@ -198,35 +204,35 @@ public class MemberServiceImpl implements MemberService {
         deleteBeforeProfileFile(findMemberProfile);
 
 
-//        // 현재 회원이 작성했던 게시글을 찾고
-//        List<Board> byMemberBoardList = boardRepository.findByMemberId(memberId);
-//
-//        // 각 게시글마다 실제 저장되었던 디렉토리의 파일을 삭제
-//        for (Board board : byMemberBoardList) {
-//            List<BoardFile> findBoardFiles = boardFileRepository.findByBoard(board);
-//
-//            // 자유게시판과 추천게시판은 첨부 파일도 같이 넣을 수 있어 따로 첨부파일 + 이미지파일 삭제
-//            if (board.getBoardType().equals("자유게시판") || board.getBoardType().equals("추천게시판")) {
-//                for (BoardFile boardFile : findBoardFiles) {
-//                    if (boardFile.getAttachedType().equals("attached")) {
-//                        deleteBeforeFile(attachFileLocation, boardFile.getStoredFileName());
-//                    } else {
-//                        deleteBeforeFile(imageFileLocation, boardFile.getStoredFileName());
-//                    }
-//                }
-//            } else { // 먹스타그램은 이미지 파일만 삭제
-//                for (BoardFile boardFile : findBoardFiles) {
-//                    deleteBeforeFile(imageFileLocation, boardFile.getStoredFileName());
-//                }
-//            }
-//        }
-//
-//
-//        // 메뉴 랜덤 추천 파일도 삭제 처리
-//        Page<MenuRecommend> findMenus = menuRecommendRepository.findByMemberId(null, memberId);
-//        for (MenuRecommend findMenu : findMenus) {
-//            deleteBeforeFile(menuRecommendLocation, findMenu.getStoredFileName());
-//        }
+        // 현재 회원이 작성했던 게시글을 찾고
+        List<Board> byMemberBoardList = boardRepository.findByMemberId(memberId);
+
+        // 각 게시글마다 실제 저장되었던 디렉토리의 파일을 삭제
+        for (Board board : byMemberBoardList) {
+            List<BoardFile> findBoardFiles = boardFileRepository.findByBoard(board);
+
+            // 자유게시판과 추천게시판은 첨부 파일도 같이 넣을 수 있어 따로 첨부파일 + 이미지파일 삭제
+            if (board.getBoardType().equals("자유게시판") || board.getBoardType().equals("추천게시판")) {
+                for (BoardFile boardFile : findBoardFiles) {
+                    if (boardFile.getAttachedType().equals("attached")) {
+                        deleteFile("attachFile/" + boardFile.getStoredFileName());
+                    } else {
+                        deleteFile("imageFile/" + boardFile.getStoredFileName());
+                    }
+                }
+            } else { // 먹스타그램은 이미지 파일만 삭제
+                for (BoardFile boardFile : findBoardFiles) {
+                    deleteFile("imageFile/" + boardFile.getStoredFileName());
+                }
+            }
+        }
+
+
+        // 메뉴 랜덤 추천 파일도 삭제 처리
+        Page<MenuRecommend> findMenus = menuRecommendRepository.findByMemberId(null, memberId);
+        for (MenuRecommend findMenu : findMenus) {
+            deleteFile("menuRecommend/" + findMenu.getStoredFileName());
+        }
 
 
         // DB 삭제처리 : CASCADE 설정으로 회원 엔티티가 삭제되면 연관 매핑된 엔티티는 모두 삭제된다.
@@ -267,6 +273,15 @@ public class MemberServiceImpl implements MemberService {
         return amazonS3.getUrl(bucket, "profileFile/" + storedFileName).toString();
     }
 
+
+    // 게시글 파일 삭제 메서드
+    private void deleteFile(String key) {
+        // 삭제 대상 객체 생성
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, key);
+
+        // 삭제 처리
+        amazonS3.deleteObject(deleteObjectRequest);
+    }
 
     // 회원가입에서의 닉네임 체크 메서드
     public int checkName(String memberName) {
