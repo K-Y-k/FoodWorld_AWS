@@ -17,10 +17,10 @@ public interface JPAMenuRecommendRepository extends JpaRepository<MenuRecommend,
     /**
      * 윈도우 환경과 달리 리눅스 환경의 MySQL에서는 대소문자 구분을 함
      */
-    @Query(value = "SELECT MENU_RECOMMEND_ID FROM menu_recommend " +
-                    "WHERE CATEGORY = :selectedCategory " +
-                    "ORDER BY RAND() " +
-                    "LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT menu_recommend_id FROM menu_recommend " +
+                   "WHERE category = :selectedCategory " +
+                   "ORDER BY RAND() " +
+                   "LIMIT 1", nativeQuery = true)
     Long findLastIdWithCategory(String selectedCategory);
 
 }
