@@ -92,16 +92,16 @@
 	<div class="main">
 		<div class="overlay"></div> <!--삼각 형태로 감싼 것-->
 
-		<div id="recommend_main">
+		<div id="recommend_main"> <!--회원이 메뉴 등록한 페이징-->
 			<h2 th:if="${session.loginMember != null}"
-				style="position: relative; left: -360px;" th:text="|${session.loginMember.name}님이 추가한 메뉴 리스트|"></h2>
+				style="position: relative;" th:text="|${session.loginMember.name}님이 추가한 메뉴 리스트|"></h2>
 			<button class="btn btn-primary" type="submit"
 					th:onclick="|location.href='@{/menu/upload}'|"
-					style="position: relative; left: -150px; width: 150px; height: 35px;">
+					style="position: relative; left: 150px; width: 180px; height: 35px;">
 				메뉴 등록하기
 			</button>
 
-			<div style="position: relative; left: -120px; margin-top: 10px; width: 550px; height : 70%; background-color: white; border-color:rgb(11, 44, 6); border-width: 0.1rem; border-radius: 0rem;">
+			<div style="position: relative; margin-top: 10px; width: 100%; height: 85vh; background-color: white; border-color:rgb(11, 44, 6); border-width: 0.1rem; border-radius: 0rem;">
 					<table class="table" style="position: absolute;">
 						<thead class="table-dark">
 						<tr>
@@ -190,33 +190,6 @@
 			</div>
 
 
-			<div id="circle">  <!--원-->
-				<div class="feature one"> <!--원 안의 카테고리-->
-					<img src="/image/menu_img/write.PNG">
-					<div>
-						<a href="/boards/freeBoard" style="text-decoration: none;"><h2 class="lightBlue">자유게시판</h2></a>
-					</div>
-				</div>
-				<div class="feature two">
-					<img src="/image/menu_img/write.PNG">
-					<div>
-						<a href="/boards/recommendBoard" style="text-decoration: none;"><h2 class="lightBlue">식당추천게시판</h2></a>
-					</div>
-				</div>
-				<div class="feature three">
-					<img src="/image/menu_img/muckstar_icon1.PNG">
-					<div>
-						<a href="/boards/muckstarBoard" style="text-decoration: none;"><h2 class="lightBlue">먹스타그램</h2></a>
-					</div>
-				</div>
-				<div class="feature four">
-					<img src="/image/menu_img/chat_icon.PNG" style="margin-left: 20px;">
-					<div>
-						<a href="/chat" style="text-decoration: none;"><h2 class="lightBlue">채팅방</h2></a>
-					</div>
-				</div>
-			</div>
-
 			<div class="controls"> <!--카테고리 컨트롤-->
 				<img src="/image/menu_img/updown_img.PNG" id="up_btn">
 				<h3>Category</h3>
@@ -224,7 +197,7 @@
 			</div>
 		</div>
 
-		<div class="menu_background">  <!--음식 메뉴 추천-->
+		<div class="menu_background">  <!--음식 메뉴 랜덤 추천-->
 			<div class="card">
 				<h1 id="top_padding">음식 메뉴 랜덤 추천</h1>
 
@@ -274,6 +247,33 @@
 				<h3 id="menuName" style="word-break: keep-all;"></h3>
 
 				<br>
+			</div>
+		</div>
+
+		<div id="circle"> <!--서비스 카테고리 선택 서클-->
+			<div class="feature one"> <!--원 안의 카테고리-->
+				<img src="/image/menu_img/write.PNG" style="margin-left: 50px;">
+				<div>
+					<a href="/boards/freeBoard" style="text-decoration: none;"><h2 class="lightBlue">자유게시판</h2></a>
+				</div>
+			</div>
+			<div class="feature two">
+				<img src="/image/menu_img/write.PNG" style="margin-left: 95px;">
+				<div>
+					<a href="/boards/recommendBoard" style="text-decoration: none;"><h2 class="lightBlue">식당추천게시판</h2></a>
+				</div>
+			</div>
+			<div class="feature three">
+				<img src="/image/menu_img/muckstar_icon1.PNG" style="margin-left: 55px;">
+				<div>
+					<a href="/boards/muckstarBoard" style="text-decoration: none;"><h2 class="lightBlue">먹스타그램</h2></a>
+				</div>
+			</div>
+			<div class="feature four">
+				<img src="/image/menu_img/chat_icon.PNG" style="margin-left: 20px;">
+				<div>
+					<a href="/chat" style="text-decoration: none;"><h2 class="lightBlue">채팅방</h2></a>
+				</div>
 			</div>
 		</div>
 	</div>
