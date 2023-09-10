@@ -260,7 +260,7 @@ function getChildItem(child) {
                         <table style="width: 370px; margin-left: 5px; border: 1px solid black;">
                             <tr>
                                 <td>
-                                    <img src="/profileImageUpload/${child.member.profileFile.storedFileName}"
+                                    <img src="${child.member.profileFile.path}"
                                         class="rounded-circle"
                                         style="width: 50px; height: 50px;">
                                 </td>

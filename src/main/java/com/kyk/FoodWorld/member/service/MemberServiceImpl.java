@@ -105,6 +105,7 @@ public class MemberServiceImpl implements MemberService {
         return savedMember.getId();
     }
 
+    // 중복 검증 로직
     private void validateDuplicateMember(Member memberEntity) {
         // 중복이 있으면 EXCEPTION
         // 같은 로그인 아이디가 있는지 찾음
@@ -177,6 +178,19 @@ public class MemberServiceImpl implements MemberService {
 
         log.info("회원 프로필 변경");
         return findMember.getId();
+    }
+
+
+    /**
+     * 회원 프로필 사진 경로 가져오기
+     */
+    public String findProfileLocation(Long memberId) {
+        Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
+                new IllegalArgumentException("회원 조회 실패: " + memberId));
+
+        ProfileFile findMemberProfile = memberRepository.findProfileByMember(findMember);
+
+        return findMemberProfile.getPath();
     }
 
 

@@ -78,7 +78,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
         List<AdminCommentDTO> commentDTOList = comments.stream()
                 .map(m -> new AdminCommentDTO(m.getId(), m.getContent(), m.getCreatedDate(),
                         new AdminMemberDTO(m.getMember().getId(), m.getMember().getName(),
-                                new AdminProfileFileDTO(m.getMember().getProfileFile().getStoredFileName())),
+                                new AdminProfileFileDTO(m.getMember().getProfileFile().getPath())),
                         new AdminBoardDTO(m.getBoard().getId(), m.getBoard().getTitle(), m.getBoard().getContent(), m.getBoard().getWriter(), m.getBoard().getBoardType(), m.getCreatedDate(), m.getBoard().getCount(), m.getBoard().getLikeCount(), m.getBoard().getCommentCount())))
                 .collect(Collectors.toList());
 

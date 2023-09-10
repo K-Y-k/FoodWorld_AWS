@@ -269,7 +269,7 @@
                 <tr>
                     <td>
                         <a th:href="@{|/members/profile/${recommendMember.id}|}">
-                            <img th:src="@{|/profileImageUpload/${recommendMember.profileFile.storedFileName}|}"
+                            <img th:src="@{${recommendMember.profileFile.path}|}"
                              class="rounded-circle"
                              style="width: 70px; height: 70px;">
                         </a>

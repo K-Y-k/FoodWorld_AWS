@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>채팅방</title>
+  <!--부트 스트랩 적용-->
+  <link th:href="@{/css/bootstrap.min.css}"
+        href="../css/bootstrap.min.css" rel="stylesheet"> <!-- ../은 상위 경로를 뜻한다. -->
+  <!--css 적용-->
+  <link rel="stylesheet" type="text/css" href="../css/chat/chat.css" th:href="@{/css/chat/chat.css}">
+</head>
+
+<body>
+<header style="position: relative;">
+  <img src="/image/main_img/logo2.PNG"
+       class = "logo" style="position: absolute; z-index: 3; width: 170px; height: 90px; left: 2.5%; top: 10%;" id = "logo2">
+
+  <div class="px-3 py-2 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <img src = "/image/main_img/chat_icon.PNG" width = "50px" height="50px" >
+        <a href="/chat" class="navbar-brand"><h4 class = "thema">&nbsp;&nbsp;채팅방 </h4></a>
+        <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+          <li>
+            <img src = "/image/main_img/home_icon.PNG" width = "45px" height="40px" style="margin-left: 151px; margin-top: 10px;">
+            <a href="/" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메인
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/write_icon.PNG" width = "50px" height="40px" style="margin-left: 105px; margin-top: 10px;">
+            <a href="/boards/freeBoard" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;자유게시판
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/write_icon.PNG" width = "50px" height="40px" style="margin-left: 90px; margin-top: 10px;">
+            <a href="/boards/recommendBoard" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;추천게시판
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/muckstar_icon.PNG" width = "40px" height="40px" style="margin-left: 88px; margin-top: 10px;">
+            <a href="/boards/muckstarBoard" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;먹스타그램
+            </a>
+          </li>
+          <li>
+            <img src = "/image/main_img/menu_recommend_icon.PNG" width = "50px" height="40px" style="margin-left: 70px; margin-top: 10px;">
+            <a href="/menu" class="nav-link text-white">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메뉴추천&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </a>
+          </li>
+
+          <li>
+            <h5 th:if="${session.loginMember != null}"
+                th:text="${session.loginMember.name}+ '님 접속중'"
+                id = "userName" style="font-size : 13px; margin-top: 20px;"></h5>
+
+            <br/>
+
+            <form th:action="@{/members/logout}" method="post">
+              <button th:if="${session.loginMember != null}"
+                      type="submit" class="btn btn-primary" id="logout"
+                      style="width: 90px; height: 35px; position :absolute; top: 56%;"
+                      th:onclick="@{/members/logout}">로그아웃
+              </button>
+            </form>
+
+            <button th:if="${session.loginMember == null}"
+                    type="submit" class="btn btn-primary"
+                    style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
+                    th:onclick="|location.href='@{/members/login}'|">로그인
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+  <br>
+  <br>
+<div class="main" style="position: relative;">
+  <h3 th:if="${session.loginMember != null}"
+      style="margin-left: 800px; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 545; border: solid 7px; border-radius: 1.5rem; border-color: blueviolet; width: 300px; text-align: center; padding-top: 5px;"
+      th:text="|${session.loginMember.name}의 채팅방|"></h3>
+
+  <h3 th:if="${targetChatRoom != null and session.loginMember.id != targetChatRoom.member1.id}"
+      th:data-receiver-id="${targetChatRoom.member1.id}"
+      style="margin-left: 800px; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 545; border : solid 7px; border-radius: 1.5rem; border-color: blueviolet; width: 300px; text-align: center; padding-top: 5px;"
+      th:text="|채팅 상대 : ${targetChatRoom.member1.name}|"></h3>
+
+  <h3 th:if="${targetChatRoom != null and session.loginMember.id != targetChatRoom.member2.id}"
+      th:data-receiver-id="${targetChatRoom.member2.id}"
+      style="margin-left: 800px; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 545; border : solid 7px; border-radius: 1.5rem; border-color: blueviolet; width: 300px; text-align: center; padding-top: 5px;"
+      th:text="|채팅 상대 : ${targetChatRoom.member2.name}|"></h3>
+
+  <h3 th:if="${session.loginMember == null}"
+      style="margin-left: 800px; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 545; border : solid 10px; border-radius: 1.5rem; border-color: blueviolet; width: 300px; text-align: center; padding-top: 5px;">
+      채팅방</h3>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col" style="height:300px; overflow-y: scroll; overflow-x: hidden;">
+        <ul id="chat-list" class="list-group"> <!--채팅방 목록-->
+          <div th:each="chatRoom : ${member1ChatRoom}">
+              <li id="list-item" style="border: 1px solid black; text-align: center; height: 120px;">
+                <table style="width: 288px; height: 118px;">
+                  <tr>
+                    <td>
+                      <img th:if="${session.loginMember.id != chatRoom.member1.id}"
+                           th:src="@{${chatRoom.member1.profileFile.path}}"
+                           class="rounded-circle" style="width: 60px; height: 60px;"/>
+                      <img th:if="${session.loginMember.id != chatRoom.member2.id}"
+                           th:src="@{${chatRoom.member2.profileFile.path}}"
+                           class="rounded-circle" style="width: 60px; height: 60px;"/>
+                    </td>
+
+                    <td>
+                      <table>
+                        <tr>
+                          <td>
+                            <a th:href="@{/chat/room(roomId=${chatRoom.roomId})}">
+                            <span th:if="${session.loginMember.id != chatRoom.member1.id}"
+                                  th:text="${chatRoom.member1.name}"
+                                  style="text-decoration-line: none;"></span>
+                            <span th:if="${session.loginMember.id != chatRoom.member2.id}"
+                                  th:text="${chatRoom.member2.name}"
+                                  style="text-decoration-line: none;"></span>
+                            </a>
+                          </td>
+
+                          <td th:if="${chatRoom.chatMessages.size() > 0 and chatRoom.chatMessages != null}">
+                            <span th:if="${#temporals.day(chatRoom.chatMessages.get(chatRoom.chatMessages.size() - 1).createdDate)} == ${#temporals.day(localDateTime)}"
+                                  th:text="${#temporals.format(chatRoom.chatMessages.get(chatRoom.chatMessages.size() - 1).createdDate, 'HH:mm')}"
+                                  style="text-decoration-line: none;"></span>
+                            <span th:if="${#temporals.day(chatRoom.chatMessages.get(chatRoom.chatMessages.size() - 1).createdDate)} != ${#temporals.day(localDateTime)}"
+                                  th:text="${#temporals.format(chatRoom.chatMessages.get(chatRoom.chatMessages.size() - 1).createdDate, 'MM-dd')}"
+                                  style="text-decoration-line: none;"></span>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td style="width: 200px;">
+                            <span th:if="${chatRoom.chatMessages != null and chatRoom.chatMessages.size() > 0}"
+                                  th:id="'content-' + ${chatRoom.roomId}"
+                                  th:text="${chatRoom.chatMessages.get(chatRoom.chatMessages.size() - 1).content}"
+                                  style="float: left;"></span>
+                            <span th:if="${chatRoom.chatMessages == null or chatRoom.chatMessages.size() == 0}"
+                                  th:id="'content-' + ${chatRoom.roomId}"
+                                  style="float: left;">채팅방이 생성되었습니다.</span>
+                          </td>
+                          <td>
+                            <button class="btn btn-primary" type="submit" id="leave_btn" th:onclick="onLeave();" style="font-size: 10px; width: 60px; height: 3vh; float: right;">
+                              나가기
+                            </button>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </li>
+          </div>
+        </ul>
+      </div>
+
+      <div class="col-9 p-0">  <!--채팅 화면-->
+        <div class="chat-container"
+             style="background: url('/image/chat_img/chat_background1.PNG'); position: relative; background-size: cover; width: 700px;"
+             id = "chat-room">
+
+          <!--채팅 기록-->
+          <ul class="list-group chat-content" id="chatContent" style="height: 600px; overflow-y: scroll;">
+            <!--채팅 연결-->
+            <div class="connecting"
+                 style="text-align: center; color: white;">
+              연결중...
+            </div>
+
+            <!--DB에 저장된 채팅 메시지-->
+            <div th:each="chatMessage : ${chatMessages}">
+              <!--현재 회원이 보낸 것이면-->
+              <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId == session.loginMember.id}"
+                  style="margin-left: 90px; max-width: 580px; list-style-type: none; margin-top: 3%;">
+                <table style="float: right;">
+                  <tr>
+                    <td style="vertical-align: bottom;">
+                      <span style="font-size: 15px; padding: 0px 5px 0px 5px;">
+                        <th:block th:if="${#temporals.day(chatMessage.createdDate)} == ${#temporals.day(localDateTime)}"
+                                  th:text="${#temporals.format(chatMessage.createdDate, 'HH:mm')}"></th:block>
+                        <th:block th:if="${#temporals.day(chatMessage.createdDate)} != ${#temporals.day(localDateTime)}"
+                                  th:text="${#temporals.format(chatMessage.createdDate, 'yyyy-MM-dd')}"></th:block>
+                      </span>
+                    </td>
+
+                    <td style="background-color: lightyellow; border-radius: 1.0rem; padding: 5px 5px 5px 10px;">
+                      <span style="font-size: 25px; word-break: break-all;"
+                            th:text="${chatMessage.content}">
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+              </li>
+
+              <!--상대방 회원이 보낸 것이면-->
+              <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId != session.loginMember.id}"
+                  style="width: 600px; float: left; list-style-type: none; margin-top: 3%;">
+                <table>
+                  <tr>
+                    <td>
+                      <img th:src="@{${chatMessage.senderProfile}}"
+                           class="rounded-circle" style="width: 5vw; height: 8vh;"/>
+                    </td>
+
+                    <td>
+                      <table>
+                        <tr th:text="${chatMessage.sender}">
+                        </tr>
+
+                        <tr>
+                          <td style="background-color: violet; border-radius: 1.0rem; padding: 5px 5px 5px 10px;">
+                            <span style="font-size: 25px; word-break: break-all;"
+                                  th:text="${chatMessage.content}">
+                            </span>
+                          </td>
+
+                          <td style="vertical-align: bottom;">
+                            <span style="font-size: 15px; margin-right: 30px; padding: 0px 5px 0px 5px;">
+                              <th:block th:if="${#temporals.day(chatMessage.createdDate) == #temporals.day(localDateTime)}"
+                                        th:text="${#temporals.format(chatMessage.createdDate, 'HH:mm')}"></th:block>
+                              <th:block th:if="${#temporals.day(chatMessage.createdDate) != #temporals.day(localDateTime)}"
+                                        th:text="${#temporals.format(chatMessage.createdDate, 'yyyy-MM-dd')}"></th:block>
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </li>
+            </div>
+          </ul>
+
+          <!--채팅 전송-->
+          <div class="input-group">
+            <input class="form-control chat-input" id="message" placeholder="채팅하고 싶은 채팅방을 클릭하고 이용해주세요." onkeydown="handleKeyDown(event)">
+            <button class="btn btn-secondary" type="submit" onclick="sendMessage();">전송</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+ </div> 
+
+ <div style= "position: absolute; top: 25%; margin-left: 1350px; display: inline;">
+  <img src = "/image/chat_img/chat_background2.PNG" style="margin-top: 10px; width: 450px;">
+ </div>
+</div>
+
+
+<!--jquery-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+
+
+<!--웹소켓을 지원하지 않는 브라우저에서도 웹소켓을 사용할 수 있도록 지원하는 SockJS 라이브러리 불러오기-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+
+<!--SockJS와 함께 사용되는 STOMP 라이브러리 불러오기-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+
+<script th:inline="javascript">
+    var username = [[${session.loginMember?.name}]] || 'Guest';
+    var userId = [[${session.loginMember?.id}]] || 'GuestId';
+
+    console.log("Hello, " + username);
+
+    var receiver = document.querySelector("[data-receiver-id]");
+    if (receiver !== null) {
+      var receiverId = receiver.getAttribute("data-receiver-id");
+    }
+</script>
+
+<script src="/js/chat.js"></script>
+
+</body>
+</html>

@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AdminProfileFileDTO {
-    private String storedFileName;
+    private String path;
 }

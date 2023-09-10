@@ -174,7 +174,7 @@ function onMessageReceived(payload) {
                                     <table style="float: left;">
                                         <tr>
                                             <td>
-                                                <img src="/profileImageUpload/${chat.senderProfile}"
+                                                <img src="${chat.senderProfile}"
                                                      class="rounded-circle" style="width: 5vw; height: 8vh;"/>
                                             </td>
 

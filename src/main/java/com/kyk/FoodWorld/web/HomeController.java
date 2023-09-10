@@ -2,6 +2,9 @@ package com.kyk.FoodWorld.web;
 
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.service.BoardServiceImpl;
+import com.kyk.FoodWorld.chat.domain.entity.ChatMessage;
+import com.kyk.FoodWorld.chat.domain.entity.ChatRoom;
+import com.kyk.FoodWorld.chat.service.ChatService;
 import com.kyk.FoodWorld.like.service.LikeServiceImpl;
 import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.dto.LoginForm;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +29,7 @@ public class HomeController {
     private final MemberServiceImpl memberService;
     private final BoardServiceImpl boardService;
     private final LikeServiceImpl likeService;
-//    private final ChatService chatService;
+    private final ChatService chatService;
 
 
     /**
@@ -52,14 +56,14 @@ public class HomeController {
         model.addAttribute("muckstarBoards", muckstarBoards);
 
 
-//        // 채팅방 목록 처리
-//        if (loginMember != null) {
-//            List<ChatRoom> member1ChatRoom = chatService.findNotLeaveMessageRoom(loginMember.getId());
-//
-//            if (!member1ChatRoom.isEmpty()) {
-//                model.addAttribute("member1ChatRoom", member1ChatRoom);
-//            }
-//        }
+        // 채팅방 목록 처리
+        if (loginMember != null) {
+            List<ChatRoom> member1ChatRoom = chatService.findNotLeaveMessageRoom(loginMember.getId());
+
+            if (!member1ChatRoom.isEmpty()) {
+                model.addAttribute("member1ChatRoom", member1ChatRoom);
+            }
+        }
 
         return "main";
     }
@@ -114,45 +118,45 @@ public class HomeController {
     }
 
 
-//    /**
-//     * 클릭한 채팅방 조회
-//     */
-//    @GetMapping("/room")
-//    public String goChatRoom(@RequestParam String roomId,
-//                             @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER) Member loginMember,
-//                             Model model){
-//        // 클릭한 방을 조회
-//        ChatRoom targetChatRoom = chatService.findRoomByRoomId(roomId);
-//        model.addAttribute("targetChatRoom", targetChatRoom);
-//
-//        // 클릭한 방의 대화 메시지 가져오기
-//        List<ChatMessage> chatMessages = chatService.findTALKMessage(roomId);
-//        model.addAttribute("chatMessages", chatMessages);
-//
-//        // 현재 회원의 전체 채팅방 리스트
-//        List<ChatRoom> member1ChatRoom = chatService.findMember1ChatRoom(loginMember.getId());
-//        model.addAttribute("member1ChatRoom", member1ChatRoom);
-//
-//        // 등록한 날이 오늘 날짜이면 시/분까지만 나타나게 조건을 설정하기 위해서 현재 시간을 객체로 담아 보낸 것
-//        model.addAttribute("localDateTime", LocalDateTime.now());
-//
-//
-//        // 인기글 가져오기
-//        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
-//        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
-//        List<Board> muckstarBoards = boardService.popularBoardList("먹스타그램");
-//
-//        // 댓글 개수 가져오는 작업
-//        findCommentCount(freeBoards);
-//        findCommentCount(recommendBoards);
-//        findCommentCount(muckstarBoards);
-//
-//        model.addAttribute("freeBoards", freeBoards);
-//        model.addAttribute("recommendBoards", recommendBoards);
-//        model.addAttribute("muckstarBoards", muckstarBoards);
-//
-//        return "main";
-//    }
+    /**
+     * 클릭한 채팅방 조회
+     */
+    @GetMapping("/room")
+    public String goChatRoom(@RequestParam String roomId,
+                             @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER) Member loginMember,
+                             Model model){
+        // 클릭한 방을 조회
+        ChatRoom targetChatRoom = chatService.findRoomByRoomId(roomId);
+        model.addAttribute("targetChatRoom", targetChatRoom);
+
+        // 클릭한 방의 대화 메시지 가져오기
+        List<ChatMessage> chatMessages = chatService.findTALKMessage(roomId);
+        model.addAttribute("chatMessages", chatMessages);
+
+        // 현재 회원의 전체 채팅방 리스트
+        List<ChatRoom> member1ChatRoom = chatService.findMember1ChatRoom(loginMember.getId());
+        model.addAttribute("member1ChatRoom", member1ChatRoom);
+
+        // 등록한 날이 오늘 날짜이면 시/분까지만 나타나게 조건을 설정하기 위해서 현재 시간을 객체로 담아 보낸 것
+        model.addAttribute("localDateTime", LocalDateTime.now());
+
+
+        // 인기글 가져오기
+        List<Board> freeBoards = boardService.popularBoardList("자유게시판");
+        List<Board> recommendBoards = boardService.popularBoardList("추천게시판");
+        List<Board> muckstarBoards = boardService.popularBoardList("먹스타그램");
+
+        // 댓글 개수 가져오는 작업
+        findCommentCount(freeBoards);
+        findCommentCount(recommendBoards);
+        findCommentCount(muckstarBoards);
+
+        model.addAttribute("freeBoards", freeBoards);
+        model.addAttribute("recommendBoards", recommendBoards);
+        model.addAttribute("muckstarBoards", muckstarBoards);
+
+        return "main";
+    }
 
 
     private void findCommentCount(List<Board> baordList) {
