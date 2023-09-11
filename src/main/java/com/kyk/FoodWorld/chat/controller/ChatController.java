@@ -38,10 +38,6 @@ public class ChatController {
      */
     @MessageMapping("/chat/enterUser")
     public void enterUser(@Payload ChatMessageDto messageDto) {
-        // 프로필 사진 갱신
-        String profilePath = memberService.findProfileLocation(messageDto.getSenderId());
-        messageDto.setSenderProfile(profilePath);
-
         // 이전에 이 채팅방을 입장한 적이 있는지 확인
         Optional<ChatMessage> isEnter = chatService.findEnterMessage(messageDto.getRoomId(), messageDto.getType(), messageDto.getSenderId());
 
@@ -64,7 +60,6 @@ public class ChatController {
         // 프로필 사진 갱신
         String profilePath = memberService.findProfileLocation(messageDto.getSenderId());
         messageDto.setSenderProfile(profilePath);
-        log.info("프로필 = {}", messageDto.getSenderProfile());
 
         template.convertAndSend("/sub/chat/room/" + messageDto.getRoomId(), messageDto);
         chatService.saveChatMessage(messageDto);
@@ -96,10 +91,6 @@ public class ChatController {
 
         // 상대방도 이미 퇴장한 상태라면 채팅방을 아예 지움
         if (youIsLeave.isPresent()) {
-            // 프로필 사진 갱신 
-            String profilePath = memberService.findProfileLocation(messageDto.getSenderId());
-            messageDto.setSenderProfile(profilePath);
-
             // 채팅방 삭제, 먼저 삭제해야 리다이렉트할 때 채팅방이 남지 않는다!
             ChatRoom findChatRoom = chatService.findRoomByRoomId(messageDto.getRoomId());
             chatService.delete(findChatRoom);
@@ -109,10 +100,6 @@ public class ChatController {
             template.convertAndSend("/sub/chat/room/" + messageDto.getRoomId(), messageDto);
         }
         else { // 상대방이 퇴장하지 않은 상태이면
-            // 프로필 사진 갱신 
-            String profilePath = memberService.findProfileLocation(messageDto.getSenderId());
-            messageDto.setSenderProfile(profilePath);
-            
             // 퇴장 메시지 전송
             messageDto.setMessage(messageDto.getSender() + " 퇴장하였습니다");
             template.convertAndSend("/sub/chat/room/" + messageDto.getRoomId(), messageDto);

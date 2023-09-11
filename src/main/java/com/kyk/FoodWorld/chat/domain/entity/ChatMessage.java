@@ -2,6 +2,7 @@ package com.kyk.FoodWorld.chat.domain.entity;
 
 
 import com.kyk.FoodWorld.chat.domain.dto.MessageType;
+import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.web.BaseTimeEntity;
 import lombok.*;
 
@@ -26,19 +27,13 @@ public class ChatMessage extends BaseTimeEntity {
     @JoinColumn(name = "chatRoom_id")
     private ChatRoom chatRoom;
 
-    private String sender;
-    private Long senderId;
-    private Long receiverId;
-    private String senderProfile;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id")
+    private Member sender;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
+    private Member receiver;
 
     private String content;
-
-    public ChatMessage(MessageType messageType, ChatRoom chatRoom, String sender, Long senderId, Long receiverId,  String content) {
-        this.messageType = messageType;
-        this.chatRoom = chatRoom;
-        this.sender = sender;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.content = content;
-    }
 }

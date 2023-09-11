@@ -108,14 +108,18 @@ public class ChatService {
 
         ChatRoom findChatRoom = chatRoomRepository.findByRoomId(chatMessageDto.getRoomId());
 
+        Member senderId = memberRepository.findById(chatMessageDto.getSenderId()).orElseThrow(() ->
+                new IllegalArgumentException("전송 회원을 찾지 못했습니다." + chatMessageDto.getSenderId()));
+
+        Member receiverId = memberRepository.findById(chatMessageDto.getReceiverId()).orElseThrow(() ->
+                new IllegalArgumentException("받는 회원을 찾지 못했습니다." + chatMessageDto.getReceiverId()));
+
         ChatMessage chatMessageEntity = ChatMessage.builder()
                 .chatRoom(findChatRoom)
                 .messageType(chatMessageDto.getType())
                 .content(chatMessageDto.getMessage())
-                .sender(chatMessageDto.getSender())
-                .senderId(chatMessageDto.getSenderId())
-                .senderProfile(chatMessageDto.getSenderProfile())
-                .receiverId(chatMessageDto.getReceiverId())
+                .sender(senderId)
+                .receiver(receiverId)
                 .build();
 
         return chatMessageRepository.save(chatMessageEntity);

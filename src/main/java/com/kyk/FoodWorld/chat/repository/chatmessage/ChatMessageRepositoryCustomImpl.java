@@ -74,7 +74,7 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
         log.info("리스트 개수={}", chatMessages.size());
 
         List<AdminChatMessageDTO> chatMessageDTOList = chatMessages.stream()
-                .map(m -> new AdminChatMessageDTO(m.getId(), m.getCreatedDate(), m.getContent(), m.getSender(), m.getSenderProfile(),
+                .map(m -> new AdminChatMessageDTO(m.getId(), m.getCreatedDate(), m.getContent(), m.getSender(),
                         new AdminChatRoomDTO(m.getChatRoom().getRoomId(),
                                 new AdminMemberDTO(m.getChatRoom().getMember1().getId(), m.getChatRoom().getMember1().getName(),
                                         new AdminProfileFileDTO(m.getChatRoom().getMember1().getProfileFile().getPath())),

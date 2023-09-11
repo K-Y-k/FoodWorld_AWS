@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public interface JPAChatMessageRepository extends JpaRepository<ChatMessage, Long>, ChatMessageRepositoryCustom {
     @Query("select m from ChatMessage m left join m.chatRoom r " +
-            "where r.roomId = :roomId and m.messageType = :messageType and m.senderId = :senderId")
+            "where r.roomId = :roomId and m.messageType = :messageType and m.sender.id = :senderId")
     Optional<ChatMessage> findEnterMessage(String roomId, MessageType messageType, Long senderId);
 
     @Modifying
-    @Query("delete from ChatMessage m where m.chatRoom.id = :roomId and m.messageType = 'LEAVE' and m.senderId = :memberId")
+    @Query("delete from ChatMessage m where m.chatRoom.id = :roomId and m.messageType = 'LEAVE' and m.sender.id = :memberId")
     void deleteByLeaveMessage(String roomId, Long memberId);
 
     @Query("select m from ChatMessage m left join m.chatRoom r " +

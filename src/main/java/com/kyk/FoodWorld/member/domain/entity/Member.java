@@ -2,6 +2,7 @@ package com.kyk.FoodWorld.member.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kyk.FoodWorld.board.domain.entity.Board;
+import com.kyk.FoodWorld.chat.domain.entity.ChatMessage;
 import com.kyk.FoodWorld.chat.domain.entity.ChatRoom;
 import com.kyk.FoodWorld.comment.domain.entity.Comment;
 import com.kyk.FoodWorld.follow.domain.entity.Follow;
@@ -89,6 +90,16 @@ public class Member extends BaseTimeEntity {
     @JsonIgnoreProperties({"member2"})
     @OneToMany(mappedBy = "member2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ChatRoom> member2ChatRooms = new ArrayList<>();
+
+    @Builder.Default
+    @JsonIgnoreProperties({"member"})
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatMessage> senderChatMessages = new ArrayList<>();
+
+    @Builder.Default
+    @JsonIgnoreProperties({"member"})
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatMessage> receiverChatMessages = new ArrayList<>();
 
 
     @Builder

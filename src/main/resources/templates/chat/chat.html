@@ -184,7 +184,7 @@
             <!--DB에 저장된 채팅 메시지-->
             <div th:each="chatMessage : ${chatMessages}">
               <!--현재 회원이 보낸 것이면-->
-              <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId == session.loginMember.id}"
+              <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.sender.id == session.loginMember.id}"
                   style="margin-left: 90px; max-width: 580px; list-style-type: none; margin-top: 3%;">
                 <table style="float: right;">
                   <tr>
@@ -207,18 +207,18 @@
               </li>
 
               <!--상대방 회원이 보낸 것이면-->
-              <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId != session.loginMember.id}"
+              <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.sender.id != session.loginMember.id}"
                   style="width: 600px; float: left; list-style-type: none; margin-top: 3%;">
                 <table>
                   <tr>
                     <td>
-                      <img th:src="@{${chatMessage.senderProfile}}"
+                      <img th:src="@{${chatMessage.sender.profileFile.path}}"
                            class="rounded-circle" style="width: 5vw; height: 8vh;"/>
                     </td>
 
                     <td>
                       <table>
-                        <tr th:text="${chatMessage.sender}">
+                        <tr th:text="${chatMessage.sender.name}">
                         </tr>
 
                         <tr>
