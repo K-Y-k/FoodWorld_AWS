@@ -1,5 +1,6 @@
 package com.kyk.FoodWorld.admin.dto;
 
+import com.kyk.FoodWorld.member.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
