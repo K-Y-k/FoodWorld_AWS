@@ -150,7 +150,7 @@
 											수정
 										</a>
 
-										<a class="dropdown-item" id="menuRecommend_delete-link" href="#"
+										<a class="dropdown-item menuRecommend_delete-link" href="#"
 										   th:attr="data-menuRecommend-id=${menuRecommend.id}">
 											삭제
 										</a>
@@ -286,11 +286,11 @@
 </script>
 
 <script>
-    var menuRecommendDeleteLink = document.getElementById('menuRecommend_delete-link');
+    var menuRecommendDeleteLinks = document.querySelectorAll('.menuRecommend_delete-link');
     var confirmMessage = `삭제하시겠습니까?`;
 
 
-    if (menuRecommendDeleteLink) {
+    menuRecommendDeleteLinks.forEach(function(menuRecommendDeleteLink) {
         menuRecommendDeleteLink.addEventListener('click', function(event) {
             event.preventDefault();
 
@@ -300,8 +300,8 @@
                 var deleteUrl = `/menu/${menuRecommendId}/delete`;
                 location.href = deleteUrl;
             }
-        });
-    }
+         });
+    });
 </script>
 
 <script src="/js/menu.js"></script>

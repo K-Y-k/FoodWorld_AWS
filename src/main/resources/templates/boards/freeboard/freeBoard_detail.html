@@ -236,7 +236,8 @@
                                                       수정
                                                   </a>
 
-                                                  <a class="dropdown-item" id="comment_delete-link" href="#"
+                                                  <!--고유한 Id를 위해서 클래스로 묶음-->
+                                                  <a class="dropdown-item comment-delete-link" href="#"
                                                      th:attr="data-board-id=${board.id}, data-comment-id=${comment.id}">
                                                       삭제
                                                   </a>
@@ -325,9 +326,8 @@
 
 <script>
     var boardDeleteLink = document.getElementById('board_delete-link');
-    var commentDeleteLink = document.getElementById('comment_delete-link');
+    var commentDeleteLinks = document.querySelectorAll('.comment-delete-link');
     var confirmMessage = `삭제하시겠습니까?`;
-
 
     if (boardDeleteLink) {
         boardDeleteLink.addEventListener('click', function(event) {
@@ -342,21 +342,20 @@
         });
     }
 
-
-    if (commentDeleteLink) {
+    commentDeleteLinks.forEach(function(commentDeleteLink) {
         commentDeleteLink.addEventListener('click', function(event) {
             event.preventDefault();
-            var confirmMessage = `삭제하시겠습니까?`;
 
             var boardId = this.getAttribute('data-board-id');
             var commentId = this.getAttribute('data-comment-id');
+
 
             if (confirm(confirmMessage)) {
                 var deleteUrl = `/boards/freeBoard/comments/${boardId}/${commentId}/delete`;
                 location.href = deleteUrl;
             }
         });
-    }
+    });
 </script>
 
 <script src="/js/comment.js"></script>
