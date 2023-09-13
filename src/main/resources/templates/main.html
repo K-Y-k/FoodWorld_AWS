@@ -254,53 +254,56 @@
             <div style="display:flex; border: solid 3px; border-color: rgb(202, 130, 22);
                         position: absolute; width: 730px; height: 300px; top: 39%;">
                 <!--자유게시판 인기글 목록-->
-                <table style="width: 360px; margin-top: 15px; margin-left: 5px;">
+                <table style="width: 50%; margin-top: 15px;">
                     <thead>
                     <tr>
                         <td colspan="4">
-                            <h4 style="color: orangered; text-align: center;">자유게시판 HOT 7</h4>
+                            <h4 style="color: orangered; text-align: center;">자유게시판 HOT 6</h4>
                         </td>
                     </tr>
 
                     <tr>
                         <td colspan="4">
-                            <a href="/boards/freeBoard"
-                               style="float: right; text-decoration: none; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 700;">
-                                더보기>>
+                            <a href="/boards/freeBoard" style="float: right; text-decoration: none; font-family: 'Nanum Gothic'; font-style: normal; font-weight: 700;">
+                                더보기 >>
                             </a>
                         </td>
                     </tr>
 
                     <tr>
-                        <th class="col-md-5" style="text-align: center; margin: 0 auto;">제목</th>
-                        <th class="col-md-1"></th>
-                        <th class="col-md-3" style="text-align: center; margin: 0 auto;">조회수</th>
-                        <th class="col-md-2" style="text-align: center; margin: 0 auto;">좋아요</th>
+                        <th style="width: 40%; text-align: center; margin: 0 auto;">제목</th>
+                        <th style="width: 10%; text-align: center;"></th>
+                        <th style="width: 25%; text-align: center; margin: 0 auto;">조회수</th>
+                        <th style="width: 25%; text-align: center; margin: 0 auto;">좋아요</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr th:each="freeBoard : ${freeBoards}">
-                        <td class="col-md-5" style="text-align: center; margin: 0 auto; display: inline-block; width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <td style="width: 40%; text-align: center;">
                             <a th:href="@{|/boards/freeBoard/${freeBoard.id}|}" th:text="|${freeBoard.title}|"
-                                   style="color: black; text-decoration-line: none;"></a>
+                               style="display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: black; text-decoration-line: none;"></a>
                         </td>
-                        <td class="col-md-1">
+                        <td style="width: 10%; text-align: center;">
                             <span th:if="${freeBoard.commentCount != 0}" style="color: red;" th:text="|[${freeBoard.commentCount}]|"></span>
                         </td>
-                        <td class="col-md-3" style="text-align: center; margin: 0 auto;" th:text="${freeBoard.count}"></td>
-                        <td class="col-md-2" style="text-align: center; margin: 0 auto;;" th:text="${freeBoard.likeCount}"></td>
+                        <td style="width: 25%; text-align: center;">
+                            <span th:text="${freeBoard.count}"></span>
+                        </td>
+                        <td style="width: 25%; text-align: center;">
+                            <span th:text="${freeBoard.likeCount}"></span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
 
 
                 <!--추천게시판 인기글 목록-->
-                <table style="width: 360px; margin-top: 15px;">
+                <table style="width: 50%; margin-top: 15px;">
                     <thead>
                     <tr>
                         <td colspan="4">
-                            <h4 style="color: orangered; text-align: center;">추천게시판 HOT 7</h4>
+                            <h4 style="color: orangered; text-align: center;">추천게시판 HOT 6</h4>
                         </td>
                     </tr>
 
@@ -314,24 +317,28 @@
                     </tr>
 
                     <tr>
-                        <th class="col-md-5" style="text-align: center; margin: 0 auto;">제목</th>
-                        <th class="col-md-1" style="text-align: center; margin: 0 auto;"></th>
-                        <th class="col-md-3" style="text-align: center; margin: 0 auto;">조회수</th>
-                        <th class="col-md-2" style="text-align: center; margin: 0 auto;">좋아요</th>
+                        <th style="width: 40%; text-align: center; margin: 0 auto;">제목</th>
+                        <th style="width: 10%; text-align: center;"></th>
+                        <th style="width: 25%; text-align: center; margin: 0 auto;">조회수</th>
+                        <th style="width: 25%; text-align: center; margin: 0 auto;">좋아요</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr th:each="recommendBoard : ${recommendBoards}">
-                        <td class="col-md-5" style="text-align: center; margin: 0 auto; display: inline-block; width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <td style="width: 40%; text-align: center;">
                             <a th:href="@{|/boards/recommendBoard/${recommendBoard.id}|}" th:text="|${recommendBoard.title}|"
-                               style="color: black; text-decoration-line: none;"></a>
+                               style="display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: black; text-decoration-line: none;"></a>
                         </td>
-                        <td class="col-md-1">
+                        <td style="width: 10%; text-align: center;">
                             <span th:if="${recommendBoard.commentCount != 0}" style="color: red;" th:text="|[${recommendBoard.commentCount}]|"></span>
                         </td>
-                        <td class="col-md-3" style="text-align: center; margin: 0 auto;" th:text="${recommendBoard.count}"></td>
-                        <td class="col-md-2" style="text-align: center; margin: 0 auto;;" th:text="${recommendBoard.likeCount}"></td>
+                        <td style="width: 25%; text-align: center;">
+                            <span th:text="${recommendBoard.count}"></span>
+                        </td>
+                        <td style="width: 25%; text-align: center;">
+                            <span th:text="${recommendBoard.likeCount}"></span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

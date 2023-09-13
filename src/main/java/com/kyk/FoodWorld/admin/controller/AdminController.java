@@ -4,10 +4,16 @@ package com.kyk.FoodWorld.admin.controller;
 import com.kyk.FoodWorld.board.domain.dto.BoardSearchCond;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.service.BoardServiceImpl;
+import com.kyk.FoodWorld.chat.domain.dto.ChatSearchCond;
+import com.kyk.FoodWorld.chat.domain.entity.ChatRoom;
+import com.kyk.FoodWorld.chat.service.ChatService;
 import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.dto.MemberSearchCond;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.member.service.MemberServiceImpl;
+import com.kyk.FoodWorld.menu.domain.dto.MenuSearchCond;
+import com.kyk.FoodWorld.menu.domain.entity.MenuRecommend;
+import com.kyk.FoodWorld.menu.service.MenuRecommendServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,8 +39,8 @@ public class AdminController {
 
     private final MemberServiceImpl memberService;
     private final BoardServiceImpl boardService;
-//    private final MenuRecommendServiceImpl menuRecommendService;
-//    private final ChatService chatService;
+    private final MenuRecommendServiceImpl menuRecommendService;
+    private final ChatService chatService;
 
     
     /**
@@ -133,9 +139,9 @@ public class AdminController {
      */
     @GetMapping("/freeBoard")
     public String adminFreeBoard(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                            Model model,
-                            BoardSearchCond boardSearchCond) {
+                                 @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                 Model model,
+                                 BoardSearchCond boardSearchCond) {
         // 관리자 체크
         String messages = checkAdmin(loginMember, model);
         if (messages != null) return messages;
@@ -239,7 +245,6 @@ public class AdminController {
             Board findBoard = boardService.findById(board.getId()).orElseThrow(() ->
                     new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + board.getId()));
             boardService.updateCommentCount(findBoard.getId());
-            boardService.updateCount(board.getId());
         }
     }
 
@@ -309,135 +314,135 @@ public class AdminController {
     }
 
 
-//    /**
-//     * 메뉴 랜덤 추천 관리 폼
-//     */
-//    @GetMapping("/menu")
-//    public String adminMenu(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-//                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-//                            Model model,
-//                            MenuSearchCond menuSearchCond) {
-//        // 관리자 체크
-//        String messages = checkAdmin(loginMember, model);
-//        if (messages != null) return messages;
-//
-//        // 검색 키워드에 따른 페이징된 메뉴 가저오기
-//        Page<MenuRecommend> menuRecommends = menuRecommendService.categoryMenuList(menuSearchCond, pageable);
-//
-//        // 메뉴 페이징 모델
-//        int nowPage = pageable.getPageNumber() + 1;
-//        int startPage = Math.max(1, nowPage - 2);
-//        int endPage = Math.min(nowPage + 2, menuRecommends.getTotalPages());
-//
-//        model.addAttribute("menuRecommends", menuRecommends);
-//        model.addAttribute("nowPage", nowPage);
-//        model.addAttribute("startPage", startPage);
-//        model.addAttribute("endPage", endPage);
-//
-//        model.addAttribute("previous", pageable.previousOrFirst().getPageNumber());
-//        model.addAttribute("next", pageable.next().getPageNumber());
-//
-//        model.addAttribute("hasPrev", menuRecommends.hasPrevious());
-//        model.addAttribute("hasNext", menuRecommends.hasNext());
-//
-//        model.addAttribute("localDateTime", LocalDateTime.now());
-//        model.addAttribute("menuNameKeyword", menuSearchCond.getMenuNameKeyword());
-//        model.addAttribute("franchisesKeyword", menuSearchCond.getFranchisesKeyword());
-//
-//        return "admin/admin_menu";
-//    }
-//
-//    /**
-//     * 메뉴 삭제 기능
-//     */
-//    @GetMapping("/menu/delete/{menuRecommendId}")
-//    public String menuDelete(@PathVariable Long menuRecommendId,
-//                             @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-//                             Model model) throws IOException {
-//        if (loginMember == null) {
-//            log.info("로그인 상태가 아님");
-//
-//            model.addAttribute("message", "로그인 먼저 해주세요!");
-//            model.addAttribute("redirectUrl", "/members/login");
-//            return "messages";
-//        } else if (loginMember.getRole().equals("admin")) {
-//            menuRecommendService.delete(menuRecommendId);
-//        } else {
-//            log.info("관리자님이 아닙니다.");
-//
-//            model.addAttribute("message", "관리자님이 아닙니다.");
-//            model.addAttribute("redirectUrl", "/");
-//            return "messages";
-//        }
-//
-//        model.addAttribute("message", "메뉴 삭제 성공");
-//        model.addAttribute("redirectUrl", "/admin/menu");
-//        return "messages";
-//    }
-//
-//
-//    /**
-//     * 채팅방 관리 폼
-//     */
-//    @GetMapping("/chat")
-//    public String adminChatRoom(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-//                                @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-//                                Model model,
-//                                ChatSearchCond chatSearchCond) {
-//        String messages = checkAdmin(loginMember, model);
-//        if (messages != null) return messages;
-//
-//        // 검색 키워드의 컬럼에 따른 페이징된 채팅방 가저오기
-//        Page<ChatRoom> chatRooms = chatService.searchChatRoomByMember(chatSearchCond.getMemberSearchKeyword(), pageable);
-//
-//        // 채팅방 페이징 모델
-//        int nowPage = pageable.getPageNumber() + 1;
-//        int startPage = Math.max(1, nowPage - 2);
-//        int endPage = Math.min(nowPage + 2, chatRooms.getTotalPages());
-//
-//        model.addAttribute("chatRooms", chatRooms);
-//        model.addAttribute("nowPage", nowPage);
-//        model.addAttribute("startPage", startPage);
-//        model.addAttribute("endPage", endPage);
-//
-//        model.addAttribute("previous", pageable.previousOrFirst().getPageNumber());
-//        model.addAttribute("next", pageable.next().getPageNumber());
-//
-//        model.addAttribute("hasPrev", chatRooms.hasPrevious());
-//        model.addAttribute("hasNext", chatRooms.hasNext());
-//
-//        model.addAttribute("localDateTime", LocalDateTime.now());
-//        model.addAttribute("memberSearchKeyword", chatSearchCond.getMemberSearchKeyword());
-//
-//        return "admin/admin_chat";
-//    }
-//
-//    /**
-//     * 채팅방 삭제 기능
-//     */
-//    @GetMapping("/chatRoom/delete/{chatRoomId}")
-//    public String chatRoomDelete(@PathVariable String chatRoomId,
-//                                 @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
-//                                 Model model) {
-//        if (loginMember == null) {
-//            log.info("로그인 상태가 아님");
-//
-//            model.addAttribute("message", "로그인 먼저 해주세요!");
-//            model.addAttribute("redirectUrl", "/members/login");
-//            return "messages";
-//        } else if (loginMember.getRole().equals("admin")) {
-//            ChatRoom findChatRoom = chatService.findRoomByRoomId(chatRoomId);
-//            chatService.delete(findChatRoom);
-//        } else {
-//            log.info("관리자님이 아닙니다.");
-//
-//            model.addAttribute("message", "관리자님이 아닙니다.");
-//            model.addAttribute("redirectUrl", "/");
-//            return "messages";
-//        }
-//
-//        model.addAttribute("message", "채팅방 삭제 성공");
-//        model.addAttribute("redirectUrl", "/admin/chat");
-//        return "messages";
-//    }
+    /**
+     * 메뉴 랜덤 추천 관리 폼
+     */
+    @GetMapping("/menu")
+    public String adminMenu(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+                            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                            Model model,
+                            MenuSearchCond menuSearchCond) {
+        // 관리자 체크
+        String messages = checkAdmin(loginMember, model);
+        if (messages != null) return messages;
+
+        // 검색 키워드에 따른 페이징된 메뉴 가저오기
+        Page<MenuRecommend> menuRecommends = menuRecommendService.categoryMenuList(menuSearchCond, pageable);
+
+        // 메뉴 페이징 모델
+        int nowPage = pageable.getPageNumber() + 1;
+        int startPage = Math.max(1, nowPage - 2);
+        int endPage = Math.min(nowPage + 2, menuRecommends.getTotalPages());
+
+        model.addAttribute("menuRecommends", menuRecommends);
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        model.addAttribute("previous", pageable.previousOrFirst().getPageNumber());
+        model.addAttribute("next", pageable.next().getPageNumber());
+
+        model.addAttribute("hasPrev", menuRecommends.hasPrevious());
+        model.addAttribute("hasNext", menuRecommends.hasNext());
+
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        model.addAttribute("menuNameKeyword", menuSearchCond.getMenuNameKeyword());
+        model.addAttribute("franchisesKeyword", menuSearchCond.getFranchisesKeyword());
+
+        return "admin/admin_menu";
+    }
+
+    /**
+     * 메뉴 삭제 기능
+     */
+    @GetMapping("/menu/delete/{menuRecommendId}")
+    public String menuDelete(@PathVariable Long menuRecommendId,
+                             @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+                             Model model) throws IOException {
+        if (loginMember == null) {
+            log.info("로그인 상태가 아님");
+
+            model.addAttribute("message", "로그인 먼저 해주세요!");
+            model.addAttribute("redirectUrl", "/members/login");
+            return "messages";
+        } else if (loginMember.getRole().equals("admin")) {
+            menuRecommendService.delete(menuRecommendId);
+        } else {
+            log.info("관리자님이 아닙니다.");
+
+            model.addAttribute("message", "관리자님이 아닙니다.");
+            model.addAttribute("redirectUrl", "/");
+            return "messages";
+        }
+
+        model.addAttribute("message", "메뉴 삭제 성공");
+        model.addAttribute("redirectUrl", "/admin/menu");
+        return "messages";
+    }
+
+
+    /**
+     * 채팅방 관리 폼
+     */
+    @GetMapping("/chat")
+    public String adminChatRoom(@SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+                                @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                Model model,
+                                ChatSearchCond chatSearchCond) {
+        String messages = checkAdmin(loginMember, model);
+        if (messages != null) return messages;
+
+        // 검색 키워드의 컬럼에 따른 페이징된 채팅방 가저오기
+        Page<ChatRoom> chatRooms = chatService.searchChatRoomByMember(chatSearchCond.getMemberSearchKeyword(), pageable);
+
+        // 채팅방 페이징 모델
+        int nowPage = pageable.getPageNumber() + 1;
+        int startPage = Math.max(1, nowPage - 2);
+        int endPage = Math.min(nowPage + 2, chatRooms.getTotalPages());
+
+        model.addAttribute("chatRooms", chatRooms);
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        model.addAttribute("previous", pageable.previousOrFirst().getPageNumber());
+        model.addAttribute("next", pageable.next().getPageNumber());
+
+        model.addAttribute("hasPrev", chatRooms.hasPrevious());
+        model.addAttribute("hasNext", chatRooms.hasNext());
+
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        model.addAttribute("memberSearchKeyword", chatSearchCond.getMemberSearchKeyword());
+
+        return "admin/admin_chat";
+    }
+
+    /**
+     * 채팅방 삭제 기능
+     */
+    @GetMapping("/chatRoom/delete/{chatRoomId}")
+    public String chatRoomDelete(@PathVariable String chatRoomId,
+                                 @SessionAttribute(name = LoginSessionConst.LOGIN_MEMBER, required = false) Member loginMember,
+                                 Model model) {
+        if (loginMember == null) {
+            log.info("로그인 상태가 아님");
+
+            model.addAttribute("message", "로그인 먼저 해주세요!");
+            model.addAttribute("redirectUrl", "/members/login");
+            return "messages";
+        } else if (loginMember.getRole().equals("admin")) {
+            ChatRoom findChatRoom = chatService.findRoomByRoomId(chatRoomId);
+            chatService.delete(findChatRoom);
+        } else {
+            log.info("관리자님이 아닙니다.");
+
+            model.addAttribute("message", "관리자님이 아닙니다.");
+            model.addAttribute("redirectUrl", "/");
+            return "messages";
+        }
+
+        model.addAttribute("message", "채팅방 삭제 성공");
+        model.addAttribute("redirectUrl", "/admin/chat");
+        return "messages";
+    }
 }

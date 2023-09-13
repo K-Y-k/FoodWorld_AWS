@@ -7,7 +7,10 @@ import com.kyk.FoodWorld.admin.dto.AdminCommentDTO;
 import com.kyk.FoodWorld.admin.dto.AdminMenuRecommendDTO;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.service.BoardServiceImpl;
+import com.kyk.FoodWorld.chat.service.ChatService;
 import com.kyk.FoodWorld.comment.service.CommentServiceImpl;
+import com.kyk.FoodWorld.menu.domain.entity.MenuRecommend;
+import com.kyk.FoodWorld.menu.service.MenuRecommendServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +33,8 @@ public class AdminApiController {
 
     private final BoardServiceImpl boardService;
     private final CommentServiceImpl commentService;
-//    private final MenuRecommendServiceImpl menuRecommendService;
-//    private final ChatService chatService;
+    private final MenuRecommendServiceImpl menuRecommendService;
+    private final ChatService chatService;
 
 
     /**
@@ -52,8 +55,8 @@ public class AdminApiController {
                 return getBoardSlicePaging(memberId, lastCursorChildId, first, pageable);
             case "comment":
                 return getCommentSlicePaging(memberId, lastCursorChildId, first, pageable, true);
-//            case "menu":
-//                return getMenuSlicePaging(memberId, lastCursorChildId, first, pageable);
+            case "menu":
+                return getMenuSlicePaging(memberId, lastCursorChildId, first, pageable);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -139,30 +142,30 @@ public class AdminApiController {
     }
 
     // 메뉴 Slice 페이징 메서드
-//    private ResponseEntity<?> getMenuSlicePaging(String memberId, Long lastCursorChildId, Boolean first, Pageable pageable) {
-//        if (lastCursorChildId == 0) {
-//            Long firstCursorMenuId = menuRecommendService.findFirstCursorMenuId(memberId);
-//            log.info("첫 id={}", firstCursorMenuId);
-//
-//            Slice<AdminMenuRecommendDTO> sliceMenuRecommends = menuRecommendService.searchBySlice(firstCursorMenuId, first, pageable, memberId);
-//
-//            if (sliceMenuRecommends.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.OK);
-//            }
-//            else {
-//                return new ResponseEntity<>(sliceMenuRecommends, HttpStatus.OK);
-//            }
-//        } else {
-//            Slice<AdminMenuRecommendDTO> sliceMenuRecommends = menuRecommendService.searchBySlice(lastCursorChildId, first, pageable, memberId);
-//
-//            if (sliceMenuRecommends.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.OK);
-//            }
-//            else {
-//                return new ResponseEntity<>(sliceMenuRecommends, HttpStatus.OK);
-//            }
-//        }
-//    }
+    private ResponseEntity<?> getMenuSlicePaging(String memberId, Long lastCursorChildId, Boolean first, Pageable pageable) {
+        if (lastCursorChildId == 0) {
+            Long firstCursorMenuId = menuRecommendService.findFirstCursorMenuId(memberId);
+            log.info("첫 id={}", firstCursorMenuId);
+
+            Slice<AdminMenuRecommendDTO> sliceMenuRecommends = menuRecommendService.searchBySlice(firstCursorMenuId, first, pageable, memberId);
+
+            if (sliceMenuRecommends.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(sliceMenuRecommends, HttpStatus.OK);
+            }
+        } else {
+            Slice<AdminMenuRecommendDTO> sliceMenuRecommends = menuRecommendService.searchBySlice(lastCursorChildId, first, pageable, memberId);
+
+            if (sliceMenuRecommends.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(sliceMenuRecommends, HttpStatus.OK);
+            }
+        }
+    }
 
     /**
      * 선택한 회원의 게시글/댓글/메뉴 삭제 후 Slice 페이징 조회
@@ -192,11 +195,11 @@ public class AdminApiController {
                 boardService.delete(findBoard.getId(), findBoard.getBoardType());
                 return getBoardSlicePaging(memberId, lastCursorChildId, first, pageable);
 
-//            case "menu":
-//                MenuRecommend findMenu = menuRecommendService.findById(Long.valueOf(childId)).orElseThrow(() ->
-//                        new IllegalArgumentException("메뉴 조회 실패: " + Long.valueOf(childId)));
-//                menuRecommendService.delete(findMenu.getId());
-//                return getMenuSlicePaging(memberId, lastCursorChildId, first, pageable);
+            case "menu":
+                MenuRecommend findMenu = menuRecommendService.findById(Long.valueOf(childId)).orElseThrow(() ->
+                        new IllegalArgumentException("메뉴 조회 실패: " + Long.valueOf(childId)));
+                menuRecommendService.delete(findMenu.getId());
+                return getMenuSlicePaging(memberId, lastCursorChildId, first, pageable);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -234,55 +237,55 @@ public class AdminApiController {
     /**
      * 선택한 채팅방의 채팅 메시지 Slice 페이징 조회
      */
-//    @GetMapping("/api/chatMessage")
-//    public ResponseEntity<?> chatMessageScroll(@RequestParam(value = "chatRoomId") String chatRoomId,
-//                                               @RequestParam(value = "lastCursorChatMessageId", defaultValue = "0") Long lastCursorChatMessageId,
-//                                               @RequestParam(value = "chatMessageFirst") Boolean first,
-//                                               @PageableDefault(size=5) Pageable pageable) {
-//        log.info("lastCursorChatMessageId={}", lastCursorChatMessageId);
-//        return getChatMessageSlicePaging(chatRoomId, lastCursorChatMessageId, first, pageable);
-//    }
+    @GetMapping("/api/chatMessage")
+    public ResponseEntity<?> chatMessageScroll(@RequestParam(value = "chatRoomId") String chatRoomId,
+                                               @RequestParam(value = "lastCursorChatMessageId", defaultValue = "0") Long lastCursorChatMessageId,
+                                               @RequestParam(value = "chatMessageFirst") Boolean first,
+                                               @PageableDefault(size=5) Pageable pageable) {
+        log.info("lastCursorChatMessageId={}", lastCursorChatMessageId);
+        return getChatMessageSlicePaging(chatRoomId, lastCursorChatMessageId, first, pageable);
+    }
 
     /**
      * 선택한 채팅 메시지 삭제 후 Slice 페이징 조회
      */
-//    @GetMapping("/api/chatMessage/delete")
-//    public ResponseEntity<?> deleteChatMessage(@RequestParam(value = "chatRoomId") String chatRoomId,
-//                                               @RequestParam(value = "chatMessageId") String chatMessageId,
-//                                               @RequestParam(value = "lastCursorChatMessageId", defaultValue = "0") Long lastCursorChatMessageId,
-//                                               @RequestParam(value = "chatMessageFirst") Boolean first,
-//                                               @PageableDefault(size=5) Pageable pageable) {
-//        log.info("lastCursorChatMessageId={}", lastCursorChatMessageId);
-//        log.info("chatMessageId={}", chatMessageId);
-//        log.info("chatRoomId={}", chatRoomId);
-//
-//        chatService.deleteChatMessage(Long.valueOf(chatMessageId));
-//        return getChatMessageSlicePaging(chatRoomId, lastCursorChatMessageId, first, pageable);
-//    }
+    @GetMapping("/api/chatMessage/delete")
+    public ResponseEntity<?> deleteChatMessage(@RequestParam(value = "chatRoomId") String chatRoomId,
+                                               @RequestParam(value = "chatMessageId") String chatMessageId,
+                                               @RequestParam(value = "lastCursorChatMessageId", defaultValue = "0") Long lastCursorChatMessageId,
+                                               @RequestParam(value = "chatMessageFirst") Boolean first,
+                                               @PageableDefault(size=5) Pageable pageable) {
+        log.info("lastCursorChatMessageId={}", lastCursorChatMessageId);
+        log.info("chatMessageId={}", chatMessageId);
+        log.info("chatRoomId={}", chatRoomId);
+
+        chatService.deleteChatMessage(Long.valueOf(chatMessageId));
+        return getChatMessageSlicePaging(chatRoomId, lastCursorChatMessageId, first, pageable);
+    }
 
     // 채팅 메시지 Slice 페이징 메서드
-//    private ResponseEntity<?> getChatMessageSlicePaging(String chatRoomId, Long lastCursorChatMessageId, Boolean first, Pageable pageable) {
-//        if (lastCursorChatMessageId == 0) {
-//            Long firstCursorChatMessageId = chatService.findFirstCursorChatMessageId(chatRoomId);
-//            Slice<AdminChatMessageDTO> sliceComments = chatService.searchBySlice(firstCursorChatMessageId, first, pageable, chatRoomId);
-//
-//            if (sliceComments.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.OK);
-//            }
-//            else {
-//                return new ResponseEntity<>(sliceComments, HttpStatus.OK);
-//            }
-//        }
-//        else {
-//            Slice<AdminChatMessageDTO> sliceComments = chatService.searchBySlice(lastCursorChatMessageId, first, pageable, chatRoomId);
-//
-//            if (sliceComments.isEmpty()) {
-//                return new ResponseEntity<>(HttpStatus.OK);
-//            }
-//            else {
-//                return new ResponseEntity<>(sliceComments, HttpStatus.OK);
-//            }
-//        }
-//    }
+    private ResponseEntity<?> getChatMessageSlicePaging(String chatRoomId, Long lastCursorChatMessageId, Boolean first, Pageable pageable) {
+        if (lastCursorChatMessageId == 0) {
+            Long firstCursorChatMessageId = chatService.findFirstCursorChatMessageId(chatRoomId);
+            Slice<AdminChatMessageDTO> sliceComments = chatService.searchBySlice(firstCursorChatMessageId, first, pageable, chatRoomId);
+
+            if (sliceComments.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(sliceComments, HttpStatus.OK);
+            }
+        }
+        else {
+            Slice<AdminChatMessageDTO> sliceComments = chatService.searchBySlice(lastCursorChatMessageId, first, pageable, chatRoomId);
+
+            if (sliceComments.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(sliceComments, HttpStatus.OK);
+            }
+        }
+    }
 
 }

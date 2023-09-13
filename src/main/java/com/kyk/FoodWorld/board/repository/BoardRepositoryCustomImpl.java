@@ -156,23 +156,27 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom{
 
     @Override
     public List<Board> popularBoardList(String boardType) {
-        int limit = 7;
+        int limit = 6;
         if (boardType.equals("먹스타그램")) {
             limit = 4;
         }
 
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime startToday = today.toLocalDate().atStartOfDay();
-        LocalDateTime endToday = today.toLocalDate().atTime(23, 59, 59);
-
+        // 하루 인기글 기준
+//        LocalDateTime startToday = today.toLocalDate().atStartOfDay();
+//        LocalDateTime endToday = today.toLocalDate().atTime(23, 59, 59);
         log.info("오늘의 시작 시간 = {}", today.toLocalDate().atStartOfDay());
         log.info("오늘의 마지막 시간 = {}", today.toLocalDate().atTime(23, 59, 59));
+
+        // 주간 인기글 기준
+        LocalDateTime oneWeekAgo = today.minusDays(7); // 7일 전 날짜 계산
 
 
         return queryFactory.selectFrom(board)
                 .where(
-                        board.boardType.eq(boardType),
-                        board.createdDate.between(startToday, endToday)
+                        board.boardType.eq(boardType)
+//                        board.createdDate.between(oneWeekAgo, today) // 7일 전부터 오늘까지의 글
+//                        board.createdDate.between(startToday, endToday) // 하루 기준 글
                 )
                 .orderBy(board.count.multiply(7).add(board.likeCount.multiply(3)).desc(),
                         board.createdDate.desc(),

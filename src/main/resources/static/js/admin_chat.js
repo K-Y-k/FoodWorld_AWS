@@ -209,13 +209,13 @@ function getChatMessageItem(chatMessage) {
     let item = `<table style="width: 370px; margin-left: 5px; margin-top: 20px; border: 1px solid black;">
                     <tr>
                         <td>
-                            <img src="/profileImageUpload/${chatMessage.senderProfile}"
+                            <img src="${chatMessage.senderProfile}"
                                  class="rounded-circle"
                                  style="width: 50px; height: 50px;">
                         </td>
 
                         <td>
-                            <span>${chatMessage.sender}</span>
+                            <span>${chatMessage.sender.name}</span>
                         </td>
 
                         <td>
