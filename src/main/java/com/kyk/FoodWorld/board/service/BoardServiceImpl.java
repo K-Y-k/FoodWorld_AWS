@@ -343,7 +343,7 @@ public class BoardServiceImpl implements BoardService {
             } else {
                 log.info("CASE4: 새로 받아온 파일이 아예 없을 경우");
 
-                findBoard.updateBoard(freeBoardUpdateForm.getTitle(), freeBoardUpdateForm.getContent(), freeBoardUpdateForm.getSubType());
+                findBoard.updateRecommendBoard(recommendBoardUpdateForm.getTitle(), recommendBoardUpdateForm.getContent(), recommendBoardUpdateForm.getSubType(), recommendBoardUpdateForm.getArea(), recommendBoardUpdateForm.getMenuName());
             }
         }
         else { // 먹스타그램인 경우는 이미지 파일만 있으므로 이미지 파일만 처리
