@@ -397,6 +397,9 @@ public class BoardServiceImpl implements BoardService {
                     findBoard.updateBoard(muckstarUpdateForm.getTitle(), muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
                 }
 
+                // 수정 전 게시글에 파일이 아예 없었을 경우가 있으므로 적용
+                findBoard.updateFileAttached(1);
+
                 BoardFile updateBoardFileEntity = BoardFile.toBoardFileEntity(findBoard, attachOriginalFilename, attachStoredFileName, amazonS3.getUrl(bucket, folder + "/" + attachStoredFileName).toString(), attached);
                 boardFileRepository.save(updateBoardFileEntity);
             }

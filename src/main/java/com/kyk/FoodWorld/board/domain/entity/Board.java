@@ -118,6 +118,9 @@ public class Board extends BaseTimeEntity {
             this.menuName = menuName;
         }
     }
+    public void updateFileAttached(int fileAttached){
+        this.fileAttached = fileAttached;
+    }
 
     public void updateLikeCount(int likeCount){
         this.likeCount = likeCount;
