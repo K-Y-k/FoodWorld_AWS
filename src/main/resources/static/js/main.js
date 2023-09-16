@@ -164,7 +164,9 @@ function onMessageReceived(payload) {
 
         // 마지막 회원까지 퇴장하여 채팅방이 삭제된 경우 마지막 큻라이언트 회원 이동 처리
         if (chat.message.equals('채팅방 삭제')) {
-            window.location.href = "/";
+            stompClient.disconnect(() => {
+                window.location.href = "/";
+            });
         }
 
     } else {                           // talk라면

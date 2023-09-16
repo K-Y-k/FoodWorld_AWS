@@ -117,8 +117,8 @@
 
 
                     <div class="container" style="position:absolute; top: 14%; left: 1%;" id="form">
-                        <a href="/oauth2/authorization/google" class="btn btn-secondary active" style="width: 100px; margin-left: 7px; font-size: 12px;" role="button">구글 로그인</a>
-                        <a href="/oauth2/authorization/naver" class="btn btn-success active" style="width: 100px; margin-left: 30px; font-size: 11px;" role="button">네이버 로그인</a>
+<!--                        <a href="/oauth2/authorization/google" class="btn btn-secondary active" style="width: 100px; margin-left: 7px; font-size: 12px;" role="button">구글 로그인</a>-->
+<!--                        <a href="/oauth2/authorization/naver" class="btn btn-success active" style="width: 100px; margin-left: 30px; font-size: 11px;" role="button">네이버 로그인</a>-->
 
                         <br>
                         <br>
@@ -459,6 +459,12 @@
 
         <!--채팅방-->
         <div class="container p-4 detail" style="position: absolute; top: 69%;">
+            <span th:if="${targetChatRoom != null and session.loginMember.id != targetChatRoom.member1.id}"
+                th:data-receiver-id="${targetChatRoom.member1.id}"></span>
+
+            <span th:if="${targetChatRoom != null and session.loginMember.id != targetChatRoom.member2.id}"
+                th:data-receiver-id="${targetChatRoom.member2.id}"></span>
+
             <div class="row">
                 <div class="col-9 p-0">
                     <div class="chat-container" id="chat-room"
@@ -473,7 +479,7 @@
                             <!--DB에 저장된 채팅 메시지-->
                             <div th:each="chatMessage : ${chatMessages}">
                                 <!--현재 회원이 보낸 것이면-->
-                                <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId == session.loginMember.id}"
+                                <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.sender.id == session.loginMember.id}"
                                     style="margin-left: 40px; max-width: 280px; margin-top: 3%; list-style-type: none;">
                                     <table style="float: right;">
                                         <tr>
@@ -496,13 +502,13 @@
                                 </li>
 
                                 <!--상대방 회원이 보낸 것이면-->
-                                <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.senderId != session.loginMember.id}"
+                                <li th:if="${#strings.equals(chatMessage.messageType, 'TALK') and chatMessage.sender.id != session.loginMember.id}"
                                     style="width: 280px; float: left; list-style-type: none; margin-top: 3%;">
                                     <table>
                                         <tr>
                                             <td>
                                                 <table>
-                                                    <tr th:text="${chatMessage.sender}">
+                                                    <tr th:text="${chatMessage.sender.name}">
                                                     </tr>
 
                                                     <tr>
