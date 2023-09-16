@@ -1,13 +1,13 @@
 # :rocket: FoodWorld_Project
-기존 프로젝트를 AWS EC2 서버, RDS MariaDB로 마이그레이션 및 CI/CD, 무중단 배포 (2023.08.28~09.12)
+기존 프로젝트를 AWS EC2 서버, RDS MariaDB로 마이그레이션 및 CI/CD, 무중단 배포 (2023.08.28 ~ 2023.09.14)
 
 - 개발 인원: 1명
 
 - 개발 기간: 2023.01 ~ 2023.04
   
-- 개발 기간의 github: https://github.com/K-Y-k/KYKProject_FoodWorld_Spring
+- 개발 기간의 GitHub: https://github.com/K-Y-k/KYKProject_FoodWorld_Spring
 
-- AWS로 마이그레이션 및 배포 기간: 2023.09
+- AWS 환경으로 마이그레이션 및 배포 기간: 2023.08.28 ~ 2023.09.14
 
 - URL: http://ec2-15-165-148-241.ap-northeast-2.compute.amazonaws.com
 
@@ -31,9 +31,9 @@
 ## <b id="0"> ❓ 어떤 프로젝트인가요?(프로젝트의 목적)</b>
 백엔드 웹 개발자가 되기 위해 Jdbc, DB, Servlet의 기초를 다지고 
 
-Spring과 관련된 Spring 기초, HTTP 네트워크, MVC 패턴, DB 연결, JPA, SpringDataJPA, queryDsl을 학습한 후 배운 내용을 나의 것으로 만들기 위해 처음 구현해본 프로젝트입니다.
+Spring과 관련된 Spring 기초, HTTP 네트워크, MVC 패턴, DB 연결, JPA, SpringDataJPA, queryDsl을 학습한 후 배운 내용을 나의 것으로 만들기 위해 처음 구현해 본 프로젝트입니다.
 
-사람에게 중요한 것중의 하나인 음식을 타깃으로 선정하고 공감대를 형성하기 좋은 음식의 주제로 소통을 할 수 있고 음식 메뉴를 선정할 때 도움을 제공하는 서비스로
+사람에게 중요한 것 중의 하나인 음식을 타깃으로 선정하고 공감대를 형성하기 좋은 음식의 주제로 소통을 할 수 있고 음식 메뉴를 선정할 때 도움을 제공하는 서비스로
 
 기본적으로 게시글/댓글을 작성할 수 있고 추가로 다른 회원과 실시간 채팅을 나눌 수 있고 회원들이 등록한 메뉴를 랜덤으로 추첨할 수 있습니다.
 
@@ -94,11 +94,11 @@ Spring과 관련된 Spring 기초, HTTP 네트워크, MVC 패턴, DB 연결, JPA
 
 
 ## <b id="3"> 🔑 E-R 다이어그램 </b>
-<img src="https://github.com/K-Y-k/KYKProject_FoodWorld_Spring/assets/102020649/af9b9267-1e1b-4c22-8394-68b9e874fcf4.png" width="800" height="500"/>
+<img src="https://github.com/K-Y-k/KYKProject_FoodWorld_Spring/assets/102020649/44282901-9883-4281-9e61-583e677875d9.png" width="800" height="500"/>
 
 
 ## <b id="4"> ⚙️ 아키텍처 구성 </b>
-
+<img src="https://github.com/K-Y-k/KYKProject_FoodWorld_Spring/assets/102020649/82bef8e7-b54e-4c13-ad88-bd624fd20cd9.png" width="800" height="650"/>
 
 ## <b id="5"> ▶️ 시연 영상 </b>
 [![Video Label](http://img.youtube.com/vi/uZDP6DqmpI8/0.jpg)](https://youtu.be/uZDP6DqmpI8)
