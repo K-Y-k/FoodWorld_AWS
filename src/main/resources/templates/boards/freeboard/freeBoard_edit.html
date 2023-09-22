@@ -12,40 +12,44 @@
 </head>
 
 <body>
-<header style="position: relative;">
-  <img src="/image/main_img/logo2.PNG" class = "logo" style="position: absolute; z-index: 3; width: 170px; height: 90px; left: 2.5%; top: 10%;" id = "logo2">
+<header style="position: relative; width: 1900px;">
+  <img src="/image/main_img/logo2.PNG" class = "logo" style="position: absolute; z-index: 3; width: 170px; height: 90px; margin-left: 50px;" id = "logo2">
   <div class="px-3 py-2 bg-dark text-white">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <img src = "/image/main_img/write_icon.PNG" width = "50px" height="50px" >
-        <a href="/boards/freeBoard" class="navbar-brand"><h4 class = "thema">&nbsp;&nbsp;자유게시판</h4></a>
+        <img src="/image/main_img/write_icon.PNG" width="50px" height="50px" >
+        <a href="/boards/freeBoard" class="navbar-brand"><h4 style="margin-left: 10px;">자유게시판</h4></a>
+
         <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-          <li>
-            <img src = "/image/main_img/home_icon.PNG" width = "45px" height="40px" style="margin-left: 151px; margin-top: 10px;">
-            <a href="/" class="nav-link text-white">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메인
+          <li style="position: relative;">
+            <img src="/image/main_img/home_icon.PNG" width="45px" height="40px"
+                 style="margin-left: 140px; margin-top: 10px;">
+            <a href="/" class="nav-link text-white" style="margin-left: 130px;">
+              메인
             </a>
           </li>
           <li>
-            <img src = "/image/main_img/write_icon.PNG" width = "50px" height="40px" style="margin-left: 105px; margin-top: 10px;">
-            <a href="/boards/recommendBoard" class="nav-link text-white">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;추천게시판
+            <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                 style="margin-left: 102px; margin-top: 10px;">
+            <a href="/boards/recommendBoard" class="nav-link text-white" style="margin-left: 75px;">
+              추천게시판
             </a>
           </li>
           <li>
-            <img src = "/image/main_img/muckstar_icon.PNG" width = "40px" height="40px" style="margin-left: 95px; margin-top: 10px;">
+            <img src="/image/main_img/muckstar_icon.PNG" width = "40px" height="40px"
+                 style="margin-left: 95px; margin-top: 10px;">
             <a href="/boards/muckstarBoard" class="nav-link text-white">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;먹스타그램
             </a>
           </li>
           <li>
-            <img src = "/image/main_img/menu_recommend_icon.PNG" width = "50px" height="40px" style="margin-left: 75px; margin-top: 10px;">
+            <img src="/image/main_img/menu_recommend_icon.PNG" width = "50px" height="40px" style="margin-left: 75px; margin-top: 10px;">
             <a href="/menu" class="nav-link text-white">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메뉴추천
             </a>
           </li>
           <li>
-            <img src = "/image/main_img/chat_icon.PNG" width = "50px" height="40px" style="margin-left: 65px; margin-top: 10px;">
+            <img src="/image/main_img/chat_icon.PNG" width = "50px" height="40px" style="margin-left: 65px; margin-top: 10px;">
             <a href="/chat" class="nav-link text-white">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;채팅방&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </a>
@@ -78,27 +82,28 @@
   </div>
 </header>
 
-<section style="position: relative; width: 90vw; height: 30vh;">
+<section style="position: relative; width: 1900px;">
     <!--th:action="@{/boards/freeBoard/{boardId}/edit(boardId=${board.id})}"-->
-    <h2 id="mtitle" style="position: absolute; left: 45%; top: 10%;"><b>자유게시판 글 수정하기</b></h2>
+    <h2 id="mtitle" style="position: absolute; margin-left: 750px; margin-top: 60px;"><b>자유게시판 글 수정하기</b></h2>
 
-    <form action="" th:action th:object="${updateForm}" method="post" enctype="multipart/form-data">
-      <div class="container mt-3" style="position: absolute; top: 20%; width: 50vw; left: 25%">
+    <form th:action th:object="${updateForm}" method="post" enctype="multipart/form-data">
+      <div class="container mt-3" style="position: absolute; top: 20%; width: 830px; margin-left: 450px;">
+        <div>
+            <div class="form-group col-sm-5">
+                <select th:field="*{boardType}" class="form-select" disabled>
+                  <option th:value="자유게시판">자유게시판</option>
+                </select>
+            </div>
 
-        <div class="form-group col-sm-5">
-          <select th:field="*{boardType}" class="form-select" disabled>
-            <option th:value="자유게시판">자유게시판</option>
-          </select>
-        </div>
+            <br>
 
-        <br>
-
-        <div class="form-group col-sm-2">
-          <select th:field="*{subType}" class="form-select">
-            <option value="말머리 선택">말머리 선택</option>
-            <option th:value="사는얘기">사는얘기</option>
-            <option th:value="질문">질문</option>
-          </select>
+            <div class="form-group col-sm-2">
+              <select th:field="*{subType}" class="form-select">
+                  <option value="말머리 선택">말머리 선택</option>
+                  <option th:value="사는얘기">사는얘기</option>
+                  <option th:value="질문">질문</option>
+              </select>
+            </div>
         </div>
 
         <div class="field-error" style="color: red;" th:errors="*{title}"></div>

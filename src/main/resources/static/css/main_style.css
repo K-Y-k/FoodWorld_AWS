@@ -3,17 +3,12 @@
     align-items: center;
     */
     width: 1900px;
-    height: 110vh;
+    height: 1017px;
     position: relative;
 }
 .nav {
     width: 100%;
     position: absolute;
-}
-.logo2 {
-    z-index: 3;
-    width: 200px;
-    position: relative;
 }
 
 .card {
