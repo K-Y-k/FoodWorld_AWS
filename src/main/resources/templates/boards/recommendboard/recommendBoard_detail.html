@@ -84,9 +84,9 @@
 </header>
 
 
-<section style="position: relative; width: 90vw; height: 80vh;">
-  <div class="container mt-3" style="position: absolute; top: 7%;">
-      <div class="card" style="position: relative; width: 50vw; left: 35%;">
+<section style="position: relative; width: 1472px; height: 739px;">
+    <div class="container mt-3" style="position: absolute; top: 7%;">
+        <div class="card" style="position: relative; width: 920px; left: 500px;">
           <div class="dropdown" style="position: absolute; left: 95%;"
                th:if="${session.loginMember != null && session.loginMember.id == board.member.id}">
               <button type="button" class="btn btn-lg btn-secondary dropdown-toggle dropdown-toggle-split"
@@ -214,19 +214,22 @@
                   </form>
 
                   <!-- 댓글 -->
-                  <div class="d-flex mb-4" th:each="comment : ${comments}" style="position: relative; width: 40vw;">
+                  <div class="d-flex mb-4" th:each="comment : ${comments}" style="position: relative; width: 900px;">
                       <div class="ms-3">
                           <span class="input-group">
                               <div class="flex-shrink-0">
-                                  <table style="position: relative; width: 40vw;">
+                                  <table style="position: relative; width: 900px;">
                                       <td style="float: left;">
                                           <img class="rounded-circle"
                                                th:src="@{${comment.member.profileFile.path}}"
                                                style="width: 3vw; height: 5vh;">
                                       </td>
 
-                                      <td class="fw-bold" style="float: left;"
-                                          th:text="${comment.writer}"></td>
+                                      <td class="fw-bold" style="float: left;">
+                                          <a th:href="@{|/members/profile/${comment.member.id}|}" style="text-decoration-line: none;">
+                                              <th:block th:text="${comment.writer}"/>
+                                          </a>
+                                      </td>
 
                                       <td class="fw-bold" style="float: left;"
                                           th:if="${#temporals.day(board.createdDate)} == ${#temporals.day(localDateTime)}"

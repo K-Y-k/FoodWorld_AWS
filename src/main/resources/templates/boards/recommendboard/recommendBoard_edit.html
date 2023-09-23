@@ -84,12 +84,12 @@
 
 <section style="position: relative; width: 1900px;">
     <!--th:action="@{/boards/freeBoard/{boardId}/edit(boardId=${board.id})}"-->
-  <h2 id="mtitle" style="position: absolute; margin-left: 750px; margin-top: 60px;"><b>추천게시판 글 수정하기</b></h2>
+  <h2 id="mtitle" style="position: absolute; margin-left: 750px; margin-top: 20px;"><b>추천게시판 글 수정하기</b></h2>
 
   <form id="submit-form" action="" th:action th:object="${updateForm}" method="post" enctype="multipart/form-data">
     <div class="container mt-3" style="position: absolute; top: 20%; width: 830px; margin-left: 450px;">
 
-      <div class="form-group col-sm-5">
+      <div class="form-group col-sm-3">
         <select th:field="*{boardType}" class="form-select" disabled>
           <option th:value="추천게시판">추천게시판</option>
         </select>

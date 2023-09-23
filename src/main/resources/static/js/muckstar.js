@@ -133,37 +133,37 @@ function getStoryItem(board) {
 
     var comparedDate = dateCompare(date, nowDate);
 
-    let item = `<div class="mucstarList_item">
-                    <table>
+    let item = `<div class="mucstarList_item" style="width: 1145px; height: 681px;">
+                    <table style="margin-left: 100px;">
                         <tr>
-                            <td> <img src="/image/muckstargram_img/muckstar_background.PNG" style="width: 23vw;"></td>
+                            <td> <img src="/image/muckstargram_img/muckstar_background.PNG" style="width: 376px; height: 472px;"></td>
 
                             <td>
-                                <div class="card" id="card" style="margin-top: 5%; left: 10%; width: 40vw; height: 70vh;">
+                                <div class="card" id="card" style="margin-top: 50px; left: 10%; width: 652px; height: 660px;">
                                     <a href="/boards/muckstarBoard/${board.id}">
                                         <img class="muckstar-image" src="${board.boardFiles[0].path}"
-                                             style="width: 40vw; height: 62vh;">
+                                             style="width: 645px; height: 600px;">
                                     </a>
 
-                                    <div class="input-group" style="margin-left: 5%;">
+                                    <div class="input-group" style="margin-left: 50px; width: 651px; height: 60px;">
                                         <button class="btn btnEvent"
                                                 id="${board.id}"
                                                 onclick="likeUpdate(this);" type="button">
-                                            <img src="/image/muckstargram_img/favorite_icon.PNG" style="width: 3vw; height: 5vh;">
+                                            <img src="/image/muckstargram_img/favorite_icon.PNG" style="width: 53px; height: 46px;">
                                         </button>
 
-                                        <span class="like" id="likeCount${board.id}" style="font-weight: 500; font-size: 250%;">${board.likeCount}</span>
+                                        <span class="like" id="likeCount${board.id}" style="font-weight: 500; font-size: 30px;">${board.likeCount}</span>
 
-                                        <img src="/image/muckstargram_img/comment_icon.PNG" style = "width: 3vw; height: 5vh; margin-left: 5%; margin-top:1%">
-                                        <span class="comment" style ="font-weight: 500; font-size: 250%; margin-left: 3%;">${board.commentCount}</span>
+                                        <img src="/image/muckstargram_img/comment_icon.PNG" style = "width: 49px; height: 46px; margin-left: 5%; margin-top:1%">
+                                        <span class="comment" style ="font-weight: 500; font-size: 30px; margin-left: 20px;">${board.commentCount}</span>
 
-                                        <span id="date" style="float: right; font-size: 20px; margin-left: 25%;">${comparedDate}</span>
+                                        <span id="date" style="float: right; font-size: 20px; margin-left: 200px;">${comparedDate}</span>
                                     </div>
                                 </div>
                             </td>
 
                             <td>
-                                <img src="/image/food/sin.jpg" style="margin-left: 30%; width: 20vw;">
+                                <img src="/image/food/sin.jpg" style="margin-left: 150px; width: 327px; height: 436px;">
                             </td>
                         </tr>
                     </table>

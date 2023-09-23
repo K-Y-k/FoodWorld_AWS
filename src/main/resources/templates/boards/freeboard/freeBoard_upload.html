@@ -82,16 +82,24 @@
 </header>
 
 <section style="position: relative; width: 1900px;">
-    <h2 id="categoryFreeBoard" style="position: absolute; margin-left: 750px; margin-top: 30px;"><b>자유게시판 글 작성하기</b></h2>
+    <h2 id="categoryFreeBoard" style="position: absolute; margin-left: 750px; margin-top: 40px;"><b>자유게시판 글 작성하기</b></h2>
 
     <form th:action th:object="${uploadForm}" method="post" enctype="multipart/form-data">
         <div class="container mt-3" style="position: absolute; top: 20%; width: 830px; margin-left: 450px;">
             <div class="field-error" style="color: red;" th:errors="*{boardType}"></div>
             <div>
+                <div class="form-group col-sm-3">
+                    <select th:field="*{boardType}" class="form-select">
+                        <option th:value="자유게시판">자유게시판</option>
+                    </select>
+                </div>
+
+                <br>
+
                 <div class="field-error" style="color: red;" th:errors="*{subType}"></div>
-                <div class="form-group col-sm-2">
+                <div class="form-group col-sm-3">
                     <select th:field="*{subType}" class="form-select">
-                        <option value="">카테고리 선택</option>
+                        <option value="">말머리 선택</option>
                         <option th:value="사는얘기">사는얘기</option>
                         <option th:value="질문">질문</option>
                     </select>
