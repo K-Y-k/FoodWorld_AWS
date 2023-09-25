@@ -13,72 +13,86 @@
 </head>
 
 <body>
-<header style="position: relative; width: 1900px;">
-    <img src="/image/main_img/logo2.PNG" class = "logo" style="position: absolute; z-index: 3; width: 170px; height: 90px; margin-left: 50px;" id = "logo2">
-    <div class="px-3 py-2 bg-dark text-white">
-        <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <img src="/image/main_img/write_icon.PNG" width="50px" height="50px" >
-                <a href="/boards/freeBoard" class="navbar-brand"><h4 style="margin-left: 10px;">자유게시판</h4></a>
+<header style="position: relative; width: 1900px;"> <!--네비게이션바-->
+    <div class="px-3 py-2 bg-dark text-white" style="height: 100px;">
+        <div class="align-items-center justify-content-center justify-content-lg-start">
+            <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                <li style="position: relative; left: -25%;">
+                    <img src="/image/main_img/logo2.PNG" width="170px" height="90px">
+                </li>
 
-                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
-                    <li style="position: relative;">
-                        <img src="/image/main_img/home_icon.PNG" width="45px" height="40px"
-                             style="margin-left: 140px; margin-top: 10px;">
-                        <a href="/" class="nav-link text-white" style="margin-left: 130px;">
-                            메인
-                        </a>
-                    </li>
-                    <li>
-                        <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
-                             style="margin-left: 102px; margin-top: 10px;">
-                        <a href="/boards/recommendBoard" class="nav-link text-white" style="margin-left: 75px;">
-                            추천게시판
-                        </a>
-                    </li>
-                    <li>
-                        <img src="/image/main_img/muckstar_icon.PNG" width = "40px" height="40px"
-                             style="margin-left: 95px; margin-top: 10px;">
-                        <a href="/boards/muckstarBoard" class="nav-link text-white">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;먹스타그램
-                        </a>
-                    </li>
-                    <li>
-                        <img src="/image/main_img/menu_recommend_icon.PNG" width = "50px" height="40px" style="margin-left: 75px; margin-top: 10px;">
-                        <a href="/menu" class="nav-link text-white">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;메뉴추천
-                        </a>
-                    </li>
-                    <li>
-                        <img src="/image/main_img/chat_icon.PNG" width = "50px" height="40px" style="margin-left: 65px; margin-top: 10px;">
-                        <a href="/chat" class="nav-link text-white">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;채팅방&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </a>
-                    </li>
+                <li style="position: relative; left: -20%;">
+                    <img src="/image/main_img/write_icon.PNG" width="65px" height="57px"
+                         style="margin-left: 6px; margin-top: 10px;">
+                </li>
 
-                    <li>
-                        <h5 th:if="${session.loginMember != null}"
-                            th:text="${session.loginMember.name}+ '님 접속중'"
-                            id = "userName" style="font-size : 13px; margin-top: 20px;"></h5>
+                <li style="position: relative; left: -19%; margin-top: 25px;">
+                    <a href="/boards/freeBoard" class="navbar-brand"><h4>자유게시판</h4></a>
+                </li>
 
-                        <br/>
+                <li style="position: relative; left: -12%;">
+                    <img src="/image/main_img/home_icon.PNG" width="45px" height="40px"
+                         style="margin-left: 10px; margin-top: 10px;">
+                    <a href="/" class="nav-link text-white" style="font-size: 16px;">
+                        <span>메인</span>
+                    </a>
+                </li>
 
-                        <form th:action="@{/members/logout}" method="post">
-                            <button th:if="${session.loginMember != null}"
-                                    type="submit" class="btn btn-primary" id="logout"
-                                    style="width: 90px; height: 35px; position :absolute; top: 56%;"
-                                    th:onclick="@{/members/logout}">로그아웃
-                            </button>
-                        </form>
+                <li style="position: relative; left: -8.5%;">
+                    <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
+                         style="margin-left: 27px; margin-top: 10px;">
+                    <a href="/boards/recommendBoard" class="nav-link text-white" style="font-size: 16px;">
+                        <span>추천게시판</span>
+                    </a>
+                </li>
 
-                        <button th:if="${session.loginMember == null}"
-                                type="submit" class="btn btn-primary"
-                                style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
-                                th:onclick="|location.href='@{/members/login}'|">로그인
+                <li style="position: relative; left: -6%;">
+                    <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px"
+                         style="margin-left: 35px; margin-top: 10px;">
+                    <a href="/boards/muckstarBoard" class="nav-link text-white" style="font-size: 16px;">
+                        <span>먹스타그램</span>
+                    </a>
+                </li>
+
+                <li style="position: relative; left: -3%;">
+                    <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px"
+                         style="margin-left: 27px; margin-top: 10px;">
+                    <a href="/menu" class="nav-link text-white" style="font-size: 16px;">
+                        <span>메뉴추천</span>
+                    </a>
+                </li>
+
+                <li style="position: relative;">
+                    <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px"
+                         style="margin-left: 20px; margin-top: 10px;">
+                    <a href="/chat" class="nav-link text-white" style="font-size: 16px;">
+                        <span>채팅방</span>
+                    </a>
+                </li>
+
+                <li>
+                    <h5 th:if="${session.loginMember != null}"
+                        th:text="${session.loginMember.name}+ '님 접속중'"
+                        id="userName" style="font-size: 13px; margin-top: 20px;"></h5>
+
+                    <br/>
+
+                    <form th:action="@{/members/logout}" method="post">
+                        <button th:if="${session.loginMember != null}"
+                                type="submit" class="btn btn-primary" id="logout"
+                                style="width: 95px; height: 35px; position :absolute; top: 56%;"
+                                th:onclick="@{/members/logout}">로그아웃
                         </button>
-                    </li>
-                </ul>
-            </div>
+                    </form>
+
+                    <button th:if="${session.loginMember == null}"
+                            type="submit" class="btn btn-primary"
+                            style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
+                            th:onclick="|location.href='@{/members/login}'|">로그인
+                    </button>
+                </li>
+            </ul>
+
         </div>
     </div>
 </header>
@@ -176,7 +190,7 @@
               <button class="btn btnEvent" id="like_btn"
                       th:onclick="|location.href='@{/boards/freeBoard/{boardId}/like(boardId=${board.id})}'|"
                       type="button">
-                  <img src="/image/muckstargram_img/recommend_icon.PNG" style="width: 3vw; height: 5vh;">
+                  <img src="/image/muckstargram_img/recommend_icon.PNG" style="width: 76px; height: 60px;">
               </button>
 
           </div>
@@ -207,11 +221,11 @@
                       <div class="ms-3">
                           <span class="input-group">
                               <div class="flex-shrink-0">
-                                  <table style="position: relative; width: 900px;">
+                                  <table style="position: relative; width: 870px;">
                                       <td style="float: left;">
                                           <img class="rounded-circle"
                                                th:src="@{${comment.member.profileFile.path}}"
-                                               style="width: 3vw; height: 5vh;">
+                                               style="width: 52px; height: 48px;">
                                       </td>
 
                                       <td class="fw-bold" style="float: left;">

@@ -12,71 +12,69 @@
 <body>
 <div class="container_main">
     <header style="position: relative;"> <!--네비게이션바-->
-        <div class="px-3 py-2 bg-dark text-white">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <img src="/image/main_img/logo2.PNG" class="logo" id="logo2" style="margin-left: 1%;">
-                <img src="/image/main_img/home_icon.PNG" width="50px" height="45px" style="margin-left: 3%;">
-                <a href="/" class="navbar-brand" style="margin-left: 1%;"><h4 class="theme">메인홈</h4></a>
+        <div class="px-3 py-2 bg-dark text-white" style="height: 130px;">
+            <div class="align-items-center justify-content-center justify-content-lg-start">
+                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                    <li style="position: relative; left: -28%;">
+                        <img src="/image/main_img/logo2.PNG" width="234px" height="120px">
+                    </li>
 
-                <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small" style="position: absolute">
-                    <li style="position: relative; left: -7%;">
+                    <li style="position: relative; left: -20%;">
+                        <img src="/image/main_img/home_icon.PNG" width="65px" height="57px"
+                             style="margin-left: 5px; margin-top: 10px;">
+                        <a href="/" class="navbar-brand"><h4>메인홈</h4></a>
+                    </li>
+
+                    <li style="position: relative; left: -12%;">
                         <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
-                             style="margin-left: 27px; margin-top: 10px;">
+                             style="margin-left: 27px; margin-top: 20px;">
                         <a href="/boards/freeBoard" class="nav-link text-white" style="font-size: 16px;">
                             <span>자유게시판</span>
                         </a>
                     </li>
-                    <li style="position: relative; left: -4%;">
+
+                    <li style="position: relative; left: -9%;">
                         <img src="/image/main_img/write_icon.PNG" width="50px" height="40px"
-                             style="margin-left: 30px; margin-top: 10px;">
+                             style="margin-left: 30px; margin-top: 20px;">
                         <a href="/boards/recommendBoard" class="nav-link text-white" style="font-size: 16px;">
                             <span>추천게시판</span>
                         </a>
                     </li>
-                    <li style="position: relative; left: -1%;">
+
+                    <li style="position: relative; left: -6%;">
                         <img src="/image/main_img/muckstar_icon.PNG" width="40px" height="40px"
-                             style="margin-left: 35px; margin-top: 10px;">
+                             style="margin-left: 35px; margin-top: 20px;">
                         <a href="/boards/muckstarBoard" class="nav-link text-white" style="font-size: 16px;">
                             <span>먹스타그램</span>
                         </a>
                     </li>
-                    <li style="position: relative; left: 2%;">
+
+                    <li style="position: relative; left: -3%;">
                         <img src="/image/main_img/menu_recommend_icon.PNG" width="50px" height="40px"
-                             style="margin-left: 27px; margin-top: 10px;">
+                             style="margin-left: 27px; margin-top: 20px;">
                         <a href="/menu" class="nav-link text-white" style="font-size: 16px;">
                             <span>메뉴추천</span>
                         </a>
                     </li>
-                    <li style="position: relative; left: 5%;">
+
+                    <li style="position: relative;">
                         <img src="/image/main_img/chat_icon.PNG" width="50px" height="40px"
-                             style="margin-left: 20px; margin-top: 10px;">
+                             style="margin-left: 20px; margin-top: 20px;">
                         <a href="/chat" class="nav-link text-white" style="font-size: 16px;">
                             <span>채팅방</span>
                         </a>
                     </li>
 
-                    <li style="position: relative; left: 7%;">
-                        <h5 th:if="${session.loginMember != null}"
-                            th:text="${session.loginMember.name}+ '님 접속중'"
-                            style="font-size : 13px; margin-top: 20px;"></h5>
-
-                        <br/>
-
-                        <form th:action="@{/members/logout}" method="post">
-                            <button th:if="${session.loginMember != null}"
-                                    type="submit" class="btn btn-primary" id="logout"
-                                    style="width: 90px; height: 35px; position :absolute; top: 56%;"
-                                    th:onclick="@{/members/logout}">로그아웃
-                            </button>
-                        </form>
-
-                        <button th:if="${session.loginMember == null}"
-                                type="submit" class="btn btn-primary"
-                                style="width: 80px; height: 35px; position :absolute; top: 56%;" id="login"
-                                th:onclick="|location.href='@{/members/login}'|">로그인
-                        </button>
+                    <li th:if="${session.loginMember != null and session.loginMember.role eq 'admin'}"
+                        style="position: relative; left: 5%;">
+                        <img src="/image/main_img/admin_icon.PNG" width="45px" height="40px"
+                             style="margin-left: 40px; margin-top: 20px;">
+                        <a href="/admin/members" class="nav-link text-white" style="font-size: 16px;">
+                            <span>관리자 페이지</span>
+                        </a>
                     </li>
                 </ul>
+
             </div>
         </div>
     </header>
