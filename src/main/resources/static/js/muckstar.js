@@ -136,7 +136,7 @@ function getStoryItem(board) {
     let item = `<div class="mucstarList_item" style="width: 1145px; height: 681px;">
                     <table style="margin-left: 100px;">
                         <tr>
-                            <td> <img src="/image/muckstargram_img/muckstar_background.PNG" style="width: 376px; height: 472px;"></td>
+                            <td> <img src="/image/main_img/main_background3.PNG" style="width: 376px; height: 472px;"></td>
 
                             <td>
                                 <div class="card" id="card" style="margin-top: 50px; left: 10%; width: 652px; height: 660px;">
