@@ -135,7 +135,7 @@
       <form action="" th:action th:object="${joinForm}" method="post">
         <div class="mb-3">
           <span style="display: flex;">
-            <input type="text" id="member-name" th:field="*{name}" class="form-control" placeholder="닉네임(3자리 이상)" oninput="clearBtnByName();">
+            <input type="text" id="member-name" th:field="*{name}" class="form-control" placeholder="닉네임(2~7글자)" oninput="clearBtnByName();">
             <button class="btn btn-primary" type="button" onclick="check_Name();"
                     style="width: 150px;">중복확인</button>
           </span>
@@ -143,14 +143,14 @@
         </div>
         <div class="mb-3">
           <span style="display: flex;">
-            <input type="text" id="member-loginId" th:field="*{loginId}" class="form-control" placeholder="아이디(3자리 이상)" oninput="clearBtnByLoginId();">
+            <input type="text" id="member-loginId" th:field="*{loginId}" class="form-control" placeholder="아이디(3~10글자)" oninput="clearBtnByLoginId();">
             <button class="btn btn-primary" type="button" onclick="check_LoginId();"
                     style="width: 150px;">중복확인</button>
           </span>
           <div class="field-error" style="color: red;" th:errors="*{loginId}"></div>
         </div>
         <div class="mb-3">
-          <input type="password" th:field="*{password}" class="form-control" placeholder="비밀번호(3자리 이상)"
+          <input type="password" th:field="*{password}" class="form-control" placeholder="비밀번호(3~10글자)"
                  th:errorclass="field-error" style="width: 350px;">
           <div class="field-error" style="color: red;" th:errors="*{password}"></div>
         </div>
