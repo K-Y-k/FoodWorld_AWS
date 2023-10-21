@@ -10,7 +10,7 @@ var lastCursorBoardId = $(".cursorBoardId").attr("id");
 storyLoad();
 
 $(window).scroll(function() {
-    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+    if (Math.ceil($(window).scrollTop()) >= Math.floor($(document).height() - $(window).height())) {
         console.log(++window.page);
 
         console.log('스크롤 상태', window.scrollCheck);
