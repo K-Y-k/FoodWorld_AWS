@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,33 +62,14 @@ public class MemberController {
         String loginId = form.getLoginId();
         String password = form.getPassword();
 
-        String messages = checkSpace(memberName, model, "닉네임에 빈 공간이 올 수 없습니다!");
-        if (messages != null) return messages;
-
-        String messages1 = checkSpace(loginId, model, "아이디에 빈 공간이 올 수 없습니다!");
-        if (messages1 != null) return messages1;
-
-        String messages2 = checkSpace(password, model, "비밀번호에 빈 공간이 올 수 없습니다!");
-        if (messages2 != null) return messages2;
+        String blankMessages = memberService.checkSpace(memberName, loginId, password, model, "/members/join");
+        if (blankMessages != null) return blankMessages;
 
 
         memberService.join(form);
         model.addAttribute("message", "회원가입 되었습니다!");
         model.addAttribute("redirectUrl", "/");
         return "messages";
-    }
-
-    // 문자열에 빈 공백 있는지 검사 메서드
-    private static String checkSpace(String memberName, Model model, String attributeValue) {
-        for (int i = 0; i < memberName.length(); i++) {
-            char nameChar = memberName.charAt(i);
-            if (nameChar == ' ') {
-                model.addAttribute("message", attributeValue);
-                model.addAttribute("redirectUrl", "/members/join");
-                return "messages";
-            }
-        }
-        return null;
     }
 
 
@@ -278,14 +260,8 @@ public class MemberController {
         String loginId = form.getLoginId();
         String password = form.getPassword();
 
-        String messages = checkSpace(memberName, model, "닉네임에 빈 공간이 올 수 없습니다!");
-        if (messages != null) return messages;
-
-        String messages1 = checkSpace(loginId, model, "아이디에 빈 공간이 올 수 없습니다!");
-        if (messages1 != null) return messages1;
-
-        String messages2 = checkSpace(password, model, "비밀번호에 빈 공간이 올 수 없습니다!");
-        if (messages2 != null) return messages2;
+        String blankMessages = memberService.checkSpace(memberName, loginId, password, model, "/members/member_profileUpdate");
+        if (blankMessages != null) return blankMessages;
 
 
         // 업데이트 적용된 회원의 아이디를 반환한 것을 가져온 이유는 아래 새로 바뀐 내용으로 재갱신하기 위해서

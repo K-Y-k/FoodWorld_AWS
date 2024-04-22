@@ -25,9 +25,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -369,6 +371,49 @@ public class MemberServiceImpl implements MemberService {
         else { // 중복 검사
             return memberRepository.updateCheckLoginId(memberLoginId, memberId);
         }
+    }
+
+
+    // 입력한 정보에 빈 공간 확인과 빈 공간인 정보를 가공하여 메시지 출력 메서드
+    public String checkSpace(String memberName, String loginId, String password, Model model, String redirectUrl) {
+        List<String> totalBlankMessage = new ArrayList<>();
+        if (checkSpace(memberName)) {
+            totalBlankMessage.add("닉네임");
+        }
+        if (checkSpace(loginId)) {
+            totalBlankMessage.add("아이디");
+        }
+        if (checkSpace(password)) {
+            totalBlankMessage.add("비밀번호");
+        }
+
+        if (!totalBlankMessage.isEmpty()) {
+            StringBuilder resultBlankMessage = new StringBuilder();
+
+            for (String message : totalBlankMessage) {
+                if (resultBlankMessage.length() == 0) {
+                    resultBlankMessage.append(message);
+                } else {
+                    resultBlankMessage.append(", ").append(message);
+                }
+            }
+            resultBlankMessage.append("에 빈 공간이 올 수 없습니다.");
+
+            model.addAttribute("message", resultBlankMessage);
+            model.addAttribute("redirectUrl", redirectUrl);
+            return "messages";
+        }
+
+        return null;
+    }
+
+    // 문자열에 빈 공백 있는지 검사 메서드
+    public boolean checkSpace(String value) {
+        if (value.contains(" ")) {
+            return true;
+        }
+
+        return false;
     }
 }
 
