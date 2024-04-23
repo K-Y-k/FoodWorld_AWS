@@ -4,6 +4,7 @@ package com.kyk.FoodWorld.follow.service;
 import com.kyk.FoodWorld.follow.domain.dto.FollowDto;
 import com.kyk.FoodWorld.follow.domain.entity.Follow;
 import com.kyk.FoodWorld.follow.repository.FollowRepository;
+import com.kyk.FoodWorld.member.domain.dto.MemberDto;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,13 +62,20 @@ public class FollowServiceImpl implements FollowService{
     }
 
     @Override
-    public Long findFirstCursorFollowerId(Member member) {
+    public Long findFirstCursorFollowerId(MemberDto memberDto) {
+        Member member = memberRepository.findById(memberDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("회원 찾기 실패: 회원을 찾을 수 없습니다." + memberDto.getId()));
+
+
         return followRepository.findFirstCursorFollowerId(member);
     }
 
     @Override
-    public Slice<FollowDto> searchBySlice(Member member, Long lastCursorFollowerId, Boolean first, Pageable pageable) {
-        return followRepository.searchBySlice(member, lastCursorFollowerId, first, pageable);
+    public Slice<FollowDto> searchBySlice(Long toMemberId, Long lastCursorFollowerId, Boolean first, Pageable pageable) {
+        Member findToMember = memberRepository.findById(toMemberId).orElseThrow(() ->
+                new IllegalArgumentException("회원 가져오기 실패: 회원을 찾지 못했습니다." + toMemberId));
+
+        return followRepository.searchBySlice(findToMember, lastCursorFollowerId, first, pageable);
     }
 
     @Override

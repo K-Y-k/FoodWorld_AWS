@@ -12,6 +12,8 @@ import com.kyk.FoodWorld.exception.member.DuplicatedMemberLoginIdException;
 import com.kyk.FoodWorld.exception.member.MemberNotFoundException;
 import com.kyk.FoodWorld.exception.member.DuplicatedMemberNameException;
 import com.kyk.FoodWorld.member.domain.dto.JoinForm;
+import com.kyk.FoodWorld.member.domain.dto.MemberDto;
+import com.kyk.FoodWorld.member.domain.dto.ProfileFileDto;
 import com.kyk.FoodWorld.member.domain.dto.UpdateForm;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.member.domain.entity.ProfileFile;
@@ -144,8 +146,11 @@ public class MemberServiceImpl implements MemberService {
      * 회원 찾기
      */
     @Override
-    public Optional<Member> findById(Long memberId) {
-        return memberRepository.findById(memberId);
+    public MemberDto findMemberDtoById(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 찾기 실패: 회원을 찾을 수 없습니다." + memberId));
+
+        return new MemberDto(member.getId(), member.getName(), member.getLoginId(), member.getPassword(), member.getIntroduce(), new ProfileFileDto(member.getProfileFile().getPath()));
     }
 
 

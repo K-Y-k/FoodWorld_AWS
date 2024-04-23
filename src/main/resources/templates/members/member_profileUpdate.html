@@ -145,8 +145,8 @@
           <div class="mb-3">
              <span style="display: flex;">
                <input type="text" id="member-name" th:field="*{name}" class="form-control"  placeholder="닉네임(3자리 이상)" style="width: 800px;" oninput="clearBtnByName();">
-               <button class="btn btn-primary" type="button" onclick="check_Name();"
-                       th:data-member-id="${updateForm.id}" style="width: 200px;">중복확인</button>
+               <button class="btn btn-primary" type="button"
+                       id="name-btn" th:data-member-id="${updateForm.id}" style="width: 200px;">중복확인</button>
              </span>
             <div class="field-error" style="color: red;" th:errors="*{name}"></div>
           </div>
@@ -154,8 +154,8 @@
           <div class="mb-3">
             <span style="display: flex;">
               <input type="text" id="member-loginId" th:field="*{loginId}" class="form-control" placeholder="아이디(3자리 이상)" style="width: 800px;" oninput="clearBtnByLoginId();">
-              <button class="btn btn-primary" type="button" onclick="check_LoginId();"
-                      th:data-member-id="${updateForm.id}" style="width: 200px;">중복확인</button>
+              <button class="btn btn-primary" type="button"
+                      id="loginId-btn" th:data-member-id="${updateForm.id}" style="width: 200px;">중복확인</button>
             </span>
 
             <div class="field-error" style="color: red;" th:errors="*{loginId}"></div>
@@ -205,6 +205,22 @@
 <script>
 let checkedName = false;
 let checkedLoginId = false;
+
+
+$(document).ready(function() {
+    // 페이지가 로드될 때마다 이벤트 핸들러 재설정
+    $("#name-btn").on("click", function(event) {
+        // 클릭 이벤트에 대한 처리 로직
+        check_Name();
+    });
+
+    $("#loginId-btn").on("click", function(event) {
+        // 클릭 이벤트에 대한 처리 로직
+        check_LoginId();
+    });
+});
+
+
 
 function readURL(input) {
     if (input.files && input.files[0]) {

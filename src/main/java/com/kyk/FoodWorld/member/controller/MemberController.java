@@ -7,6 +7,7 @@ import com.kyk.FoodWorld.follow.service.FollowServiceImpl;
 import com.kyk.FoodWorld.member.domain.LoginSessionConst;
 import com.kyk.FoodWorld.member.domain.dto.JoinForm;
 import com.kyk.FoodWorld.member.domain.dto.LoginForm;
+import com.kyk.FoodWorld.member.domain.dto.MemberDto;
 import com.kyk.FoodWorld.member.domain.dto.UpdateForm;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.member.domain.entity.ProfileFile;
@@ -138,15 +139,14 @@ public class MemberController {
 
 
         // 회원 정보
-        Member member = memberService.findById(memberId).orElseThrow(() ->
-                new IllegalArgumentException("회원 가져오기 실패: 회원을 찾지 못했습니다." + memberId));
-        model.addAttribute("member", member);
+        MemberDto memberDto = memberService.findMemberDtoById(memberId);
+        model.addAttribute("member", memberDto);
 
         // 프로필 사진
-        ProfileFile profileFile = member.getProfileFile();
-        if (profileFile != null && !profileFile.getStoredFileName().isEmpty()) {
-            model.addAttribute("profileFile", profileFile);
-            log.info("프로필 경로 = {}", profileFile.getPath());
+        String profileLocation = memberService.findProfileLocation(memberId);
+        if (!profileLocation.isEmpty()) {
+            model.addAttribute("profileLocation", profileLocation);
+            log.info("프로필 경로 = {}", profileLocation);
         }
 
         // 해당 회원이 작성한 게시글 총 개수
@@ -174,7 +174,7 @@ public class MemberController {
 
         // 회원의 팔로워 최근 id 가져오기
         try {
-            Long firstCursorFollowerId = followService.findFirstCursorFollowerId(member);
+            Long firstCursorFollowerId = followService.findFirstCursorFollowerId(memberDto);
             log.info("최근 팔로워 id = {}", firstCursorFollowerId);
             model.addAttribute("firstCursorFollowerId", firstCursorFollowerId);
         } catch (NullPointerException e){
@@ -220,16 +220,15 @@ public class MemberController {
             return "messages";
         }
 
-        Member member = memberService.findById(memberId).orElseThrow(() ->
-                new IllegalArgumentException("회원 가져오기 실패: 회원을 찾지 못했습니다." + memberId));
+        // 회원 정보
+        MemberDto memberDto = memberService.findMemberDtoById(memberId);
+        model.addAttribute("updateForm", memberDto);
 
-        // 프로필 사진 가져오기
-        ProfileFile profileFile = member.getProfileFile();
-        if (profileFile != null && !profileFile.getStoredFileName().isEmpty()) {
-            model.addAttribute("profileFile", profileFile);
+        // 프로필 사진
+        String profileLocation = memberService.findProfileLocation(memberId);
+        if (!profileLocation.isEmpty()) {
+            model.addAttribute("profileLocation", profileLocation);
         }
-
-        model.addAttribute("updateForm", member);
 
         return "members/member_profileUpdate";
     }
@@ -243,15 +242,6 @@ public class MemberController {
                                           Model model,
                                           HttpServletRequest request) throws IOException {
         if (bindingResult.hasErrors()) {
-            Member member = memberService.findById(memberId).orElseThrow(() ->
-                    new IllegalArgumentException("회원 가져오기 실패: 회원을 찾지 못했습니다." + memberId));
-
-            // 프로필 사진 가져오기
-            ProfileFile profileFile = member.getProfileFile();
-            if (profileFile != null && !profileFile.getStoredFileName().isEmpty()) {
-                model.addAttribute("profileFile", profileFile);
-            }
-
             return "members/member_profileUpdate";
         }
 
@@ -260,7 +250,7 @@ public class MemberController {
         String loginId = form.getLoginId();
         String password = form.getPassword();
 
-        String blankMessages = memberService.checkSpace(memberName, loginId, password, model, "/members/member_profileUpdate");
+        String blankMessages = memberService.checkSpace(memberName, loginId, password, model, "/members/profile/" + memberId + "/edit");
         if (blankMessages != null) return blankMessages;
 
 
@@ -275,9 +265,7 @@ public class MemberController {
             getSession.invalidate(); // 해당 세션이랑 그 안의 데이터를 모두 지운다.
         }
 
-        Member member = memberService.findById(changeMemberId).orElseThrow(() ->
-                new IllegalArgumentException("회원 가져오기 실패: 회원을 찾지 못했습니다." + changeMemberId));
-        Member loginMember = memberService.login(member.getLoginId(), member.getPassword());
+        Member loginMember = memberService.login(loginId, password);
 
         HttpSession createSession = request.getSession();
         createSession.setAttribute("loginMember", loginMember);

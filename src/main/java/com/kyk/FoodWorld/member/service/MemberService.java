@@ -2,6 +2,7 @@ package com.kyk.FoodWorld.member.service;
 
 
 import com.kyk.FoodWorld.member.domain.dto.JoinForm;
+import com.kyk.FoodWorld.member.domain.dto.MemberDto;
 import com.kyk.FoodWorld.member.domain.dto.UpdateForm;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public interface MemberService {
     /**
      * 회원 id로 조회
      */
-    Optional<Member> findById(Long memberId);
+    MemberDto findMemberDtoById(Long memberId);
 
     /**
      * 회원 모두 조회

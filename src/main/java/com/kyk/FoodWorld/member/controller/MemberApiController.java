@@ -73,11 +73,7 @@ public class MemberApiController {
                                             @RequestParam(value = "lastCursorFollowerId", defaultValue = "0") Long lastCursorFollowerId,
                                             @RequestParam(value = "followerFirst") Boolean first,
                                             @PageableDefault(size=7) Pageable pageable) {
-
-        Member findToMember = memberService.findById(toMemberId).orElseThrow(() ->
-                new IllegalArgumentException("회원 가져오기 실패: 회원을 찾지 못했습니다." + toMemberId));
-
-        Slice<FollowDto> followers = followService.searchBySlice(findToMember, lastCursorFollowerId, first, pageable);
+        Slice<FollowDto> followers = followService.searchBySlice(toMemberId, lastCursorFollowerId, first, pageable);
 
         for (FollowDto follower : followers) {
             log.info("follower={}", follower.getFromMember().getName());

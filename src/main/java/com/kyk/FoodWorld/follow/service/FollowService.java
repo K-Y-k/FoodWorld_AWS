@@ -2,6 +2,7 @@ package com.kyk.FoodWorld.follow.service;
 
 import com.kyk.FoodWorld.follow.domain.dto.FollowDto;
 import com.kyk.FoodWorld.follow.domain.entity.Follow;
+import com.kyk.FoodWorld.member.domain.dto.MemberDto;
 import com.kyk.FoodWorld.member.domain.entity.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -35,12 +36,12 @@ public interface FollowService {
     /**
      * 회원을 팔로우한 회원들로 최신 팔로우 id 가져오기
      */
-    Long findFirstCursorFollowerId(Member member);
+    Long findFirstCursorFollowerId(MemberDto memberDto);
 
     /**
      * 팔로우한 회원들만 페이징
      */
-    Slice<FollowDto> searchBySlice(Member member, Long lastCursorFollowerId, Boolean first, Pageable pageable);
+    Slice<FollowDto> searchBySlice(Long toMemberId, Long lastCursorFollowerId, Boolean first, Pageable pageable);
 
     /**
      * 현재 회원이 팔로우한 회원을 팔로우한 회원들과
