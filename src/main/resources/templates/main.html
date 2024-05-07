@@ -69,7 +69,7 @@
                         </a>
                     </li>
 
-                    <li th:if="${session.loginMember != null and session.loginMember.role eq 'ADMIN'}"
+                    <li th:if="${session.loginMember != null and session.loginMember.role.key eq 'ROLE_ADMIN'}"
                         style="position: relative; left: 2%;">
                         <img src="/image/main_img/admin_icon.PNG" width="45px" height="40px"
                              style="margin-left: 40px; margin-top: 20px;">

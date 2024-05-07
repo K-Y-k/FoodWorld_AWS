@@ -48,9 +48,9 @@ public class Member extends BaseTimeEntity {
 
     private int followingCount;
 
-//    @Enumerated(EnumType.STRING)  // EnumType.STRING은 Enum타입의 상수를 필드 값으로 저장한다는 옵션
-//    @Column(nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)  // EnumType.STRING은 Enum타입의 상수를 필드 값으로 저장한다는 옵션
+    @Column(nullable = false)
+    private Role role;
 
     @Builder.Default
     @JsonIgnoreProperties({"member"})
@@ -105,7 +105,7 @@ public class Member extends BaseTimeEntity {
 
 
     @Builder
-    public Member(String name, String loginId, String password, String role) {
+    public Member(String name, String loginId, String password, Role role) {
         this.name = name;
         this.loginId = loginId;
         this.password = password;

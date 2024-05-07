@@ -43,7 +43,7 @@ public class JoinForm {
                 .name(name)
                 .loginId(loginId)
                 .password(password)
-                .role("Role.CUSTOMER")
+                .role(Role.CUSTOMER)
                 .build();
     }
 
