@@ -1,5 +1,6 @@
 package com.kyk.FoodWorld.member.domain.dto;
 
+import com.kyk.FoodWorld.member.domain.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ public class MemberDto {
     private String introduce;
     private int followCount;
     private int followingCount;
-    private String role;
+    private Role role;
     private ProfileFileDto profileFile;
 
 
@@ -28,7 +29,7 @@ public class MemberDto {
         this.profileFile = profileFile;
     }
 
-    public MemberDto(Long id, String name, String loginId, String introduce, int followCount, int followingCount, String role, ProfileFileDto profileFile) {
+    public MemberDto(Long id, String name, String loginId, String introduce, int followCount, int followingCount, Role role, ProfileFileDto profileFile) {
         this.id = id;
         this.name = name;
         this.loginId = loginId;

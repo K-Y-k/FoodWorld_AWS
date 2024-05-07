@@ -1,6 +1,7 @@
 package com.kyk.FoodWorld.member.domain.dto;
 
 import com.kyk.FoodWorld.member.domain.entity.Member;
+import com.kyk.FoodWorld.member.domain.entity.Role;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -42,7 +43,7 @@ public class JoinForm {
                 .name(name)
                 .loginId(loginId)
                 .password(password)
-                .role("customer")
+                .role(Role.CUSTOMER)
                 .build();
     }
 
