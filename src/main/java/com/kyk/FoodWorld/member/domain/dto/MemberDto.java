@@ -16,7 +16,7 @@ public class MemberDto {
     private String introduce;
     private int followCount;
     private int followingCount;
-    private Role role;
+    private String role;
     private ProfileFileDto profileFile;
 
 
@@ -29,7 +29,7 @@ public class MemberDto {
         this.profileFile = profileFile;
     }
 
-    public MemberDto(Long id, String name, String loginId, String introduce, int followCount, int followingCount, Role role, ProfileFileDto profileFile) {
+    public MemberDto(Long id, String name, String loginId, String introduce, int followCount, int followingCount, String role, ProfileFileDto profileFile) {
         this.id = id;
         this.name = name;
         this.loginId = loginId;

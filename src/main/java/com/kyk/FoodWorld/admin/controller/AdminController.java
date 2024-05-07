@@ -95,7 +95,7 @@ public class AdminController {
             model.addAttribute("message", "로그인 먼저 해주세요!");
             model.addAttribute("redirectUrl", "/members/login");
             return "messages";
-        } else if (!loginMember.getRole().getKey().equals("ROLE_ADMIN")) {
+        } else if (!loginMember.getRole().equals("ADMIN")) {
             log.info("관리자님이 아닙니다.");
 
             model.addAttribute("message", "관리자님이 아닙니다.");
@@ -118,7 +118,7 @@ public class AdminController {
             model.addAttribute("message", "로그인 먼저 해주세요!");
             model.addAttribute("redirectUrl", "/members/login");
             return "messages";
-        } else if (loginMember.getRole().getKey().equals("ROLE_ADMIN")) {
+        } else if (loginMember.getRole().equals("ADMIN")) {
             memberService.delete(memberId);
         } else {
             log.info("관리자님이 아닙니다.");
@@ -297,7 +297,7 @@ public class AdminController {
             model.addAttribute("message", "로그인 먼저 해주세요!");
             model.addAttribute("redirectUrl", "/members/login");
             return "messages";
-        } else if (loginMember.getRole().getKey().equals("ROLE_ADMIN")) {
+        } else if (loginMember.getRole().equals("ADMIN")) {
             boardService.delete(boardId, boardType);
         } else {
             log.info("관리자님이 아닙니다.");
@@ -365,7 +365,7 @@ public class AdminController {
             model.addAttribute("message", "로그인 먼저 해주세요!");
             model.addAttribute("redirectUrl", "/members/login");
             return "messages";
-        } else if (loginMember.getRole().getKey().equals("ROLE_ADMIN")) {
+        } else if (loginMember.getRole().equals("ADMIN")) {
             menuRecommendService.delete(menuRecommendId);
         } else {
             log.info("관리자님이 아닙니다.");
@@ -430,7 +430,7 @@ public class AdminController {
             model.addAttribute("message", "로그인 먼저 해주세요!");
             model.addAttribute("redirectUrl", "/members/login");
             return "messages";
-        } else if (loginMember.getRole().getKey().equals("ROLE_ADMIN")) {
+        } else if (loginMember.getRole().equals("ADMIN")) {
             ChatRoom findChatRoom = chatService.findRoomByRoomId(chatRoomId);
             chatService.delete(findChatRoom);
         } else {
