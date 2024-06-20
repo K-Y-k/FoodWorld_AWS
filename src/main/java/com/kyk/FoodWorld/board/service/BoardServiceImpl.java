@@ -72,13 +72,13 @@ public class BoardServiceImpl implements BoardService {
         // 첨부파일이 있을 경우
         if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
             boardEntity.updateFileAttached(1);
-            attachUpload(boardDto, boardEntity);
+            fileUpload(attachFiles, boardEntity, "attachFile", "attached");
         }
 
         // 이미지 파일이 있을 경우
         if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
             boardEntity.updateFileAttached(1);
-            imageUpload(boardDto, boardEntity);
+            fileUpload(imageFiles, boardEntity, "imageFile", "none");
         }
 
         boardRepository.save(boardEntity);
@@ -93,18 +93,16 @@ public class BoardServiceImpl implements BoardService {
         Board boardEntity = boardDto.toSaveFileEntity(findMember, boardDto);
 
         if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
-
-            Long savedId = boardRepository.save(boardEntity).getId();
-            Board board = boardRepository.findById(savedId).get();
-
-            muckstarImageUpload(boardDto, board);
+            fileUpload(imageFiles, boardEntity, "imageFile", "none");
         }
+
+        boardRepository.save(boardEntity);
     }
 
-    private void imageUpload(BoardUploadForm boardDto, Board board) throws IOException {
+    private void fileUpload(List<MultipartFile> files, Board board, String folder, String attachedType) throws IOException {
         // 루프를 돌려 파일을 모두 찾고 반환
-        for (MultipartFile imageFiles: boardDto.getImageFiles()) {
-            String originalFilename = imageFiles.getOriginalFilename();
+        for (MultipartFile file: files) {
+            String originalFilename = file.getOriginalFilename();
 
             // 파일에 이름을 붙일 랜덤으로 식별자 지정
             UUID uuid = UUID.randomUUID();
@@ -112,12 +110,10 @@ public class BoardServiceImpl implements BoardService {
 
             // S3 버킷에 넣을 파일 설정 및 넣기
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(imageFiles.getSize());
-            metadata.setContentType(imageFiles.getContentType());
+            metadata.setContentLength(file.getSize());
+            metadata.setContentType(file.getContentType());
 
-            amazonS3.putObject(bucket, "imageFile/"+storedFileName, imageFiles.getInputStream(), metadata);
-
-            String attachedType = "none";
+            amazonS3.putObject(bucket, folder + "/" + storedFileName, file.getInputStream(), metadata);
 
             // DB에 파일 관련 필드 값 저장
             BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "imageFile/"+storedFileName).toString(),attachedType);
@@ -125,53 +121,6 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
-    private void muckstarImageUpload(MucstarUploadForm boardDto, Board board) throws IOException {
-        // 루프를 돌려 파일을 모두 찾고 반환
-        for (MultipartFile imageFiles: boardDto.getImageFiles()) {
-            String originalFilename = imageFiles.getOriginalFilename();
-
-            // 파일에 이름을 붙일 랜덤으로 식별자 지정
-            UUID uuid = UUID.randomUUID();
-            String storedFileName = uuid + "_" + originalFilename;
-
-            // S3 버킷에 넣을 파일 설정 및 넣기
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(imageFiles.getSize());
-            metadata.setContentType(imageFiles.getContentType());
-
-            amazonS3.putObject(bucket, "imageFile/"+storedFileName, imageFiles.getInputStream(), metadata);
-
-            String attachedType = "none";
-
-            // DB에 파일 관련 필드 값 저장
-            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "imageFile/"+storedFileName).toString(), attachedType);
-            boardFileRepository.save(boardFileEntity);
-        }
-    }
-
-    private void attachUpload(BoardUploadForm boardDto, Board board) throws IOException {
-        // 루프를 돌려 파일을 모두 찾고 반환
-        for (MultipartFile attachFiles: boardDto.getAttachFiles()) {
-            String originalFilename = attachFiles.getOriginalFilename();
-
-            // 파일에 이름을 붙일 랜덤으로 식별자 지정
-            UUID uuid = UUID.randomUUID();
-            String storedFileName = uuid + "_" + originalFilename;
-
-            // S3 버킷에 넣을 파일 설정 및 넣기
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(attachFiles.getSize());
-            metadata.setContentType(attachFiles.getContentType());
-
-            amazonS3.putObject(bucket, "attachFile/"+storedFileName, attachFiles.getInputStream(), metadata);
-
-            String attachedType = "attached";
-
-            // DB에 파일 관련 필드 값 저장
-            BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "attachFile/"+storedFileName).toString(), attachedType);
-            boardFileRepository.save(boardFileEntity);
-        }
-    }
 
 //    // 확장자 구분 메서드
 //    private String createStoreFileName(String originalFilename) {
