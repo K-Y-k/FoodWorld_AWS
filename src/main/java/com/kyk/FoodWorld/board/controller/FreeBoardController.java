@@ -134,9 +134,28 @@ public class FreeBoardController {
         // 좋아요 개수 업데이트
         boardService.updateLikeCount(boardId, likeCount);
 
-        // 댓글 가져오기
+        // 현재 게시글 가져오기
         Board board = boardService.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + boardId));
+
+        // 댓글 가져오기
+        getComment(boardId, pageable, model, nowPage, startPage, endPage);
+
+        // 파일 가져오기
+        List<BoardFile> boardFiles = board.getBoardFiles();
+        if (boardFiles != null && !boardFiles.isEmpty()) {
+            model.addAttribute("boardFiles", boardFiles);
+        }
+
+        model.addAttribute("board", board);
+
+        // 등록한 날이 오늘 날짜이면 시/분까지만 나타나게 조건을 설정하기 위해서 현재 시간을 객체로 담아 보낸 것
+        model.addAttribute("localDateTime", LocalDateTime.now());
+
+        return "boards/freeboard/freeBoard_detail";
+    }
+
+    private void getComment(Long boardId, Pageable pageable, Model model, int nowPage, int startPage, int endPage) {
         Page<Comment> comments = commentService.findPageListByBoardId(pageable, boardId);
 
         if (comments != null && !comments.isEmpty()) {
@@ -160,19 +179,6 @@ public class FreeBoardController {
             model.addAttribute("startPage", startPage);
             model.addAttribute("endPage", endPage);
         }
-
-        // 파일 가져오기
-        List<BoardFile> boardFiles = board.getBoardFiles();
-        if (boardFiles != null && !boardFiles.isEmpty()) {
-            model.addAttribute("boardFiles", boardFiles);
-        }
-
-        model.addAttribute("board", board);
-
-        // 등록한 날이 오늘 날짜이면 시/분까지만 나타나게 조건을 설정하기 위해서 현재 시간을 객체로 담아 보낸 것
-        model.addAttribute("localDateTime", LocalDateTime.now());
-
-        return "boards/freeboard/freeBoard_detail";
     }
 
     /**
@@ -208,29 +214,7 @@ public class FreeBoardController {
 
             Board board = boardService.findById(boardId).orElseThrow(() ->
                     new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + boardId));
-            Page<Comment> comments = commentService.findPageListByBoardId(pageable, boardId);
-
-            if (comments != null && !comments.isEmpty()) {
-                nowPage = pageable.getPageNumber() + 1;
-                startPage = Math.max(1, nowPage - 2);
-                endPage = Math.min(nowPage + 2, comments.getTotalPages());
-                long commentCount = comments.getTotalElements();
-
-                model.addAttribute("comments", comments);
-                model.addAttribute("commentCount", commentCount);
-
-                model.addAttribute("nowPage", nowPage);
-                model.addAttribute("startPage", startPage);
-                model.addAttribute("endPage", endPage);
-
-                model.addAttribute("hasPrev", comments.hasPrevious());
-                model.addAttribute("hasNext", comments.hasNext());
-            }
-            else {
-                model.addAttribute("nowPage", nowPage);
-                model.addAttribute("startPage", startPage);
-                model.addAttribute("endPage", endPage);
-            }
+            getComment(boardId, pageable, model, nowPage, startPage, endPage);
 
             List<BoardFile> boardFiles = board.getBoardFiles();
             if (boardFiles != null && !boardFiles.isEmpty()) {

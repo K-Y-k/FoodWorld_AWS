@@ -21,12 +21,12 @@ public interface BoardService {
     /**
      * 일반 게시판 글 저장
      */
-    Long upload(Long memberId, BoardUploadForm boardDto) throws IOException;
+    void upload(Long memberId, BoardUploadForm boardDto) throws IOException;
 
     /**
      * 먹스타그램 글 저장
      */
-    Long muckstarUpload(Long memberId, MucstarUploadForm boardDto) throws IOException;
+    void muckstarUpload(Long memberId, MucstarUploadForm boardDto) throws IOException;
 
     /**
      * 글 수정

@@ -60,76 +60,45 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public Long upload(Long memberId, BoardUploadForm boardDto) throws IOException {
+    public void upload(Long memberId, BoardUploadForm boardDto) throws IOException {
         Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
                 new IllegalArgumentException("글 등록 실패: 로그인 상태가 아닙니다." + memberId));
 
         List<MultipartFile> attachFiles = boardDto.getAttachFiles();
         List<MultipartFile> imageFiles = boardDto.getImageFiles();
 
+        Board boardEntity = boardDto.toSaveEntity(findMember, boardDto);
+
         // 첨부파일이 있을 경우
         if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
-            // 여러 개의 파일일 수 있으므로 부모 객체인 Board부터 가져와야함
-            // + attached 속성 1로 설정한 toSaveFileEntity로 글 저장
-            Board boardEntity = boardDto.toSaveFileEntity(findMember, boardDto);
-            Long savedId = boardRepository.save(boardEntity).getId();
-            Board board = boardRepository.findById(savedId).get();
-
-            attachUpload(boardDto, board);
-
-            // + 이미지파일이 있을 경우
-            if (imageFiles.get(0).getOriginalFilename() != null && !imageFiles.get(0).getOriginalFilename().isBlank()) {
-                imageUpload(boardDto, board);
-            }
-
-            return savedId;
-        } else if (attachFiles.get(0).getOriginalFilename().isBlank()) {
-            // 첨부파일이 없고 이미지파일은 있을 경우
-            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
-                Board boardEntity = boardDto.toSaveFileEntity(findMember, boardDto);
-                Long savedId = boardRepository.save(boardEntity).getId();
-                Board board = boardRepository.findById(savedId).get();
-
-                imageUpload(boardDto, board);
-                return savedId;
-            } else { // 첨부파일, 이미지파일 모두 없을 경우
-                Board uploadBoard = uploadBoard(boardDto, findMember);
-                return uploadBoard.getId();
-            }
+            boardEntity.updateFileAttached(1);
+            attachUpload(boardDto, boardEntity);
         }
-        return null;
+
+        // 이미지 파일이 있을 경우
+        if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
+            boardEntity.updateFileAttached(1);
+            imageUpload(boardDto, boardEntity);
+        }
+
+        boardRepository.save(boardEntity);
     }
 
     @Override
-    public Long muckstarUpload(Long memberId, MucstarUploadForm boardDto) throws IOException {
+    public void muckstarUpload(Long memberId, MucstarUploadForm boardDto) throws IOException {
         Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
                 new IllegalArgumentException("글 등록 실패: 로그인 상태가 아닙니다." + memberId));
 
         List<MultipartFile> imageFiles = boardDto.getImageFiles();
+        Board boardEntity = boardDto.toSaveFileEntity(findMember, boardDto);
 
-        try {
-            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
-                // + attached 속성 1로 설정한 toSaveFileEntity로 글 저장
-                Board boardEntity = boardDto.toSaveFileEntity(findMember, boardDto);
+        if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
 
-                Long savedId = boardRepository.save(boardEntity).getId();
-                Board board = boardRepository.findById(savedId).get();
+            Long savedId = boardRepository.save(boardEntity).getId();
+            Board board = boardRepository.findById(savedId).get();
 
-                muckstarImageUpload(boardDto, board);
-            }
-        } catch(IllegalStateException e) {
-            log.info("먹스타그램은 이미지가 필수라고 안내 오류");
+            muckstarImageUpload(boardDto, board);
         }
-
-        return null;
-    }
-
-
-    private Board uploadBoard(BoardUploadForm boardDto, Member findMember) {
-        Board board = boardDto.toSaveEntity(findMember, boardDto);
-        Board uploadBoard = boardRepository.save(board);
-        log.info("uploadBoard = {}", board);
-        return uploadBoard;
     }
 
     private void imageUpload(BoardUploadForm boardDto, Board board) throws IOException {
@@ -155,6 +124,7 @@ public class BoardServiceImpl implements BoardService {
             boardFileRepository.save(boardFileEntity);
         }
     }
+
     private void muckstarImageUpload(MucstarUploadForm boardDto, Board board) throws IOException {
         // 루프를 돌려 파일을 모두 찾고 반환
         for (MultipartFile imageFiles: boardDto.getImageFiles()) {
@@ -271,7 +241,7 @@ public class BoardServiceImpl implements BoardService {
                 saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, freeBoardUpdateForm, null, null, "attached");
             } else if (Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
                 log.info("CASE3: 새로 받아온 이미지 파일만 있을 경우");
-                
+
                 // 기존 파일과 엔티티 삭제 처리
                 for (BoardFile boardFile : findBoardFiles) {
                     // 이미지 파일일 때의 기존 실제 이미지 파일 삭제 처리
