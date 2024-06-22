@@ -4,7 +4,6 @@ package com.kyk.FoodWorld.board.service;
 import com.kyk.FoodWorld.board.domain.dto.*;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.domain.entity.BoardFile;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,14 +18,9 @@ import java.util.Optional;
 public interface BoardService {
 
     /**
-     * 일반 게시판 글 저장
+     * 글 저장
      */
-    void upload(Long memberId, BoardUploadForm boardDto) throws IOException;
-
-    /**
-     * 먹스타그램 글 저장
-     */
-    void muckstarUpload(Long memberId, MucstarUploadForm boardDto) throws IOException;
+    void upload(Long memberId, UploadFormBase boardDto) throws IOException;
 
     /**
      * 글 수정

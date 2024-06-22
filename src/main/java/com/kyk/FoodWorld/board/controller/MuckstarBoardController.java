@@ -3,7 +3,7 @@ package com.kyk.FoodWorld.board.controller;
 
 import com.kyk.FoodWorld.board.domain.dto.BoardUploadForm;
 import com.kyk.FoodWorld.board.domain.dto.MuckstarUpdateForm;
-import com.kyk.FoodWorld.board.domain.dto.MucstarUploadForm;
+import com.kyk.FoodWorld.board.domain.dto.MuckstarUploadForm;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.domain.entity.BoardFile;
 import com.kyk.FoodWorld.board.service.BoardServiceImpl;
@@ -18,7 +18,6 @@ import com.kyk.FoodWorld.member.domain.entity.Member;
 import com.kyk.FoodWorld.member.domain.entity.ProfileFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -288,7 +287,7 @@ public class MuckstarBoardController {
      */
     @PostMapping("/muckstarBoard/upload")
     public String boardUpload(@SessionAttribute(LoginSessionConst.LOGIN_MEMBER) Member loginMember,
-                              @Valid @ModelAttribute("uploadForm") MucstarUploadForm boardDto, BindingResult bindingResult,
+                              @Valid @ModelAttribute("uploadForm") MuckstarUploadForm boardDto, BindingResult bindingResult,
                               Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             return "boards/muckstarboard/muckstarBoard_upload";
@@ -300,7 +299,7 @@ public class MuckstarBoardController {
             return "messages";
         }
 
-        boardService.muckstarUpload(loginMember.getId(), boardDto);
+        boardService.upload(loginMember.getId(), boardDto);
         return "redirect:/boards/muckstarBoard";
     }
 

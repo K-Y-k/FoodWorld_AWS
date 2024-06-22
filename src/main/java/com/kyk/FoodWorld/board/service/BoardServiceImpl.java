@@ -3,7 +3,6 @@ package com.kyk.FoodWorld.board.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.util.IOUtils;
 import com.kyk.FoodWorld.board.domain.dto.*;
 import com.kyk.FoodWorld.board.domain.entity.Board;
 import com.kyk.FoodWorld.board.domain.entity.BoardFile;
@@ -15,14 +14,11 @@ import com.kyk.FoodWorld.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -60,39 +55,28 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public void upload(Long memberId, BoardUploadForm boardDto) throws IOException {
+    public void upload(Long memberId, UploadFormBase boardDto) throws IOException {
         Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
                 new IllegalArgumentException("글 등록 실패: 로그인 상태가 아닙니다." + memberId));
 
-        List<MultipartFile> attachFiles = boardDto.getAttachFiles();
-        List<MultipartFile> imageFiles = boardDto.getImageFiles();
+        Board boardEntity = boardDto.toSaveEntity(findMember);
 
-        Board boardEntity = boardDto.toSaveEntity(findMember, boardDto);
+        if (boardDto instanceof BoardUploadForm) {
+            BoardUploadForm boardDto2 = (BoardUploadForm) boardDto;
+            List<MultipartFile> attachFiles = boardDto2.getAttachFiles();
 
-        // 첨부파일이 있을 경우
-        if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
-            boardEntity.updateFileAttached(1);
-            fileUpload(attachFiles, boardEntity, "attachFile", "attached");
+            // 첨부파일이 있을 경우
+            if (!attachFiles.isEmpty() && !attachFiles.get(0).getOriginalFilename().isBlank()) {
+                boardEntity.updateFileAttached(1);
+                fileUpload(attachFiles, boardEntity, "attachFile", "attached");
+            }
         }
 
+
+        List<MultipartFile> imageFiles = boardDto.getImageFiles();
         // 이미지 파일이 있을 경우
-        if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
+        if (!imageFiles.isEmpty() && !imageFiles.get(0).getOriginalFilename().isBlank()) {
             boardEntity.updateFileAttached(1);
-            fileUpload(imageFiles, boardEntity, "imageFile", "none");
-        }
-
-        boardRepository.save(boardEntity);
-    }
-
-    @Override
-    public void muckstarUpload(Long memberId, MucstarUploadForm boardDto) throws IOException {
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
-                new IllegalArgumentException("글 등록 실패: 로그인 상태가 아닙니다." + memberId));
-
-        List<MultipartFile> imageFiles = boardDto.getImageFiles();
-        Board boardEntity = boardDto.toSaveFileEntity(findMember, boardDto);
-
-        if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
             fileUpload(imageFiles, boardEntity, "imageFile", "none");
         }
 

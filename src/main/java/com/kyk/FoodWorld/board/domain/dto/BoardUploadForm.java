@@ -16,58 +16,29 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
-public class BoardUploadForm {
-    private Long id;
-
+public class BoardUploadForm extends UploadFormBase {
     @NotBlank(message = "제목을 입력해주세요")
     @Size(max = 60, message = "최대 50글자입니다.")
     private String title;
 
-    @NotBlank(message = "내용을 입력해주세요")
-    @Size(max = 500, message = "최대 500글자입니다.")
-    private String content;
-
-    private String boardType;
     @NotBlank(message = "카테고리를 선택해주세요")
     private String subType;
     private String area;
     private String menuName;
-
-    private List<MultipartFile> imageFiles;
     private List<MultipartFile> attachFiles;
-    private int fileAttached;
 
 
-    public Board toSaveEntity(Member member, BoardUploadForm boardDto) {
+    public Board toSaveEntity(Member member) {
         return Board.builder()
                 .title(title)
-                .content(content)
+                .content(super.getContent())
                 .writer(member.getName())
                 .member(member)
-                .boardType(boardType)
+                .boardType(super.getBoardType())
                 .subType(subType)
-                .area(boardDto.getArea())
-                .menuName(boardDto.getMenuName())
+                .area(area)
+                .menuName(menuName)
                 .fileAttached(0)
                 .build();
     }
-    public Board toSaveFileEntity(Member member, BoardUploadForm boardDto) {
-        return Board.builder()
-                .title(title)
-                .content(content)
-                .writer(member.getName())
-                .member(member)
-                .boardType(boardType)
-                .subType(subType)
-                .area(boardDto.getArea())
-                .menuName(boardDto.getMenuName())
-                .fileAttached(1)
-                .build();
-    }
-
-
-    public BoardUploadForm(String boardType) {
-        this.boardType = boardType;
-    }
-
 }
