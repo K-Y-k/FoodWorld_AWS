@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Data
-public class UploadFormBase {
+public abstract class UploadFormBase {
     private Long id;
     @NotBlank(message = "내용을 입력해주세요")
     @Size(max = 500, message = "최대 500글자입니다.")
@@ -20,7 +20,5 @@ public class UploadFormBase {
     private String boardType;
     private List<MultipartFile> imageFiles;
 
-    public Board toSaveEntity(Member findMember) {
-        return null;
-    }
+    public abstract Board toSaveEntity(Member findMember);
 }

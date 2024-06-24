@@ -12,6 +12,7 @@ import lombok.*;
 public class MuckstarUploadForm extends UploadFormBase {
     private String subType;
 
+    @Override
     public Board toSaveEntity(Member member) {
         return Board.builder()
                 .title("먹스타그램 게시글")
@@ -23,5 +24,4 @@ public class MuckstarUploadForm extends UploadFormBase {
                 .fileAttached(1)
                 .build();
     }
-
 }

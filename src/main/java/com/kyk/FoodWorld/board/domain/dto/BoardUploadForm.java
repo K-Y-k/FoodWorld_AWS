@@ -28,6 +28,7 @@ public class BoardUploadForm extends UploadFormBase {
     private List<MultipartFile> attachFiles;
 
 
+    @Override
     public Board toSaveEntity(Member member) {
         return Board.builder()
                 .title(title)

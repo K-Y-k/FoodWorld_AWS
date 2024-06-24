@@ -61,6 +61,7 @@ public class BoardServiceImpl implements BoardService {
 
         Board boardEntity = boardDto.toSaveEntity(findMember);
 
+        // 첨부파일까지 지원하는 자유게시판과 메뉴추천게시판의 전송 객체인 경우
         if (boardDto instanceof BoardUploadForm) {
             BoardUploadForm boardDto2 = (BoardUploadForm) boardDto;
             List<MultipartFile> attachFiles = boardDto2.getAttachFiles();
@@ -71,7 +72,6 @@ public class BoardServiceImpl implements BoardService {
                 fileUpload(attachFiles, boardEntity, "attachFile", "attached");
             }
         }
-
 
         List<MultipartFile> imageFiles = boardDto.getImageFiles();
         // 이미지 파일이 있을 경우
