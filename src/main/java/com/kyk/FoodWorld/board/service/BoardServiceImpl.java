@@ -54,6 +54,9 @@ public class BoardServiceImpl implements BoardService {
     private final AmazonS3 amazonS3;
 
 
+    /**
+     * 게시글 저장
+     */
     @Override
     public void upload(Long memberId, UploadFormBase boardDto) throws IOException {
         Member findMember = memberRepository.findById(memberId).orElseThrow(() ->
@@ -63,13 +66,13 @@ public class BoardServiceImpl implements BoardService {
 
         // 첨부파일까지 지원하는 자유게시판과 메뉴추천게시판의 전송 객체인 경우
         if (boardDto instanceof BoardUploadForm) {
-            BoardUploadForm boardDto2 = (BoardUploadForm) boardDto;
-            List<MultipartFile> attachFiles = boardDto2.getAttachFiles();
+            BoardUploadForm childBoardDto = (BoardUploadForm) boardDto;
+            List<MultipartFile> attachFiles = childBoardDto.getAttachFiles();
 
             // 첨부파일이 있을 경우
             if (!attachFiles.isEmpty() && !attachFiles.get(0).getOriginalFilename().isBlank()) {
                 boardEntity.updateFileAttached(1);
-                fileUpload(attachFiles, boardEntity, "attachFile", "attached");
+                fileUpload(attachFiles, boardEntity, "attachFile/", "attached");
             }
         }
 
@@ -77,7 +80,7 @@ public class BoardServiceImpl implements BoardService {
         // 이미지 파일이 있을 경우
         if (!imageFiles.isEmpty() && !imageFiles.get(0).getOriginalFilename().isBlank()) {
             boardEntity.updateFileAttached(1);
-            fileUpload(imageFiles, boardEntity, "imageFile", "none");
+            fileUpload(imageFiles, boardEntity, "imageFile/", "none");
         }
 
         boardRepository.save(boardEntity);
@@ -97,7 +100,7 @@ public class BoardServiceImpl implements BoardService {
             metadata.setContentLength(file.getSize());
             metadata.setContentType(file.getContentType());
 
-            amazonS3.putObject(bucket, folder + "/" + storedFileName, file.getInputStream(), metadata);
+            amazonS3.putObject(bucket, folder + storedFileName, file.getInputStream(), metadata);
 
             // DB에 파일 관련 필드 값 저장
             BoardFile boardFileEntity = BoardFile.toBoardFileEntity(board, originalFilename, storedFileName, amazonS3.getUrl(bucket, "imageFile/"+storedFileName).toString(),attachedType);
@@ -125,219 +128,101 @@ public class BoardServiceImpl implements BoardService {
      * 게시글 수정
      */
     @Override
-    public Long updateBoard(Long boardId, FreeBoardUpdateForm freeBoardUpdateForm, RecommendBoardUpdateForm recommendBoardUpdateForm, MuckstarUpdateForm muckstarUpdateForm) throws IOException {
+    public Long updateBoard(Long boardId, UpdateFormBase updateForm) throws IOException {
         Board findBoard = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + boardId));
 
         List<BoardFile> findBoardFiles = boardFileRepository.findByBoard(findBoard);
 
         // 각 게시판의 DTO가 달라서 게시판별로 처리
-        // 자유게시판일 때
-        if (findBoard.getBoardType().equals("자유게시판")) {
+        if (updateForm instanceof FreeBoardUpdateForm) {
+            FreeBoardUpdateForm freeBoardUpdateForm = (FreeBoardUpdateForm)updateForm;
+
             // 새로 받아온 파일 생성
             List<MultipartFile> attachFiles = freeBoardUpdateForm.getAttachFiles();
             List<MultipartFile> imageFiles = freeBoardUpdateForm.getImageFiles();
             log.info("첨부파일명={}", attachFiles.get(0).getOriginalFilename());
             log.info("이미지파일명={}", imageFiles.get(0).getOriginalFilename());
 
-            // 새로 받아온 첨부파일, 이미지 파일 모두 있을 경우
-            if (!Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                log.info("CASE1: 새로 받아온 첨부파일, 이미지 파일 모두 있을 경우");
-                // 기존 파일과 엔티티 삭제 처리
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 첨부파일일 때의 삭제 처리
-                    if (boardFile.getAttachedType().equals("attached")) {
-                        deleteFile("attachFile", boardFile);
-                    } else if (boardFile.getAttachedType().equals("none")){ // 이미지 파일일 때의 삭제 처리
-                        // 기존 실제 이미지 파일 삭제
-                        deleteFile("imageFile", boardFile);
-                    }
-                }
+            // 새로 받아온 첨부파일이 있을 경우
+            if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
+                // 파일이 없었던 게시글인 경우가 있을 수 있으므로 파일 여부 필드 업데이트
+                findBoard.updateFileAttached(1);
 
-                // 새로 받아온 첨부파일 생성
-                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, freeBoardUpdateForm, null, null, "attached");
+                // 기존 파일과 게시글 엔티티 삭제 처리
+                pastFileDelete(findBoardFiles, "attached", "attachFile/");
 
-                // 새로 받아온 이미지 파일 생성
-                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, freeBoardUpdateForm, null, null, "none");
-            } else if (!Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                log.info("CASE2: 새로 받아온 첨부 파일만 있을 경우");
-
-                // 기존 파일과 엔티티 삭제 처리
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 첨부 파일일 때의 기존 실제 첨부 파일 삭제 처리
-                    if (boardFile.getAttachedType().equals("attached")){
-                        deleteFile("attachFile", boardFile);
-                    }
-                }
-
-                // 새로 받아온 첨부파일만 생성
-                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, freeBoardUpdateForm, null, null, "attached");
-            } else if (Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                log.info("CASE3: 새로 받아온 이미지 파일만 있을 경우");
-
-                // 기존 파일과 엔티티 삭제 처리
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 이미지 파일일 때의 기존 실제 이미지 파일 삭제 처리
-                    if (boardFile.getAttachedType().equals("none")) {
-                        deleteFile("imageFile", boardFile);
-                    }
-                }
-
-                // 새로 받아온 이미지 파일만 생성
-                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, freeBoardUpdateForm, null, null, "none");
-            } else {
-                log.info("CASE4: 새로 받아온 파일이 아예 없을 경우");
-
-                findBoard.updateBoard(freeBoardUpdateForm.getTitle(), freeBoardUpdateForm.getContent(), freeBoardUpdateForm.getSubType());
+                // 아마존에 새로 받아온 첨부파일 생성 및 파일 엔티티 생성
+                fileUpload(attachFiles, findBoard, "attachFile/", "attached");
             }
-        }
-        else if (findBoard.getBoardType().equals("추천게시판")){ // 추천게시판인 경우
-            // 새로 받아온 파일 생성
+
+            // 새로 받아온 이미지파일이 있을 경우
+            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
+                findBoard.updateFileAttached(1);
+
+                pastFileDelete(findBoardFiles, "none", "imageFile/");
+
+                fileUpload(imageFiles, findBoard, "imageFile/", "none");
+            }
+
+            // 수정한 게시글 엔티티 필드 적용
+            findBoard.updateBoard(freeBoardUpdateForm.getTitle(), freeBoardUpdateForm.getContent(), freeBoardUpdateForm.getSubType());
+        } else if (updateForm instanceof RecommendBoardUpdateForm) {
+            RecommendBoardUpdateForm recommendBoardUpdateForm = (RecommendBoardUpdateForm)updateForm;
+
             List<MultipartFile> attachFiles = recommendBoardUpdateForm.getAttachFiles();
             List<MultipartFile> imageFiles = recommendBoardUpdateForm.getImageFiles();
             log.info("첨부파일명={}", attachFiles.get(0).getOriginalFilename());
             log.info("이미지파일명={}", imageFiles.get(0).getOriginalFilename());
 
-            // 새로 받아온 첨부파일, 이미지 파일 모두 있을 경우
-            if (!Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                log.info("CASE1: 새로 받아온 첨부파일, 이미지 파일 모두 있을 경우");
-                // 기존 파일과 엔티티 삭제 처리
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 첨부파일일 때의 삭제 처리
-                    if (boardFile.getAttachedType().equals("attached")) {
-                        deleteFile("attachFile", boardFile);
-                    } else if (boardFile.getAttachedType().equals("none")){ // 이미지 파일일 때의 삭제 처리
-                        // 기존 실제 이미지 파일 삭제
-                        deleteFile("imageFile", boardFile);
-                    }
-                }
-
-                // 새로 받아온 첨부파일 생성
-                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, null, recommendBoardUpdateForm, null, "attached");
-
-                // 새로 받아온 이미지 파일 생성
-                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, null,  recommendBoardUpdateForm, null, "none");
-            } else if (!Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                log.info("CASE2: 새로 받아온 첨부 파일만 있을 경우");
-
-                // 기존 파일과 엔티티 삭제 처리
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 첨부 파일일 때의 기존 실제 첨부 파일 삭제 처리
-                    if (boardFile.getAttachedType().equals("attached")){
-                        deleteFile("attachFile", boardFile);
-                    }
-                }
-
-                // 새로 받아온 첨부파일만 생성
-                saveNewBoardAndBoardFileDB(attachFiles, "attachFile", findBoard, null, recommendBoardUpdateForm, null, "attached");
-            } else if (Objects.requireNonNull(attachFiles.get(0).getOriginalFilename()).isBlank() && !Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                log.info("CASE3: 새로 받아온 이미지 파일만 있을 경우");
-
-                // 기존 파일과 엔티티 삭제 처리
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 이미지 파일일 때의 기존 실제 이미지 파일 삭제 처리
-                    if (boardFile.getAttachedType().equals("none")) {
-                        deleteFile("imageFile", boardFile);
-                    }
-                }
-
-                // 새로 받아온 이미지 파일만 생성
-                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, null, recommendBoardUpdateForm,null,  "none");
-            } else {
-                log.info("CASE4: 새로 받아온 파일이 아예 없을 경우");
-
-                findBoard.updateRecommendBoard(recommendBoardUpdateForm.getTitle(), recommendBoardUpdateForm.getContent(), recommendBoardUpdateForm.getSubType(), recommendBoardUpdateForm.getArea(), recommendBoardUpdateForm.getMenuName());
-            }
-        }
-        else { // 먹스타그램인 경우는 이미지 파일만 있으므로 이미지 파일만 처리
-            List<MultipartFile> imageFiles = muckstarUpdateForm.getImageFiles();
-
-            // 새로 받아온 이미지 파일이 있을 경우
-            if (!Objects.requireNonNull(imageFiles.get(0).getOriginalFilename()).isBlank()) {
-                for (BoardFile boardFile : findBoardFiles) {
-                    // 기존 이미지 파일 삭제
-                    deleteFile("imageFile", boardFile);
-                }
-
-                // 새로 받아온 이미지 파일 생성
-                saveNewBoardAndBoardFileDB(imageFiles, "imageFile", findBoard, null, null, muckstarUpdateForm, "none");
-            } else { // 새로 받아온 파일이 없을 경우
-                findBoard.updateBoard(muckstarUpdateForm.getTitle(), muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
-            }
-        }
-
-        log.info("수정완료");
-        return findBoard.getId();
-    }
-
-    private void saveNewBoardAndBoardFileDB(List<MultipartFile> files, String folder, Board findBoard, FreeBoardUpdateForm freeBoardUpdateForm, RecommendBoardUpdateForm recommendBoardUpdateForm, MuckstarUpdateForm muckstarUpdateForm, String attached) throws IOException {
-        log.info("BoardType={}", findBoard.getBoardType());
-
-        if (!files.isEmpty()) {
-            for (MultipartFile file : files) {
-                // 새로 받아온 첨부파일 이름
-                String attachOriginalFilename = file.getOriginalFilename();
-
-                // 파일에 이름을 붙일 랜덤으로 식별자 지정
-                UUID uuid = UUID.randomUUID();
-                String attachStoredFileName = uuid + "_" + attachOriginalFilename;
-
-                // S3 버킷에 넣을 파일 설정 및 넣기
-                ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(file.getSize());
-                metadata.setContentType(file.getContentType());
-
-                amazonS3.putObject(bucket, folder + "/" + attachStoredFileName, file.getInputStream(), metadata);
-
-
-                // 각 게시글에 따른 엔티티와 파일 엔티티의 DB 업데이트
-                if (findBoard.getBoardType().equals("자유게시판")) {
-                    findBoard.updateBoard(freeBoardUpdateForm.getTitle(), freeBoardUpdateForm.getContent(), freeBoardUpdateForm.getSubType());
-                }
-                else if (findBoard.getBoardType().equals("추천게시판")){
-                    findBoard.updateRecommendBoard(recommendBoardUpdateForm.getTitle(), recommendBoardUpdateForm.getContent(), recommendBoardUpdateForm.getSubType(), recommendBoardUpdateForm.getArea(), recommendBoardUpdateForm.getMenuName());
-                } else {
-                    findBoard.updateBoard(muckstarUpdateForm.getTitle(), muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
-                }
-
-                // 수정 전 게시글에 파일이 아예 없었을 경우가 있으므로 적용
+            if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
                 findBoard.updateFileAttached(1);
 
-                BoardFile updateBoardFileEntity = BoardFile.toBoardFileEntity(findBoard, attachOriginalFilename, attachStoredFileName, amazonS3.getUrl(bucket, folder + "/" + attachStoredFileName).toString(), attached);
-                boardFileRepository.save(updateBoardFileEntity);
+                pastFileDelete(findBoardFiles, "attached", "attachFile/");
+
+                fileUpload(attachFiles, findBoard, "attachFile/", "attached");
+            }
+
+            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
+                findBoard.updateFileAttached(1);
+                
+                pastFileDelete(findBoardFiles, "none", "imageFile/");
+
+                fileUpload(imageFiles, findBoard, "imageFile/", "none");
+            }
+
+            findBoard.updateRecommendBoard(recommendBoardUpdateForm.getTitle(), recommendBoardUpdateForm.getContent(), recommendBoardUpdateForm.getSubType(), recommendBoardUpdateForm.getArea(), recommendBoardUpdateForm.getMenuName());
+        } else {
+            MuckstarUpdateForm muckstarUpdateForm = (MuckstarUpdateForm)updateForm;
+
+            List<MultipartFile> imageFiles = muckstarUpdateForm.getImageFiles();
+            log.info("이미지파일명={}", imageFiles.get(0).getOriginalFilename());
+
+            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
+                pastFileDelete(findBoardFiles, "none", "imageFile/");
+
+                fileUpload(imageFiles, findBoard, "imageFile/", "none");
+            }
+
+            findBoard.updateBoard(null, muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
+        }
+
+        log.info("수정완료");
+        return findBoard.getId();
+    }
+
+    private void pastFileDelete(List<BoardFile> findBoardFiles, String attached, String folder) {
+        for (BoardFile boardFile : findBoardFiles) {
+            if (boardFile.getAttachedType().equals(attached)) {
+                // 삭제 대상 객체 생성 및 삭제
+                deleteFile(folder + boardFile.getStoredFileName());
+
+                // 기존 게시글 엔티티 삭제
+                boardFileRepository.delete(boardFile);
             }
         }
     }
 
-    private void deleteFile(String folder, BoardFile boardFile) {
-        // 삭제 대상 객체 생성
-        deleteFile(folder + "/" + boardFile.getStoredFileName());
-
-        // 기존 파일 엔티티 삭제
-        boardFileRepository.delete(boardFile);
-    }
-
-    @Override
-    public Long recommendUpdateBoard(Long boardId, RecommendBoardUpdateForm updateParam) {
-        Board findBoard = boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + boardId));
-        log.info("서브 타입 = {}", findBoard.getSubType());
-        findBoard.updateRecommendBoard(updateParam.getTitle(), updateParam.getContent(), updateParam.getSubType(), updateParam.getArea(), updateParam.getMenuName());
-
-        log.info("수정완료");
-        return findBoard.getId();
-    }
-
-    @Override
-    public Long muckstarUpdateBoard(Long boardId, MuckstarUpdateForm updateParam) {
-        Board findBoard = boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("게시글 가져오기 실패: 게시글을 찾지 못했습니다." + boardId));
-        log.info("서브 타입 = {}", findBoard.getSubType());
-        findBoard.updateBoard(updateParam.getTitle(), updateParam.getContent(), updateParam.getSubType());
-
-        log.info("수정완료");
-        return findBoard.getId();
-    }
 
 //    @Override
 //    public Optional<BoardDto> findById(Long id) {

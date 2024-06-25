@@ -374,7 +374,7 @@ public class RecommendBoardController {
             return "boards/recommendBoard/recommendBoard_edit";
         }
 
-        boardService.updateBoard(boardId, null, recommendBoardUpdateForm, null);
+        boardService.updateBoard(boardId, recommendBoardUpdateForm);
         return "redirect:/boards/recommendBoard/{boardId}";
     }
 

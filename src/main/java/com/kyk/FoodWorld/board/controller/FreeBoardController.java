@@ -347,7 +347,7 @@ public class FreeBoardController {
      */
     @PostMapping("/freeBoard/{boardId}/edit")
     public String edit(@PathVariable Long boardId,
-                       @Valid @ModelAttribute("updateForm") FreeBoardUpdateForm updateParam, BindingResult bindingResult,
+                       @Valid @ModelAttribute("updateForm") FreeBoardUpdateForm updateForm, BindingResult bindingResult,
                        Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             Board board = boardService.findById(boardId).orElseThrow(() ->
@@ -358,7 +358,7 @@ public class FreeBoardController {
             return "boards/freeboard/freeBoard_edit";
         }
 
-        boardService.updateBoard(boardId, updateParam, null, null);
+        boardService.updateBoard(boardId, updateForm);
         return "redirect:/boards/freeBoard/{boardId}";
     }
 

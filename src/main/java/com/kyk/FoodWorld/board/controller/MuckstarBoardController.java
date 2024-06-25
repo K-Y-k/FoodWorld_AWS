@@ -334,7 +334,7 @@ public class MuckstarBoardController {
             return "boards/muckstarBoard/muckstarBoard_edit";
         }
 
-        boardService.updateBoard(boardId, null, null, updateParam);
+        boardService.updateBoard(boardId, updateParam);
         return "redirect:/boards/muckstarBoard/{boardId}";
     }
 

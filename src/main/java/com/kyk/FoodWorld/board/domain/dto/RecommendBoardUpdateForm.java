@@ -11,16 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Setter
-public class RecommendBoardUpdateForm {
-    private Long id;
-
+public class RecommendBoardUpdateForm extends UpdateFormBase {
     @NotBlank(message = "제목을 입력해주세요")
     @Size(max = 60, message = "최대 50글자입니다.")
     private String title;
-
-    @NotBlank(message = "내용을 입력해주세요")
-    @Size(max = 500, message = "최대 500글자입니다.")
-    private String content;
 
     private String boardType;
 
@@ -32,7 +26,4 @@ public class RecommendBoardUpdateForm {
     private String menuName;
 
     private List<MultipartFile> attachFiles;
-
-    private List<MultipartFile> imageFiles;
-
 }
