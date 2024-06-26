@@ -136,6 +136,7 @@ public class BoardServiceImpl implements BoardService {
 
         // 각 게시판의 DTO가 달라서 게시판별로 처리
         if (updateForm instanceof FreeBoardUpdateForm) {
+            // 자식 폼 객체로 다운 캐스팅
             FreeBoardUpdateForm freeBoardUpdateForm = (FreeBoardUpdateForm)updateForm;
 
             // 새로 받아온 파일 생성
@@ -144,26 +145,8 @@ public class BoardServiceImpl implements BoardService {
             log.info("첨부파일명={}", attachFiles.get(0).getOriginalFilename());
             log.info("이미지파일명={}", imageFiles.get(0).getOriginalFilename());
 
-            // 새로 받아온 첨부파일이 있을 경우
-            if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
-                // 파일이 없었던 게시글인 경우가 있을 수 있으므로 파일 여부 필드 업데이트
-                findBoard.updateFileAttached(1);
-
-                // 기존 파일과 게시글 엔티티 삭제 처리
-                pastFileDelete(findBoardFiles, "attached", "attachFile/");
-
-                // 아마존에 새로 받아온 첨부파일 생성 및 파일 엔티티 생성
-                fileUpload(attachFiles, findBoard, "attachFile/", "attached");
-            }
-
-            // 새로 받아온 이미지파일이 있을 경우
-            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
-                findBoard.updateFileAttached(1);
-
-                pastFileDelete(findBoardFiles, "none", "imageFile/");
-
-                fileUpload(imageFiles, findBoard, "imageFile/", "none");
-            }
+            // 새로 받아온 파일 업데이트
+            fileUpdate(findBoard, findBoardFiles, attachFiles, imageFiles);
 
             // 수정한 게시글 엔티티 필드 적용
             findBoard.updateBoard(freeBoardUpdateForm.getTitle(), freeBoardUpdateForm.getContent(), freeBoardUpdateForm.getSubType());
@@ -172,43 +155,44 @@ public class BoardServiceImpl implements BoardService {
 
             List<MultipartFile> attachFiles = recommendBoardUpdateForm.getAttachFiles();
             List<MultipartFile> imageFiles = recommendBoardUpdateForm.getImageFiles();
-            log.info("첨부파일명={}", attachFiles.get(0).getOriginalFilename());
-            log.info("이미지파일명={}", imageFiles.get(0).getOriginalFilename());
 
-            if (!attachFiles.get(0).getOriginalFilename().isBlank()) {
-                findBoard.updateFileAttached(1);
-
-                pastFileDelete(findBoardFiles, "attached", "attachFile/");
-
-                fileUpload(attachFiles, findBoard, "attachFile/", "attached");
-            }
-
-            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
-                findBoard.updateFileAttached(1);
-                
-                pastFileDelete(findBoardFiles, "none", "imageFile/");
-
-                fileUpload(imageFiles, findBoard, "imageFile/", "none");
-            }
+            fileUpdate(findBoard, findBoardFiles, attachFiles, imageFiles);
 
             findBoard.updateRecommendBoard(recommendBoardUpdateForm.getTitle(), recommendBoardUpdateForm.getContent(), recommendBoardUpdateForm.getSubType(), recommendBoardUpdateForm.getArea(), recommendBoardUpdateForm.getMenuName());
         } else {
             MuckstarUpdateForm muckstarUpdateForm = (MuckstarUpdateForm)updateForm;
 
             List<MultipartFile> imageFiles = muckstarUpdateForm.getImageFiles();
-            log.info("이미지파일명={}", imageFiles.get(0).getOriginalFilename());
 
-            if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
-                pastFileDelete(findBoardFiles, "none", "imageFile/");
-
-                fileUpload(imageFiles, findBoard, "imageFile/", "none");
-            }
+            fileUpdate(findBoard, findBoardFiles, null, imageFiles);
 
             findBoard.updateBoard(null, muckstarUpdateForm.getContent(), muckstarUpdateForm.getSubType());
         }
 
-        log.info("수정완료");
         return findBoard.getId();
+    }
+
+    private void fileUpdate(Board findBoard, List<BoardFile> findBoardFiles, List<MultipartFile> attachFiles, List<MultipartFile> imageFiles) throws IOException {
+        // 새로 받아온 첨부파일이 있을 경우
+        if (attachFiles != null && !attachFiles.get(0).getOriginalFilename().isBlank()) {
+            // 파일이 없었던 게시글인 경우가 있을 수 있으므로 파일 여부 필드 업데이트
+            findBoard.updateFileAttached(1);
+
+            // 기존 파일과 게시글 엔티티 삭제 처리
+            pastFileDelete(findBoardFiles, "attached", "attachFile/");
+
+            // 아마존에 새로 받아온 첨부파일 생성 및 파일 엔티티 생성
+            fileUpload(attachFiles, findBoard, "attachFile/", "attached");
+        }
+
+        // 새로 받아온 이미지파일이 있을 경우
+        if (!imageFiles.get(0).getOriginalFilename().isBlank()) {
+            findBoard.updateFileAttached(1);
+
+            pastFileDelete(findBoardFiles, "none", "imageFile/");
+
+            fileUpload(imageFiles, findBoard, "imageFile/", "none");
+        }
     }
 
     private void pastFileDelete(List<BoardFile> findBoardFiles, String attached, String folder) {
