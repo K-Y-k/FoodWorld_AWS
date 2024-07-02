@@ -8,7 +8,7 @@ ABSDIR=$(dirname $ABSPATH)  # 여기서도 IDL_PROFILE을 사용하니 profile.s
 source ${ABSDIR}/profile.sh
 
 REPOSITORY=/home/ec2-user/app/step3
-PROJECT_NAME=FoodWorld-webservice
+PROJECT_NAME=FoodWorld_AWS
 
 echo "> Build 파일 복사"
 echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
