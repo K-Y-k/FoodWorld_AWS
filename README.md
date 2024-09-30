@@ -112,8 +112,8 @@
     
     <img src="https://github.com/K-Y-k/KYKProject_FoodWorld_Spring/assets/102020649/538457da-0746-435f-b42c-1dcb3f415426.gif" width="50%"/>
     
- - ### 게시판 메인 페이징, 무한 스크롤 조회 / 쿼리 파라미터 조회 / 검색
-   - 자유/추천게시판의 메인은 <b>페이징 처리</b>를 하였고 <b>음식 카테고리에 따른 조회</b>를 합니다.
+ - ### 게시판 메인 페이징, 무한 스크롤 조회 / 메뉴 카테고리 조회 / 검색
+   - 자유/추천게시판의 메인은 <b>페이징 처리</b>를 하였고 <b>메뉴 카테고리에 따른 조회</b>를 합니다.
    - 검색을 하면 <b>검색 키워드에 따른 게시글만 조회</b>를 합니다.
   
      <img src="https://github.com/K-Y-k/KYKProject_FoodWorld_Spring/assets/102020649/8c3a5f1e-fc17-413d-b709-29bb35c0f44d.gif" width="50%"/>
