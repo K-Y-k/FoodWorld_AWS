@@ -9,7 +9,7 @@
 
 - AWS 환경으로 마이그레이션 및 배포 기간: 2023.08.28 ~ 2023.09.14
 
-- URL      : http://ec2-54-180-173-230.ap-northeast-2.compute.amazonaws.com
+- URL      : http://ec2-54-180-173-230.ap-northeast-2.compute.amazonaws.com:8081
 - API 문서 : https://documenter.getpostman.com/view/24388769/2s9YJW6RuN
 
 
